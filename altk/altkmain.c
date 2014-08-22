@@ -9,4 +9,7 @@
  */
 void altk_main ( void )
 {
+  GMainLoop *loop;
+  loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
 }
