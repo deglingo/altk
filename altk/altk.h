@@ -7,6 +7,8 @@
 
 #include <altk/altkbase.h>
 
+#include <altk/altkmain.h>
+
 #include <altk/altkwidget.h>
 
 #include <altk/altkdialog.h>
