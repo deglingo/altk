@@ -1,0 +1,7 @@
+/* -*- c++ -*- */
+
+namespace Altk
+{
+  class Widget;
+  // class Dialog : Widget;
+}

@@ -4,7 +4,8 @@
 #ifndef _ALTKBASE_H_
 #define _ALTKBASE_H_
 
-#include <glib.h>
+#include <glib.h> /* [removeme] */
+#include <los.h>
 
 
 

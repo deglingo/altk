@@ -5,10 +5,25 @@
 #define _ALTKWIDGET_H_
 
 #include "altk/altkbase.h"
+#include "altk/altkwidget-def.h"
 
 
 
-typedef struct _AltkWidget AltkWidget;
+/* AltkWidget:
+ */
+struct _AltkWidget
+{
+  ALTK_WIDGET_INSTANCE_HEADER;
+};
+
+
+
+/* AltkWidgetClass:
+ */
+struct _AltkWidgetClass
+{
+  ALTK_WIDGET_CLASS_HEADER;
+};
 
 
 
