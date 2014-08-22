@@ -9,5 +9,7 @@
 
 #include <altk/altkwidget.h>
 
+#include <altk/altkdialog.h>
+
 
 #endif
