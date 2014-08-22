@@ -7,5 +7,7 @@
 
 #include <altk/altkbase.h>
 
+#include <altk/altkwidget.h>
+
 
 #endif
