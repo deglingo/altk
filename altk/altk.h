@@ -9,6 +9,8 @@
 
 #include <altk/altkmain.h>
 
+#include <altk/altkdisplay.h>
+
 #include <altk/altkwidget.h>
 
 #include <altk/altkdialog.h>
