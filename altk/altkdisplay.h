@@ -18,6 +18,8 @@ struct _AltkWidget;
 struct _AltkDisplay
 {
   ALTK_DISPLAY_INSTANCE_HEADER;
+  /* the underlying allegro display */
+  ALLEGRO_DISPLAY *al_display;
 };
 
 

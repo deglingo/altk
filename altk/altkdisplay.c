@@ -20,6 +20,7 @@ AltkDisplay *altk_display_new ( void )
  */
 void altk_display_open ( AltkDisplay *display )
 {
+  display->al_display = al_create_display(640, 480);
 }
 
 
