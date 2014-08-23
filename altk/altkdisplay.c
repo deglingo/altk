@@ -3,13 +3,23 @@
 
 #include "altk/altkdisplay.h"
 
+#include "altk/altkdisplay.inl"
+
 
 
 /* altk_display_new:
  */
 AltkDisplay *altk_display_new ( void )
 {
-  return 0;
+  return ALTK_DISPLAY(l_object_new(ALTK_CLASS_DISPLAY, NULL));
+}
+
+
+
+/* altk_display_open:
+ */
+void altk_display_open ( AltkDisplay *display )
+{
 }
 
 

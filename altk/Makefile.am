@@ -7,7 +7,7 @@ include_HEADERS = altk.h
 includealtk_HEADERS = \
 	altkbase.h \
 	altkmain.h \
-	altkdisplay.h \
+	altkdisplay.h altkdisplay-def.h \
 	altkwidget.h altkwidget-def.h \
 	altkdialog.h altkdialog-def.h
 
@@ -17,13 +17,15 @@ libaltk_la_SOURCES = \
 	altkbase.c \
 	altkmain.c \
 	altkdisplay.c \
-	altkwidget.c altkwidget.inl \
-	altkdialog.c altkdialog.inl
+	altkwidget.c \
+	altkdialog.c
 
 BUILT_SOURCES = \
+	altkdisplay-def.h altkdisplay.inl \
 	altkwidget-def.h altkwidget.inl \
 	altkdialog-def.h altkdialog.inl
 
+altkdisplay-def.h altkdisplay.inl \
 altkwidget-def.h altkwidget.inl \
 altkdialog-def.h altkdialog.inl \
 : altktypes.stamp-h
