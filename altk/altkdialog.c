@@ -4,6 +4,8 @@
 #include "altk/altkdialog.h"
 #include "altk/altkdisplay.h"
 
+#include "altk/altkdialog.inl"
+
 
 
 /* altk_dialog_new:
