@@ -9,7 +9,7 @@ includealtk_HEADERS = \
 	altkmain.h \
 	altkdisplay.h \
 	altkwidget.h altkwidget-def.h \
-	altkdialog.h
+	altkdialog.h altkdialog-def.h
 
 libaltk_la_CFLAGS = -I$(top_srcdir) -I$(top_builddir) @LOS_CFLAGS@ @GLIB_CFLAGS@
 
@@ -18,12 +18,14 @@ libaltk_la_SOURCES = \
 	altkmain.c \
 	altkdisplay.c \
 	altkwidget.c altkwidget.inl \
-	altkdialog.c
+	altkdialog.c altkdialog.inl
 
 BUILT_SOURCES = \
-	altkwidget-def.h altkwidget.inl
+	altkwidget-def.h altkwidget.inl \
+	altkdialog-def.h altkdialog.inl
 
 altkwidget-def.h altkwidget.inl \
+altkdialog-def.h altkdialog.inl \
 : altktypes.stamp-h
 
 altktypes.stamp-h: altktypes.in

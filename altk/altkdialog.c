@@ -10,5 +10,7 @@
  */
 AltkWidget *altk_dialog_new ( AltkDisplay *display )
 {
-  return 0;
+  AltkWidget *dlg;
+  dlg = ALTK_WIDGET(l_object_new(ALTK_TYPE_DIALOG, NULL));
+  return dlg;
 }

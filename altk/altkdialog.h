@@ -5,6 +5,8 @@
 #define _ALTKDIALOG_H_
 
 #include "altk/altkwidget.h" /* [FIXME] altkbin.h */
+#include "altk/altkdialog-def.h"
+
 
 struct _AltkDisplay;
 
