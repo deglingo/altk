@@ -26,6 +26,18 @@ static void _al_source_finalize ( GSource *src );
 
 static AlSource *al_source = NULL;
 
+static gboolean _idle_timer ( gpointer data );
+
+
+
+/* _idle_timer:
+ */
+static gboolean _idle_timer ( gpointer data )
+{
+  g_usleep(1000);
+  return G_SOURCE_CONTINUE;
+}
+
 
 
 /* _al_source_prepare:
@@ -91,6 +103,8 @@ void _altk_main_init ( void )
   al_source = (AlSource *) g_source_new(&al_funcs, sizeof(AlSource));
   al_source->queue = al_create_event_queue();
   g_source_attach((GSource *) al_source, NULL);
+  /* idle timer */
+  g_idle_add_full(G_MAXINT32, _idle_timer, NULL, NULL);
 }
 
 
