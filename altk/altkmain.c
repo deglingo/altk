@@ -2,6 +2,8 @@
  */
 
 #include "altk/altkmain.h"
+/* [fixme] ?? */
+#include "altk/altkdisplay.h"
 
 
 
@@ -71,7 +73,8 @@ static gboolean _al_source_dispatch ( GSource *src,
     {
       fprintf(stderr, "EVENT: %d\n", event.type);
       if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-        fprintf(stderr, "display closed, bye\n");
+        AltkDisplay *display = altk_display_from_al_display(event.display.source);
+        fprintf(stderr, "display %p closed, bye\n", display);
         exit(0);
       }
     }

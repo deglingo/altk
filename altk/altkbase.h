@@ -10,6 +10,8 @@
 
 
 
+extern GQuark ALTK_QUARK_AL_OWNER;
+
 int altk_init ( void );
 
 
