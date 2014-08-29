@@ -15,7 +15,6 @@ AltkDisplay *altk_display_new ( void )
 {
   AltkDisplay *display;
   display = ALTK_DISPLAY(l_object_new(ALTK_CLASS_DISPLAY, NULL));
-  CL_DEBUG("display created: %p", display);
   return display;
 }
 
