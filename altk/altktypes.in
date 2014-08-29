@@ -4,5 +4,5 @@ namespace Altk
 {
   class Display;
   class Widget;
-  class Dialog;
+  class Dialog : Widget;
 }
