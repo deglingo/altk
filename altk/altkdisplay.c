@@ -46,4 +46,6 @@ void altk_display_open ( AltkDisplay *display )
 void altk_display_attach_widget ( AltkDisplay *display,
                                   struct _AltkWidget *widget )
 {
+  display->top_widgets = g_list_append(display->top_widgets,
+                                       l_object_ref(widget));
 }
