@@ -1,6 +1,7 @@
 /* altkdisplay.c -
  */
 
+#include "altk/private.h"
 #include "altk/altkdisplay.h"
 #include "altk/altkmain.h"
 
@@ -14,7 +15,7 @@ AltkDisplay *altk_display_new ( void )
 {
   AltkDisplay *display;
   display = ALTK_DISPLAY(l_object_new(ALTK_CLASS_DISPLAY, NULL));
-  fprintf(stderr, "display created: %p\n", display);
+  CL_DEBUG("display created: %p", display);
   return display;
 }
 

@@ -6,6 +6,6 @@ libdir=@libdir@
 Name: altk
 Description: An allegro5 GUI toolkit.
 Version: 0.0.0
-Requires: allegro-debug-5 allegro_main-debug-5 los
+Requires: allegro-debug-5 allegro_main-debug-5 clog los
 Cflags: -I${includedir}
 Libs: -L${libdir} -laltk

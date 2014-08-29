@@ -11,7 +11,7 @@ includealtk_HEADERS = \
 	altkwidget.h altkwidget-def.h \
 	altkdialog.h altkdialog-def.h
 
-libaltk_la_CFLAGS = -I$(top_srcdir) -I$(top_builddir) @LOS_CFLAGS@ @GLIB_CFLAGS@
+libaltk_la_CFLAGS = -DCL_LOG_DOMAIN=\"altk\" -I$(top_srcdir) -I$(top_builddir) @CLOG_CFLAGS@ @LOS_CFLAGS@ @GLIB_CFLAGS@
 
 libaltk_la_SOURCES = \
 	altkbase.c \
