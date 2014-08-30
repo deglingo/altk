@@ -14,6 +14,8 @@
 struct _AltkBin
 {
   ALTK_BIN_INSTANCE_HEADER;
+
+  AltkWidget *child;
 };
 
 

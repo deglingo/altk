@@ -43,6 +43,8 @@ struct _AltkAllocation
 struct _AltkWidget
 {
   ALTK_WIDGET_INSTANCE_HEADER;
+  /* the parent widget */
+  AltkWidget *parent;
   /* on-screen location */
   gint root_x;
   gint root_y;
@@ -73,6 +75,8 @@ struct _AltkWidgetClass
 
 
 
+void _altk_widget_set_parent ( AltkWidget *widget,
+                               AltkWidget *parent );
 void altk_widget_event ( AltkWidget *widget,
                          AltkEvent *event );
 void altk_widget_size_request ( AltkWidget *widget,

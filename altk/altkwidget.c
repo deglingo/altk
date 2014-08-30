@@ -24,6 +24,18 @@ static void altk_widget_class_init ( LObjectClass *cls )
 
 
 
+/* _altk_widget_set_parent:
+ */
+void _altk_widget_set_parent ( AltkWidget *widget,
+                               AltkWidget *parent )
+{
+  /* [FIXME] use a weakref ? */
+  ASSERT(!widget->parent);
+  widget->parent = parent;
+}
+
+
+
 /* altk_widget_size_request:
  */
 void altk_widget_size_request ( AltkWidget *widget,
