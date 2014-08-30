@@ -10,6 +10,7 @@ includealtk_HEADERS = \
 	altkevent.h \
 	altkmain.h \
 	altkdrawable.h altkdrawable-def.h \
+	altkbitmap.h altkbitmap-def.h \
 	altkdisplay.h altkdisplay-def.h \
 	altkstyle.h altkstyle-def.h \
 	altkwidget.h altkwidget-def.h \
@@ -26,6 +27,7 @@ libaltk_la_SOURCES = \
 	altkevent.c \
 	altkmain.c \
 	altkdrawable.c \
+	altkbitmap.c \
 	altkdisplay.c \
 	altkstyle.c \
 	altkwidget.c \
@@ -36,6 +38,7 @@ libaltk_la_SOURCES = \
 
 BUILT_SOURCES = \
 	altkdrawable-def.h altkdrawable.inl \
+	altkbitmap-def.h altkbitmap.inl \
 	altkdisplay-def.h altkdisplay.inl \
 	altkstyle-def.h altkstyle.inl \
 	altkwidget-def.h altkwidget.inl \
@@ -45,6 +48,7 @@ BUILT_SOURCES = \
 	altkdialog-def.h altkdialog.inl
 
 altkdrawable-def.h altkdrawable.inl \
+altkbitmap-def.h altkbitmap.inl \
 altkdisplay-def.h altkdisplay.inl \
 altkstyle-def.h altkstyle.inl \
 altkwidget-def.h altkwidget.inl \

@@ -4,6 +4,7 @@ namespace Altk
 {
   class Display;
   class Drawable;
+  class Bitmap : Drawable;
   class Style;
   class Widget;
   class Label : Widget;
