@@ -50,6 +50,12 @@ struct _AltkWidget
 struct _AltkWidgetClass
 {
   ALTK_WIDGET_CLASS_HEADER;
+
+  void (* size_request) ( AltkWidget *widget,
+                          AltkRequisition *req );
+
+  void (* size_allocate ) ( AltkWidget *widget,
+                            AltkAllocation *alloc );
 };
 
 

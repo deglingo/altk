@@ -20,9 +20,9 @@ static void altk_widget_class_init ( LObjectClass *cls )
 void altk_widget_size_request ( AltkWidget *widget,
                                 AltkRequisition *req )
 {
-  CL_DEBUG("[TODO] size_request(%p)", widget);
-  req->width = 32;
-  req->height = 20;
+  ALTK_WIDGET_GET_CLASS(widget)->size_request(widget, req);
+  CL_DEBUG("size_request(%p) -> %d, %d",
+           widget, req->width, req->height);
 }
 
 
@@ -32,6 +32,7 @@ void altk_widget_size_request ( AltkWidget *widget,
 void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc )
 {
-  CL_DEBUG("[TODO] size_allocate(%p, %d, %d, %d, %d)",
+  CL_DEBUG("size_allocate(%p, %d, %d, %d, %d)",
            widget, alloc->x, alloc->y, alloc->width, alloc->height);
+  ALTK_WIDGET_GET_CLASS(widget)->size_allocate(widget, alloc);
 }
