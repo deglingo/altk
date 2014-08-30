@@ -6,6 +6,7 @@
 #include "altk/altkmain.h"
 #include "altk/altkwidget.h"
 #include "altk/altkevent.h"
+#include "altk/altkbitmap.h"
 
 #include "altk/altkdisplay.inl"
 
@@ -106,11 +107,23 @@ struct child_redraw_data
 
 
 
+static void _grow_backbuf ( AltkDisplay *display,
+                            gint width,
+                            gint height )
+{
+  /* [FIXME] !!!! */
+  display->backbuf = NULL;
+  display->backbuf = altk_bitmap_new(display, width, height);
+}
+
+
+
 static void _process_child_redraw ( AltkWidget *widget,
                                     struct child_redraw_data *data )
 {
   AltkRegion *wid_area;
   AltkEvent event;
+  AltkRectangle wid_extents;
   /* process children first */
   altk_widget_forall(widget, (AltkForeachFunc) _process_child_redraw, &data);
   /* get the widget's update area (and subract it from 'area') */
@@ -119,10 +132,15 @@ static void _process_child_redraw ( AltkWidget *widget,
   altk_region_intersect(wid_area, data->area);
   altk_region_subtract(data->area, wid_area);
   altk_region_offset(wid_area, -widget->root_x, -widget->root_y);
+  /* create/grow the backbuf */
+  altk_region_get_clipbox(wid_area, &wid_extents);
+  _grow_backbuf(data->display, wid_extents.width, wid_extents.height);
+  /* altk_bitmap_set_offset(-wid_extents.x, -wid_extents.y); */
   /* create the expose event */
   event.type = ALTK_EVENT_EXPOSE;
   event.expose.widget = widget;
   event.expose.area = wid_area;
+  /* event.expose.window = data->display->backbuf; */
   altk_event_process(&event);
   /* [TODO] widget_redraw(wid_area) */
   altk_region_destroy(wid_area);
