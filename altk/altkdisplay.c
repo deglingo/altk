@@ -125,7 +125,7 @@ static void _process_child_redraw ( AltkWidget *widget,
   AltkEvent event;
   AltkRectangle wid_extents;
   /* process children first */
-  altk_widget_forall(widget, (AltkForeachFunc) _process_child_redraw, &data);
+  altk_widget_forall(widget, (AltkForeachFunc) _process_child_redraw, data);
   /* get the widget's update area (and subract it from 'area') */
   wid_area = altk_widget_get_shape(widget);
   altk_region_offset(wid_area, widget->root_x, widget->root_y);
