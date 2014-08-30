@@ -13,6 +13,7 @@ includealtk_HEADERS = \
 	altkwidget.h altkwidget-def.h \
 	altklabel.h altklabel-def.h \
 	altkcontainer.h altkcontainer-def.h \
+	altkbin.h altkbin-def.h \
 	altkdialog.h altkdialog-def.h
 
 libaltk_la_CFLAGS = -DCL_LOG_DOMAIN=\"altk\" -I$(top_srcdir) -I$(top_builddir) @CLOG_CFLAGS@ @LOS_CFLAGS@ @GLIB_CFLAGS@
@@ -26,6 +27,7 @@ libaltk_la_SOURCES = \
 	altkwidget.c \
 	altklabel.c \
 	altkcontainer.c \
+	altkbin.c \
 	altkdialog.c
 
 BUILT_SOURCES = \
@@ -33,12 +35,14 @@ BUILT_SOURCES = \
 	altkwidget-def.h altkwidget.inl \
 	altklabel-def.h altklabel.inl \
 	altkcontainer-def.h altkcontainer.inl \
+	altkbin-def.h altkbin.inl \
 	altkdialog-def.h altkdialog.inl
 
 altkdisplay-def.h altkdisplay.inl \
 altkwidget-def.h altkwidget.inl \
 altklabel-def.h altklabel.inl \
 altkcontainer-def.h altkcontainer.inl \
+altkbin-def.h altkbin.inl \
 altkdialog-def.h altkdialog.inl \
 : altktypes.stamp-h
 

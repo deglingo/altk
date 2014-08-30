@@ -19,6 +19,8 @@
 
 #include <altk/altkcontainer.h>
 
+#include <altk/altkbin.h>
+
 #include <altk/altkdialog.h>
 
 

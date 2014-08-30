@@ -6,5 +6,6 @@ namespace Altk
   class Widget;
   class Label : Widget;
   class Container : Widget;
-  class Dialog : Container;
+  class Bin : Container;
+  class Dialog : Bin;
 }
