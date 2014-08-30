@@ -13,3 +13,13 @@
 static void altk_container_class_init ( LObjectClass *cls )
 {
 }
+
+
+
+/* altk_container_add:
+ */
+void altk_container_add ( AltkContainer *cont,
+                          AltkWidget *child )
+{
+  ALTK_CONTAINER_GET_CLASS(cont)->add(cont, child);
+}

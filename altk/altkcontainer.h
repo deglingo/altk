@@ -23,7 +23,15 @@ struct _AltkContainer
 struct _AltkContainerClass
 {
   ALTK_CONTAINER_CLASS_HEADER;
+
+  void (* add) ( AltkContainer *cont,
+                 AltkWidget *child );
 };
+
+
+
+void altk_container_add ( AltkContainer *cont,
+                          AltkWidget *child );
 
 
 
