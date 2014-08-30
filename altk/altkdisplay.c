@@ -12,6 +12,7 @@
 
 /* [FIXME] */
 #define ALTK_PRIORITY_RESIZE 0
+#define ALTK_PRIORITY_REDRAW 100
 
 
 
@@ -77,6 +78,8 @@ void altk_display_open ( AltkDisplay *display )
                   (GSourceFunc) _idle_resize,
                   display,
                   NULL);
+  /* [FIXME] */
+  altk_display_queue_draw(display, NULL);
 }
 
 
@@ -88,4 +91,30 @@ void altk_display_attach_widget ( AltkDisplay *display,
 {
   display->top_widgets = g_list_append(display->top_widgets,
                                        l_object_ref(widget));
+}
+
+
+
+/* _idle_redraw:
+ */
+static gboolean _idle_redraw ( AltkDisplay *display )
+{
+  CL_DEBUG("[TODO] redraw");
+  display->redraw_source_id = 0;
+  return FALSE;
+}
+
+
+
+/* altk_display_queue_draw:
+ */
+void altk_display_queue_draw ( AltkDisplay *display,
+                               void *region /* [FIXME] */ )
+{
+  if (display->redraw_source_id == 0) {
+    display->redraw_source_id = g_idle_add_full(ALTK_PRIORITY_REDRAW,
+                                                (GSourceFunc) _idle_redraw,
+                                                display,
+                                                NULL);
+  }
 }

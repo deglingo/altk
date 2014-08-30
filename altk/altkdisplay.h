@@ -22,6 +22,8 @@ struct _AltkDisplay
   ALLEGRO_DISPLAY *al_display;
   /* top-widgets attached to this display */
   GList *top_widgets;
+  /* id of the redraw idle source */
+  guint redraw_source_id;
 };
 
 
@@ -40,6 +42,8 @@ AltkDisplay *altk_display_from_al_display ( ALLEGRO_DISPLAY *al_display );
 void altk_display_open ( AltkDisplay *display );
 void altk_display_attach_widget ( AltkDisplay *display,
                                   struct _AltkWidget *widget );
+void altk_display_queue_draw ( AltkDisplay *display,
+                               void *region /* [FIXME] */ );
 
 
 
