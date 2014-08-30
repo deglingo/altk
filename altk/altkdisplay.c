@@ -5,6 +5,7 @@
 #include "altk/altkdisplay.h"
 #include "altk/altkmain.h"
 #include "altk/altkwidget.h"
+#include "altk/altkevent.h"
 
 #include "altk/altkdisplay.inl"
 
@@ -104,12 +105,19 @@ static void _process_widget_redraw ( AltkDisplay *display,
                                      AltkRegion *area )
 {
   AltkRegion *wid_area;
+  AltkEvent event;
   /* [TODO] process children first */
+  /* get the widget's update area (and subract it from 'area') */
   wid_area = altk_widget_get_shape(widget);
   altk_region_offset(wid_area, widget->root_x, widget->root_y);
   altk_region_intersect(wid_area, area);
   altk_region_subtract(area, wid_area);
   altk_region_offset(wid_area, -widget->root_x, -widget->root_y);
+  /* create the expose event */
+  event.type = ALTK_EVENT_EXPOSE;
+  event.expose.widget = widget;
+  event.expose.area = wid_area;
+  altk_event_process(&event);
   /* [TODO] widget_redraw(wid_area) */
   altk_region_destroy(wid_area);
 }
