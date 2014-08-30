@@ -6,6 +6,7 @@
 
 #include "altk/altkbase.h"
 #include "altk/altkregion.h"
+#include "altk/altkevent.h"
 #include "altk/altkwidget-def.h"
 
 
@@ -64,10 +65,16 @@ struct _AltkWidgetClass
 
   void (* size_allocate ) ( AltkWidget *widget,
                             AltkAllocation *alloc );
+
+  /* events */
+  void (* expose_event) ( AltkWidget *widget,
+                          AltkEvent *event );
 };
 
 
 
+void altk_widget_event ( AltkWidget *widget,
+                         AltkEvent *event );
 void altk_widget_size_request ( AltkWidget *widget,
                                 AltkRequisition *req );
 void altk_widget_size_allocate ( AltkWidget *widget,

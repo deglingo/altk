@@ -9,6 +9,8 @@
 
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc );
+static void _on_expose_event ( AltkWidget *wid,
+                               AltkEvent *event );
 
 
 
@@ -17,6 +19,7 @@ static void _on_size_allocate ( AltkWidget *wid,
 static void altk_widget_class_init ( LObjectClass *cls )
 {
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
+  ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
 }
 
 
@@ -70,4 +73,31 @@ AltkRegion *altk_widget_get_shape ( AltkWidget *widget )
   r.width = widget->width;
   r.height = widget->height;
   return altk_region_rectangle(&r);
+}
+
+
+
+/* altk_widget_event:
+ */
+void altk_widget_event ( AltkWidget *widget,
+                         AltkEvent *event )
+{
+  /* [FIXME] virtual func ? */
+  switch (event->type) {
+  case ALTK_EVENT_EXPOSE:
+    ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
+    break;
+  default:
+    CL_DEBUG("[TODO] event %d", event->type);
+  }
+}
+
+
+
+/* _on_expose_event:
+ */
+static void _on_expose_event ( AltkWidget *wid,
+                               AltkEvent *event )
+{
+  CL_DEBUG("[TODO] not implemented: AltkWidget.expose_event()");
 }
