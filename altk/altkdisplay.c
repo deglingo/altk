@@ -30,6 +30,8 @@ AltkDisplay *altk_display_new ( void )
 {
   AltkDisplay *display;
   display = ALTK_DISPLAY(l_object_new(ALTK_CLASS_DISPLAY, NULL));
+  /* [FIXME] insance init */
+  display->update_area = altk_region_new();
   return display;
 }
 
@@ -99,7 +101,12 @@ void altk_display_attach_widget ( AltkDisplay *display,
  */
 static gboolean _idle_redraw ( AltkDisplay *display )
 {
+  AltkRegion *update_area = display->update_area;
+  display->update_area = altk_region_new();
   CL_DEBUG("[TODO] redraw");
+  /* cleanup */
+  altk_region_destroy(update_area);
+  /* uninstall the event source */
   display->redraw_source_id = 0;
   return FALSE;
 }
@@ -109,8 +116,18 @@ static gboolean _idle_redraw ( AltkDisplay *display )
 /* altk_display_queue_draw:
  */
 void altk_display_queue_draw ( AltkDisplay *display,
-                               void *region /* [FIXME] */ )
+                               AltkRegion *area )
 {
+  if (area) {
+    CL_ERROR("[TODO]");
+  } else {
+    AltkRectangle rect;
+    rect.x = rect.y = 0;
+    rect.width = al_get_display_width(display->al_display);
+    rect.height = al_get_display_height(display->al_display);
+    altk_region_union_with_rect(display->update_area, &rect);
+  }
+  /* install the event source */
   if (display->redraw_source_id == 0) {
     display->redraw_source_id = g_idle_add_full(ALTK_PRIORITY_REDRAW,
                                                 (GSourceFunc) _idle_redraw,

@@ -5,6 +5,7 @@
 #define _ALTKDISPLAY_H_
 
 #include "altk/altkbase.h"
+#include "altk/altkregion.h"
 #include "altk/altkdisplay-def.h"
 
 
@@ -24,6 +25,8 @@ struct _AltkDisplay
   GList *top_widgets;
   /* id of the redraw idle source */
   guint redraw_source_id;
+  /* area which needs a redraw */
+  AltkRegion *update_area;
 };
 
 
@@ -43,7 +46,7 @@ void altk_display_open ( AltkDisplay *display );
 void altk_display_attach_widget ( AltkDisplay *display,
                                   struct _AltkWidget *widget );
 void altk_display_queue_draw ( AltkDisplay *display,
-                               void *region /* [FIXME] */ );
+                               AltkRegion *area );
 
 
 
