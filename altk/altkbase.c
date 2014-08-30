@@ -1,6 +1,7 @@
 /* altkbase.c - basic stuff
  */
 
+#include "altk/private.h"
 #include "altk/altkbase.h"
 
 
