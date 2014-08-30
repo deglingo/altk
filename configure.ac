@@ -20,6 +20,7 @@ PKG_CHECK_MODULES([AL5], [allegro-debug-5 allegro_main-debug-5])
 AC_CONFIG_FILES([ \
   Makefile \
   altk/Makefile \
+  examples/Makefile \
 ])
 AC_CONFIG_FILES([altk.pc])
 AC_OUTPUT

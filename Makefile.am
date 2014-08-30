@@ -1,5 +1,5 @@
 #
 
-SUBDIRS = altk
+SUBDIRS = altk examples
 
 pkgconfig_DATA = altk.pc
