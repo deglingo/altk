@@ -7,6 +7,14 @@
 
 
 
+/* altk_widget_class_init:
+ */
+static void altk_widget_class_init ( LObjectClass *cls )
+{
+}
+
+
+
 /* altk_widget_size_request:
  */
 void altk_widget_size_request ( AltkWidget *widget,

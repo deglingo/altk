@@ -8,6 +8,14 @@
 
 
 
+/* altk_dialog_class_init:
+ */
+static void altk_dialog_class_init ( LObjectClass *cls )
+{
+}
+
+
+
 /* altk_dialog_new:
  */
 AltkWidget *altk_dialog_new ( AltkDisplay *display )
