@@ -97,13 +97,38 @@ void altk_display_attach_widget ( AltkDisplay *display,
 
 
 
+/* _process_widget_redraw:
+ */
+static void _process_widget_redraw ( AltkDisplay *display,
+                                     AltkWidget *widget,
+                                     AltkRegion *area )
+{
+  AltkRegion *wid_area;
+  /* [TODO] process children first */
+  wid_area = altk_widget_get_shape(widget);
+  altk_region_offset(wid_area, widget->root_x, widget->root_y);
+  altk_region_intersect(wid_area, area);
+  altk_region_subtract(area, wid_area);
+  altk_region_offset(wid_area, -widget->root_x, -widget->root_y);
+  /* [TODO] widget_redraw(wid_area) */
+  altk_region_destroy(wid_area);
+}
+
+
+
 /* _idle_redraw:
  */
 static gboolean _idle_redraw ( AltkDisplay *display )
 {
+  GList *l;
   AltkRegion *update_area = display->update_area;
   display->update_area = altk_region_new();
-  CL_DEBUG("[TODO] redraw");
+  /* process widgets */
+  for (l = display->top_widgets; l; l = l->next)
+    {
+      AltkWidget *wid = ALTK_WIDGET(l->data);
+      _process_widget_redraw(display, wid, update_area);
+    }
   /* cleanup */
   altk_region_destroy(update_area);
   /* uninstall the event source */

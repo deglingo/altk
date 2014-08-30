@@ -5,6 +5,7 @@
 #define _ALTKWIDGET_H_
 
 #include "altk/altkbase.h"
+#include "altk/altkregion.h"
 #include "altk/altkwidget-def.h"
 
 
@@ -41,6 +42,13 @@ struct _AltkAllocation
 struct _AltkWidget
 {
   ALTK_WIDGET_INSTANCE_HEADER;
+  /* on-screen location */
+  gint root_x;
+  gint root_y;
+  gint x;
+  gint y;
+  gint width;
+  gint height;
 };
 
 
@@ -64,6 +72,7 @@ void altk_widget_size_request ( AltkWidget *widget,
                                 AltkRequisition *req );
 void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc );
+AltkRegion *altk_widget_get_shape ( AltkWidget *widget );
 
 
 

@@ -11,8 +11,8 @@
 
 static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req );
-static void _on_size_allocate ( AltkWidget *wid,
-                                AltkAllocation *alloc );
+/* static void _on_size_allocate ( AltkWidget *wid, */
+/*                                 AltkAllocation *alloc ); */
 
 
 
@@ -21,7 +21,7 @@ static void _on_size_allocate ( AltkWidget *wid,
 static void altk_dialog_class_init ( LObjectClass *cls )
 {
   ((AltkWidgetClass *) cls)->size_request = _on_size_request;
-  ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
+  /* ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate; */
 }
 
 
@@ -50,11 +50,11 @@ static void _on_size_request ( AltkWidget *wid,
 
 
 
-/* _on_size_allocate:
- */
-static void _on_size_allocate ( AltkWidget *wid,
-                                AltkAllocation *alloc )
-{
-  CL_DEBUG("[TODO] dialog size allocate: %d, %d, %d, %d",
-           alloc->x, alloc->y, alloc->width, alloc->height);
-}
+/* /\* _on_size_allocate: */
+/*  *\/ */
+/* static void _on_size_allocate ( AltkWidget *wid, */
+/*                                 AltkAllocation *alloc ) */
+/* { */
+/*   CL_DEBUG("[TODO] dialog size allocate: %d, %d, %d, %d", */
+/*            alloc->x, alloc->y, alloc->width, alloc->height); */
+/* } */
