@@ -4,7 +4,7 @@
 #ifndef _ALTKDIALOG_H_
 #define _ALTKDIALOG_H_
 
-#include "altk/altkwidget.h" /* [FIXME] altkbin.h */
+#include "altk/altkcontainer.h" /* [FIXME] altkbin.h */
 #include "altk/altkdialog-def.h"
 
 
