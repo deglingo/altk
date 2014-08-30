@@ -14,6 +14,9 @@
 typedef struct _AltkRequisition AltkRequisition;
 typedef struct _AltkAllocation AltkAllocation;
 
+typedef void (* AltkForeachFunc) ( AltkWidget *widget,
+                                   gpointer data );
+
 
 
 /* AltkRequisition:
@@ -68,6 +71,11 @@ struct _AltkWidgetClass
   void (* size_allocate ) ( AltkWidget *widget,
                             AltkAllocation *alloc );
 
+  /* [FIXME] should be in AltkContainer only ? */
+  void (* forall) ( AltkWidget *widget,
+                    AltkForeachFunc func,
+                    gpointer data );
+
   /* events */
   void (* expose_event) ( AltkWidget *widget,
                           AltkEvent *event );
@@ -84,6 +92,9 @@ void altk_widget_size_request ( AltkWidget *widget,
 void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc );
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget );
+void altk_widget_forall ( AltkWidget *widget,
+                          AltkForeachFunc func,
+                          gpointer data );
 
 
 

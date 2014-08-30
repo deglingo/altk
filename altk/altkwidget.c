@@ -118,3 +118,16 @@ static void _on_expose_event ( AltkWidget *wid,
 {
   CL_DEBUG("[TODO] not implemented: AltkWidget.expose_event()");
 }
+
+
+
+/* altk_widget_forall:
+ */
+void altk_widget_forall ( AltkWidget *widget,
+                          AltkForeachFunc func,
+                          gpointer data )
+{
+  if (ALTK_WIDGET_GET_CLASS(widget)->forall) {
+    ALTK_WIDGET_GET_CLASS(widget)->forall(widget, func, data);
+  }
+}
