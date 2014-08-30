@@ -3,6 +3,7 @@
 namespace Altk
 {
   class Display;
+  class Style;
   class Widget;
   class Label : Widget;
   class Container : Widget;

@@ -13,6 +13,8 @@
 
 #include <altk/altkdisplay.h>
 
+#include <altk/altkstyle.h>
+
 #include <altk/altkwidget.h>
 
 #include <altk/altklabel.h>
