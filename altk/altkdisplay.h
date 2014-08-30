@@ -6,6 +6,7 @@
 
 #include "altk/altkbase.h"
 #include "altk/altkregion.h"
+#include "altk/altkdrawable.h"
 #include "altk/altkdisplay-def.h"
 
 
@@ -27,6 +28,8 @@ struct _AltkDisplay
   guint redraw_source_id;
   /* area which needs a redraw */
   AltkRegion *update_area;
+  /* some back-buffer to safely draw a widget */
+  AltkDrawable *backbuf;
 };
 
 
