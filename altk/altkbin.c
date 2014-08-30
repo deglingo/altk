@@ -30,5 +30,5 @@ static void _on_add ( AltkContainer *cont,
   AltkBin *bin = ALTK_BIN(cont);
   ASSERT(!bin->child);
   bin->child = l_object_ref(child);
-  _altk_widget_set_parent(child, cont);
+  _altk_widget_set_parent(child, ALTK_WIDGET(cont));
 }
