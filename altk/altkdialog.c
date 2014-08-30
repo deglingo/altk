@@ -43,9 +43,13 @@ AltkWidget *altk_dialog_new ( AltkDisplay *display )
 static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req )
 {
-  CL_DEBUG("[TODO] dialog size request");
-  req->width = 32;
-  req->height = 20;
+  if (ALTK_BIN(wid)->child) {
+    altk_widget_size_request(ALTK_BIN(wid)->child, req);
+    req->width += 4;
+    req->height += 4;
+  } else {
+    req->width = req->height = 4;
+  }
 }
 
 
