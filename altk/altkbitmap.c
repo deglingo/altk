@@ -4,7 +4,16 @@
 #include "altk/private.h"
 #include "altk/altkbitmap.h"
 #include "altk/altkdisplay.h"
+#include "altk/altkgc.h"
 #include "altk/altkbitmap.inl"
+
+
+
+static void _on_draw_text ( AltkDrawable *drawable,
+                            AltkGC *gc,
+                            gint x,
+                            gint y,
+                            const gchar *text );
 
 
 
@@ -12,6 +21,7 @@
  */
 static void altk_bitmap_class_init ( LObjectClass *cls )
 {
+  ((AltkDrawableClass *) cls)->draw_text = _on_draw_text;
 }
 
 
@@ -37,4 +47,17 @@ AltkDrawable *altk_bitmap_new ( AltkDisplay *display,
   ALTK_BITMAP(d)->al_bitmap = al_create_bitmap(width, height);
   al_restore_state(&state);
   return d;
+}
+
+
+
+/* _on_draw_text:
+ */
+static void _on_draw_text ( AltkDrawable *drawable,
+                            AltkGC *gc,
+                            gint x,
+                            gint y,
+                            const gchar *text )
+{
+  CL_DEBUG("[TODO] draw_text(%d, %d, \"%s\")", x, y, text);
 }
