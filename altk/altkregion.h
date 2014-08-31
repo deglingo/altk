@@ -34,7 +34,6 @@
 
 G_BEGIN_DECLS
 
-typedef struct _AltkRegion AltkRegion;
 
 /* [FIXME] these should be elsewhere */
 typedef struct _AltkPoint AltkPoint;
@@ -69,6 +68,19 @@ struct _AltkSpan
   gint x;
   gint y;
   gint width;
+};
+
+/* AltkRegion:
+ */
+typedef AltkSegment AltkRegionBox;
+typedef struct _AltkRegion AltkRegion;
+
+struct _AltkRegion
+{
+  long size;
+  long numRects;
+  AltkRegionBox *rects;
+  AltkRegionBox extents;
 };
 
 /* GC fill rule for polygons

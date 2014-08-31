@@ -48,19 +48,6 @@ SOFTWARE.
 #ifndef _ALTKREGION_PRIVATE_H_
 #define _ALTKREGION_PRIVATE_H_
 
-typedef AltkSegment AltkRegionBox;
-
-/* 
- *   clip region
- */
-
-struct _AltkRegion
-{
-  long size;
-  long numRects;
-  AltkRegionBox *rects;
-  AltkRegionBox extents;
-};
 
 /*  1 if two BOXs overlap.
  *  0 if two BOXs do not overlap.
