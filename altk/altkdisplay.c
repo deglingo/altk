@@ -140,7 +140,7 @@ static void _process_child_redraw ( AltkWidget *widget,
   event.type = ALTK_EVENT_EXPOSE;
   event.expose.widget = widget;
   event.expose.area = wid_area;
-  /* event.expose.window = data->display->backbuf; */
+  event.expose.window = data->display->backbuf;
   altk_event_process(&event);
   /* [TODO] widget_redraw(wid_area) */
   altk_region_destroy(wid_area);
