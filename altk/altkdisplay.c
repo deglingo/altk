@@ -70,13 +70,29 @@ static gboolean _idle_resize ( AltkDisplay *display )
 
 
 
+/* _map_widget:
+ */
+static void _map_widget ( AltkWidget *widget,
+                          AltkDisplay *display )
+{
+  altk_widget_map(widget, display);
+  altk_widget_forall(widget, (AltkForeachFunc) _map_widget, display);
+}
+
+
+
 /* altk_display_open:
  */
 void altk_display_open ( AltkDisplay *display )
 {
+  GList *l;
   display->al_display = al_create_display(640, 480);
   g_dataset_id_set_data(display->al_display, ALTK_QUARK_AL_OWNER, display);
   altk_main_register_al_source(al_get_display_event_source(display->al_display));
+  /* map all widgets */
+  for (l = display->top_widgets; l; l = l->next) {
+    _map_widget(ALTK_WIDGET(l->data), display);
+  }
   /* [FIXME] */
   g_idle_add_full(ALTK_PRIORITY_RESIZE,
                   (GSourceFunc) _idle_resize,

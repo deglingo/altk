@@ -3,6 +3,7 @@
 
 #include "altk/private.h"
 #include "altk/altkwidget.h"
+#include "altk/altkstyle.h"
 #include "altk/altkwidget.inl"
 
 
@@ -32,6 +33,16 @@ void _altk_widget_set_parent ( AltkWidget *widget,
   /* [FIXME] use a weakref ? */
   ASSERT(!widget->parent);
   widget->parent = parent;
+}
+
+
+
+/* altk_widget_map:
+ */
+void altk_widget_map ( AltkWidget *widget,
+                       struct _AltkDisplay *display )
+{
+  widget->style = altk_style_new();
 }
 
 

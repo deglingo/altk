@@ -11,6 +11,9 @@
 
 
 
+struct _AltkDisplay;
+struct _AltkStyle;
+
 typedef struct _AltkRequisition AltkRequisition;
 typedef struct _AltkAllocation AltkAllocation;
 
@@ -55,6 +58,8 @@ struct _AltkWidget
   gint y;
   gint width;
   gint height;
+  /* a style to draw the various part of the widget */
+  struct _AltkStyle *style;
 };
 
 
@@ -85,6 +90,8 @@ struct _AltkWidgetClass
 
 void _altk_widget_set_parent ( AltkWidget *widget,
                                AltkWidget *parent );
+void altk_widget_map ( AltkWidget *widget,
+                       struct _AltkDisplay *display );
 void altk_widget_event ( AltkWidget *widget,
                          AltkEvent *event );
 void altk_widget_size_request ( AltkWidget *widget,

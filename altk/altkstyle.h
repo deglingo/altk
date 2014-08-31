@@ -27,4 +27,8 @@ struct _AltkStyleClass
 
 
 
+AltkStyle *altk_style_new ( void );
+
+
+
 #endif
