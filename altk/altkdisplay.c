@@ -87,6 +87,7 @@ void altk_display_open ( AltkDisplay *display )
 {
   GList *l;
   display->al_display = al_create_display(640, 480);
+  display->backbuf = altk_bitmap_new_from_al_bitmap(al_get_backbuffer(display->al_display), FALSE);
   g_dataset_id_set_data(display->al_display, ALTK_QUARK_AL_OWNER, display);
   altk_main_register_al_source(al_get_display_event_source(display->al_display));
   /* map all widgets */

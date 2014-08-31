@@ -45,7 +45,22 @@ AltkDrawable *altk_bitmap_new ( AltkDisplay *display,
   al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY);
   al_set_new_bitmap_flags(ALLEGRO_CONVERT_BITMAP);
   ALTK_BITMAP(d)->al_bitmap = al_create_bitmap(width, height);
+  ALTK_BITMAP(d)->destroy = TRUE;
   al_restore_state(&state);
+  return d;
+}
+
+
+
+/* altk_bitmap_new_from_al_bitmap:
+ */
+AltkDrawable *altk_bitmap_new_from_al_bitmap ( ALLEGRO_BITMAP *bmp,
+                                               gboolean destroy )
+{
+  AltkDrawable *d;
+  d = ALTK_DRAWABLE(l_object_new(ALTK_CLASS_BITMAP, NULL));
+  ALTK_BITMAP(d)->al_bitmap = bmp;
+  ALTK_BITMAP(d)->destroy = destroy;
   return d;
 }
 
