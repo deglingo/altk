@@ -27,4 +27,8 @@ struct _AltkGCClass
 
 
 
+AltkGC *altk_gc_new ( void );
+
+
+
 #endif

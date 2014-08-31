@@ -12,3 +12,12 @@
 static void altk_gc_class_init ( LObjectClass *cls )
 {
 }
+
+
+
+/* altk_gc_new:
+ */
+AltkGC *altk_gc_new ( void )
+{
+  return ALTK_GC(l_object_new(ALTK_CLASS_GC, NULL));
+}

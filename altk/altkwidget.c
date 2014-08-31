@@ -4,6 +4,7 @@
 #include "altk/private.h"
 #include "altk/altkwidget.h"
 #include "altk/altkstyle.h"
+#include "altk/altkgc.h"
 #include "altk/altkwidget.inl"
 
 
@@ -42,7 +43,11 @@ void _altk_widget_set_parent ( AltkWidget *widget,
 void altk_widget_map ( AltkWidget *widget,
                        struct _AltkDisplay *display )
 {
+  gint s;
   widget->style = altk_style_new();
+  for (s = 0; s < ALTK_STATE_COUNT; s++) {
+    widget->gc[s] = altk_gc_new();
+  }
 }
 
 

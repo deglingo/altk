@@ -13,6 +13,7 @@
 
 struct _AltkDisplay;
 struct _AltkStyle;
+struct _AltkGC;
 
 typedef struct _AltkRequisition AltkRequisition;
 typedef struct _AltkAllocation AltkAllocation;
@@ -60,6 +61,8 @@ struct _AltkWidget
   gint height;
   /* a style to draw the various part of the widget */
   struct _AltkStyle *style;
+  /* graphic contexts */
+  struct _AltkGC *gc[ALTK_STATE_COUNT];
 };
 
 
