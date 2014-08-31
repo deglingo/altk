@@ -120,7 +120,7 @@ altk_region_new ()
   temp = g_new (AltkRegion, 1);
   temp->rects = g_new (AltkRegionBox, 1);
 
-  temp->numRects = 0;
+  temp->n_rects = 0;
   temp->extents.x1 = 0;
   temp->extents.y1 = 0;
   temp->extents.x2 = 0;
@@ -151,7 +151,7 @@ altk_region_rectangle (AltkRectangle *rectangle)
   temp = g_new (AltkRegion, 1);
   temp->rects = g_new (AltkRegionBox, 1);
 
-  temp->numRects = 1;
+  temp->n_rects = 1;
   temp->extents.x1 = temp->rects[0].x1 = rectangle->x;
   temp->extents.y1 = temp->rects[0].y1 = rectangle->y;
   temp->extents.x2 = temp->rects[0].x2 = rectangle->x + rectangle->width;
@@ -177,13 +177,13 @@ altk_region_copy (AltkRegion *region)
   g_return_val_if_fail (region != NULL, NULL);
 
   temp = g_new (AltkRegion, 1);
-  temp->rects = g_new (AltkRegionBox, region->numRects);
+  temp->rects = g_new (AltkRegionBox, region->n_rects);
 
-  temp->numRects = region->numRects;
+  temp->n_rects = region->n_rects;
   temp->extents = region->extents;
-  temp->size = region->numRects;
+  temp->size = region->n_rects;
   
-  memcpy (temp->rects, region->rects, region->numRects * sizeof (AltkRegionBox));
+  memcpy (temp->rects, region->rects, region->n_rects * sizeof (AltkRegionBox));
 
   return temp;
 }
@@ -222,10 +222,10 @@ altk_region_get_rectangles (AltkRegion     *region,
   g_return_if_fail (rectangles != NULL);
   g_return_if_fail (n_rectangles != NULL);
   
-  *n_rectangles = region->numRects;
-  *rectangles = g_new (AltkRectangle, region->numRects);
+  *n_rectangles = region->n_rects;
+  *rectangles = g_new (AltkRectangle, region->n_rects);
 
-  for (i = 0; i < region->numRects; i++)
+  for (i = 0; i < region->n_rects; i++)
     {
       AltkRegionBox rect;
       rect = region->rects[i];
@@ -258,7 +258,7 @@ altk_region_union_with_rect (AltkRegion    *region,
     return;
     
   tmp_region.rects = &tmp_region.extents;
-  tmp_region.numRects = 1;
+  tmp_region.n_rects = 1;
   tmp_region.extents.x1 = rect->x;
   tmp_region.extents.y1 = rect->y;
   tmp_region.extents.x2 = rect->x + rect->width;
@@ -288,7 +288,7 @@ miSetExtents (AltkRegion *pReg)
 {
   AltkRegionBox *pBox, *pBoxEnd, *pExtents;
 
-  if (pReg->numRects == 0)
+  if (pReg->n_rects == 0)
     {
       pReg->extents.x1 = 0;
       pReg->extents.y1 = 0;
@@ -299,7 +299,7 @@ miSetExtents (AltkRegion *pReg)
 
   pExtents = &pReg->extents;
   pBox = pReg->rects;
-  pBoxEnd = &pBox[pReg->numRects - 1];
+  pBoxEnd = &pBox[pReg->n_rects - 1];
 
     /*
      * Since pBox is the first rectangle in the region, it must have the
@@ -355,7 +355,7 @@ altk_region_offset (AltkRegion *region,
   g_return_if_fail (region != NULL);
 
   pbox = region->rects;
-  nbox = region->numRects;
+  nbox = region->n_rects;
 
   while(nbox--)
     {
@@ -491,7 +491,7 @@ miIntersectO (AltkRegion    *pReg,
   int  	x2;
   AltkRegionBox *pNextRect;
 
-  pNextRect = &pReg->rects[pReg->numRects];
+  pNextRect = &pReg->rects[pReg->n_rects];
 
   while ((r1 != r1End) && (r2 != r2End))
     {
@@ -514,9 +514,9 @@ miIntersectO (AltkRegion    *pReg,
 	  pNextRect->y1 = y1;
 	  pNextRect->x2 = x2;
 	  pNextRect->y2 = y2;
-	  pReg->numRects += 1;
+	  pReg->n_rects += 1;
 	  pNextRect++;
-	  assert (pReg->numRects <= pReg->size);
+	  assert (pReg->n_rects <= pReg->size);
 	}
 
       /*
@@ -557,9 +557,9 @@ altk_region_intersect (AltkRegion *region,
   g_return_if_fail (other != NULL);
   
   /* check for trivial reject */
-  if ((!(region->numRects)) || (!(other->numRects))  ||
+  if ((!(region->n_rects)) || (!(other->n_rects))  ||
       (!EXTENTCHECK(&region->extents, &other->extents)))
-    region->numRects = 0;
+    region->n_rects = 0;
   else
     miRegionOp (region, region, other, 
     		miIntersectO, (nonOverlapFunc) NULL, (nonOverlapFunc) NULL);
@@ -578,18 +578,18 @@ miRegionCopy(AltkRegion *dstrgn, AltkRegion *rgn)
 {
   if (dstrgn != rgn) /*  don't want to copy to itself */
     {  
-      if (dstrgn->size < rgn->numRects)
+      if (dstrgn->size < rgn->n_rects)
         {
-	  dstrgn->rects = g_renew (AltkRegionBox, dstrgn->rects, rgn->numRects);
-	  dstrgn->size = rgn->numRects;
+	  dstrgn->rects = g_renew (AltkRegionBox, dstrgn->rects, rgn->n_rects);
+	  dstrgn->size = rgn->n_rects;
 	}
-      dstrgn->numRects = rgn->numRects;
+      dstrgn->n_rects = rgn->n_rects;
       dstrgn->extents.x1 = rgn->extents.x1;
       dstrgn->extents.y1 = rgn->extents.y1;
       dstrgn->extents.x2 = rgn->extents.x2;
       dstrgn->extents.y2 = rgn->extents.y2;
 
-      memcpy (dstrgn->rects, rgn->rects, rgn->numRects * sizeof (AltkRegionBox));
+      memcpy (dstrgn->rects, rgn->rects, rgn->n_rects * sizeof (AltkRegionBox));
     }
 }
 
@@ -611,7 +611,7 @@ miRegionCopy(AltkRegion *dstrgn, AltkRegion *rgn)
  *	If coalescing takes place:
  *	    - rectangles in the previous band will have their y2 fields
  *	      altered.
- *	    - pReg->numRects will be decreased.
+ *	    - pReg->n_rects will be decreased.
  *
  *-----------------------------------------------------------------------
  */
@@ -630,7 +630,7 @@ miCoalesce (AltkRegion *pReg,         /* Region to coalesce */
 				 * band */
   int	    	bandY1;	    	/* Y1 coordinate for current band */
 
-  pRegEnd = &pReg->rects[pReg->numRects];
+  pRegEnd = &pReg->rects[pReg->n_rects];
 
   pPrevBox = &pReg->rects[prevStart];
   prevNumRects = curStart - prevStart;
@@ -663,7 +663,7 @@ miCoalesce (AltkRegion *pReg,         /* Region to coalesce */
 	  pRegEnd--;
 	}
       curStart = pRegEnd - pReg->rects;
-      pRegEnd = pReg->rects + pReg->numRects;
+      pRegEnd = pReg->rects + pReg->n_rects;
     }
 	
   if ((curNumRects == prevNumRects) && (curNumRects != 0)) {
@@ -695,7 +695,7 @@ miCoalesce (AltkRegion *pReg,         /* Region to coalesce */
 	    prevNumRects -= 1;
 	  } while (prevNumRects != 0);
 
-	pReg->numRects -= curNumRects;
+	pReg->n_rects -= curNumRects;
 	pCurBox -= curNumRects;
 	pPrevBox -= curNumRects;
 
@@ -808,8 +808,8 @@ miRegionOp(AltkRegion *newReg,
      */
     r1 = reg1->rects;
     r2 = reg2->rects;
-    r1End = r1 + reg1->numRects;
-    r2End = r2 + reg2->numRects;
+    r1End = r1 + reg1->n_rects;
+    r2End = r2 + reg2->n_rects;
     
     oldRects = newReg->rects;
     
@@ -822,7 +822,7 @@ miRegionOp(AltkRegion *newReg,
      * have to worry about using too much memory. I hope to be able to
      * nuke the Xrealloc() at the end of this function eventually.
      */
-    newReg->size = MAX (reg1->numRects, reg2->numRects) * 2;
+    newReg->size = MAX (reg1->n_rects, reg2->n_rects) * 2;
     newReg->rects = g_new (AltkRegionBox, newReg->size);
     
     /*
@@ -856,7 +856,7 @@ miRegionOp(AltkRegion *newReg,
     
     do
       {
-	curBand = newReg->numRects;
+	curBand = newReg->n_rects;
 
 	/*
 	 * This algorithm proceeds one source-band (as opposed to a
@@ -920,7 +920,7 @@ miRegionOp(AltkRegion *newReg,
 	 * this test in miCoalesce, but some machines incur a not
 	 * inconsiderable cost for function calls, so...
 	 */
-	if (newReg->numRects != curBand)
+	if (newReg->n_rects != curBand)
 	  {
 	    prevBand = miCoalesce (newReg, prevBand, curBand);
 	  }
@@ -930,14 +930,14 @@ miRegionOp(AltkRegion *newReg,
 	 * intersect if ybot > ytop
 	 */
 	ybot = MIN (r1->y2, r2->y2);
-	curBand = newReg->numRects;
+	curBand = newReg->n_rects;
 	if (ybot > ytop)
 	  {
 	    (* overlapFn) (newReg, r1, r1BandEnd, r2, r2BandEnd, ytop, ybot);
 
 	  }
 	
-	if (newReg->numRects != curBand)
+	if (newReg->n_rects != curBand)
 	  {
 	    prevBand = miCoalesce (newReg, prevBand, curBand);
 	  }
@@ -959,7 +959,7 @@ miRegionOp(AltkRegion *newReg,
     /*
      * Deal with whichever region still has rectangles left.
      */
-    curBand = newReg->numRects;
+    curBand = newReg->n_rects;
     if (r1 != r1End)
       {
 	if (nonOverlap1Fn != (nonOverlapFunc )NULL)
@@ -992,7 +992,7 @@ miRegionOp(AltkRegion *newReg,
 	  } while (r2 != r2End);
       }
 
-    if (newReg->numRects != curBand)
+    if (newReg->n_rects != curBand)
     {
       (void) miCoalesce (newReg, prevBand, curBand);
     }
@@ -1005,11 +1005,11 @@ miRegionOp(AltkRegion *newReg,
      * Only do this stuff if the number of rectangles allocated is more than
      * twice the number of rectangles in the region (a simple optimization...).
      */
-    if (newReg->numRects < (newReg->size >> 1))
+    if (newReg->n_rects < (newReg->size >> 1))
       {
 	if (REGION_NOT_EMPTY (newReg))
 	  {
-	    newReg->size = newReg->numRects;
+	    newReg->size = newReg->n_rects;
 	    newReg->rects = g_renew (AltkRegionBox, newReg->rects, newReg->size);
 	  }
 	else
@@ -1042,7 +1042,7 @@ miRegionOp(AltkRegion *newReg,
  *	None.
  *
  * Side Effects:
- *	pReg->numRects is incremented and the final rectangles overwritten
+ *	pReg->n_rects is incremented and the final rectangles overwritten
  *	with the rectangles we're passed.
  *
  *-----------------------------------------------------------------------
@@ -1056,7 +1056,7 @@ miUnionNonO (AltkRegion    *pReg,
 {
   AltkRegionBox *pNextRect;
 
-  pNextRect = &pReg->rects[pReg->numRects];
+  pNextRect = &pReg->rects[pReg->n_rects];
 
   assert(y1 < y2);
 
@@ -1068,10 +1068,10 @@ miUnionNonO (AltkRegion    *pReg,
       pNextRect->y1 = y1;
       pNextRect->x2 = r->x2;
       pNextRect->y2 = y2;
-      pReg->numRects += 1;
+      pReg->n_rects += 1;
       pNextRect++;
 
-      assert(pReg->numRects<=pReg->size);
+      assert(pReg->n_rects<=pReg->size);
       r++;
     }
 }
@@ -1087,7 +1087,7 @@ miUnionNonO (AltkRegion    *pReg,
  *	None.
  *
  * Side Effects:
- *	Rectangles are overwritten in pReg->rects and pReg->numRects will
+ *	Rectangles are overwritten in pReg->rects and pReg->n_rects will
  *	be changed.
  *
  *-----------------------------------------------------------------------
@@ -1105,10 +1105,10 @@ miUnionO (AltkRegion *pReg,
 {
   AltkRegionBox *	pNextRect;
     
-  pNextRect = &pReg->rects[pReg->numRects];
+  pNextRect = &pReg->rects[pReg->n_rects];
 
 #define MERGERECT(r) 					\
-    if ((pReg->numRects != 0) &&  			\
+    if ((pReg->n_rects != 0) &&  			\
 	(pNextRect[-1].y1 == y1) &&  			\
 	(pNextRect[-1].y2 == y2) &&  			\
 	(pNextRect[-1].x2 >= r->x1))  			\
@@ -1126,10 +1126,10 @@ miUnionO (AltkRegion *pReg,
 	pNextRect->y2 = y2;  				\
 	pNextRect->x1 = r->x1;  			\
 	pNextRect->x2 = r->x2;  			\
-	pReg->numRects += 1;  				\
+	pReg->n_rects += 1;  				\
         pNextRect += 1;  				\
       }  						\
-    assert(pReg->numRects<=pReg->size);			\
+    assert(pReg->n_rects<=pReg->size);			\
     r++;
     
     assert (y1<y2);
@@ -1179,13 +1179,13 @@ altk_region_union (AltkRegion *region,
     /*
      * region and other are the same or other is empty
      */
-  if ((region == other) || (!(other->numRects)))
+  if ((region == other) || (!(other->n_rects)))
     return;
 
     /* 
      * region is empty
      */
-  if (!(region->numRects))
+  if (!(region->n_rects))
     {
       miRegionCopy (region, other);
       return;
@@ -1194,7 +1194,7 @@ altk_region_union (AltkRegion *region,
   /*
      * region completely subsumes otehr
      */
-  if ((region->numRects == 1) && 
+  if ((region->n_rects == 1) && 
       (region->extents.x1 <= other->extents.x1) &&
       (region->extents.y1 <= other->extents.y1) &&
       (region->extents.x2 >= other->extents.x2) &&
@@ -1204,7 +1204,7 @@ altk_region_union (AltkRegion *region,
   /*
      * other completely subsumes region
      */
-  if ((other->numRects == 1) && 
+  if ((other->n_rects == 1) && 
       (other->extents.x1 <= region->extents.x1) &&
       (other->extents.y1 <= region->extents.y1) &&
       (other->extents.x2 >= region->extents.x2) &&
@@ -1252,7 +1252,7 @@ miSubtractNonO1 (AltkRegion    *pReg,
 {
   AltkRegionBox *	pNextRect;
 	
-  pNextRect = &pReg->rects[pReg->numRects];
+  pNextRect = &pReg->rects[pReg->n_rects];
 	
   assert(y1<y2);
 
@@ -1264,10 +1264,10 @@ miSubtractNonO1 (AltkRegion    *pReg,
       pNextRect->y1 = y1;
       pNextRect->x2 = r->x2;
       pNextRect->y2 = y2;
-      pReg->numRects += 1;
+      pReg->n_rects += 1;
       pNextRect++;
 
-      assert (pReg->numRects <= pReg->size);
+      assert (pReg->n_rects <= pReg->size);
 
       r++;
     }
@@ -1303,7 +1303,7 @@ miSubtractO (AltkRegion    *pReg,
   x1 = r1->x1;
     
   assert(y1<y2);
-  pNextRect = &pReg->rects[pReg->numRects];
+  pNextRect = &pReg->rects[pReg->n_rects];
 
   while ((r1 != r1End) && (r2 != r2End))
     {
@@ -1351,10 +1351,10 @@ miSubtractO (AltkRegion    *pReg,
 	  pNextRect->y1 = y1;
 	  pNextRect->x2 = r2->x1;
 	  pNextRect->y2 = y2;
-	  pReg->numRects += 1;
+	  pReg->n_rects += 1;
 	  pNextRect++;
 
-	  assert(pReg->numRects<=pReg->size);
+	  assert(pReg->n_rects<=pReg->size);
 
 	  x1 = r2->x2;
 	  if (x1 >= r1->x2)
@@ -1386,9 +1386,9 @@ miSubtractO (AltkRegion    *pReg,
 	      pNextRect->y1 = y1;
 	      pNextRect->x2 = r1->x2;
 	      pNextRect->y2 = y2;
-	      pReg->numRects += 1;
+	      pReg->n_rects += 1;
 	      pNextRect++;
-	      assert(pReg->numRects<=pReg->size);
+	      assert(pReg->n_rects<=pReg->size);
 	    }
 	  r1++;
 	  if (r1 != r1End)
@@ -1407,10 +1407,10 @@ miSubtractO (AltkRegion    *pReg,
       pNextRect->y1 = y1;
       pNextRect->x2 = r1->x2;
       pNextRect->y2 = y2;
-      pReg->numRects += 1;
+      pReg->n_rects += 1;
       pNextRect++;
 
-      assert(pReg->numRects<=pReg->size);
+      assert(pReg->n_rects<=pReg->size);
 
       r1++;
       if (r1 != r1End)
@@ -1436,7 +1436,7 @@ altk_region_subtract (AltkRegion *region,
   g_return_if_fail (other != NULL);
   
   /* check for trivial reject */
-  if ((!(region->numRects)) || (!(other->numRects)) ||
+  if ((!(region->n_rects)) || (!(other->n_rects)) ||
       (!EXTENTCHECK(&region->extents, &other->extents)))
     return;
  
@@ -1489,7 +1489,7 @@ altk_region_empty (AltkRegion *r)
 {
   g_return_val_if_fail (r != NULL, FALSE);
   
-  if (r->numRects == 0)
+  if (r->n_rects == 0)
     return TRUE;
   else
     return FALSE;
@@ -1507,14 +1507,14 @@ altk_region_equal (AltkRegion *r1,
   g_return_val_if_fail (r1 != NULL, FALSE);
   g_return_val_if_fail (r2 != NULL, FALSE);
 
-  if (r1->numRects != r2->numRects) return FALSE;
-  else if (r1->numRects == 0) return TRUE;
+  if (r1->n_rects != r2->n_rects) return FALSE;
+  else if (r1->n_rects == 0) return TRUE;
   else if (r1->extents.x1 != r2->extents.x1) return FALSE;
   else if (r1->extents.x2 != r2->extents.x2) return FALSE;
   else if (r1->extents.y1 != r2->extents.y1) return FALSE;
   else if (r1->extents.y2 != r2->extents.y2) return FALSE;
   else
-    for(i=0; i < r1->numRects; i++ )
+    for(i=0; i < r1->n_rects; i++ )
       {
 	if (r1->rects[i].x1 != r2->rects[i].x1) return FALSE;
 	else if (r1->rects[i].x2 != r2->rects[i].x2) return FALSE;
@@ -1533,11 +1533,11 @@ altk_region_point_in (AltkRegion *region,
 
   g_return_val_if_fail (region != NULL, FALSE);
 
-  if (region->numRects == 0)
+  if (region->n_rects == 0)
     return FALSE;
   if (!INBOX(region->extents, x, y))
     return FALSE;
-  for (i=0; i<region->numRects; i++)
+  for (i=0; i<region->n_rects; i++)
     {
       if (INBOX (region->rects[i], x, y))
 	return TRUE;
@@ -1568,14 +1568,14 @@ altk_region_rect_in (AltkRegion    *region,
   prect->y2 = ry + rectangle->height;
     
     /* this is (just) a useful optimization */
-  if ((region->numRects == 0) || !EXTENTCHECK (&region->extents, prect))
+  if ((region->n_rects == 0) || !EXTENTCHECK (&region->extents, prect))
     return ALTK_OVERLAP_RECTANGLE_OUT;
 
   partOut = FALSE;
   partIn = FALSE;
 
     /* can stop when both partOut and partIn are TRUE, or we reach prect->y2 */
-  for (pbox = region->rects, pboxEnd = pbox + region->numRects;
+  for (pbox = region->rects, pboxEnd = pbox + region->n_rects;
        pbox < pboxEnd;
        pbox++)
     {
@@ -1649,7 +1649,7 @@ altk_region_unsorted_spans_intersect_foreach (AltkRegion *region,
   AltkRegionBox *pboxEnd;
   AltkSpan out_span;
 
-  if (!region->numRects)
+  if (!region->n_rects)
     return;
 
   for (i=0;i<n_spans;i++)
@@ -1665,7 +1665,7 @@ altk_region_unsorted_spans_intersect_foreach (AltkRegion *region,
 	continue;
 
       /* can stop when we passed y */
-      for (pbox = region->rects, pboxEnd = pbox + region->numRects;
+      for (pbox = region->rects, pboxEnd = pbox + region->n_rects;
 	   pbox < pboxEnd;
 	   pbox++)
 	{
@@ -1719,7 +1719,7 @@ altk_region_spans_intersect_foreach (AltkRegion  *region,
       return;
     }
   
-  if ((!region->numRects) || (n_spans == 0))
+  if ((!region->n_rects) || (n_spans == 0))
     return;
 
   /* The main method here is to step along the
@@ -1731,7 +1731,7 @@ altk_region_spans_intersect_foreach (AltkRegion  *region,
   span = spans;
   end_span = spans + n_spans;
   pbox = region->rects;
-  pboxEnd = pbox + region->numRects;
+  pboxEnd = pbox + region->n_rects;
   while (pbox < pboxEnd)
     {
       while ((pbox->y2 < span->y) || (span->y < pbox->y1))

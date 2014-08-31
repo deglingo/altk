@@ -77,10 +77,10 @@ SOFTWARE.
  *   Check to see if there is enough memory in the present region.
  */
 #define MEMCHECK(reg, rect, firstrect){					  	 \
-        if ((reg)->numRects >= ((reg)->size - 1)) {			 	 \
+        if ((reg)->n_rects >= ((reg)->size - 1)) {			 	 \
           (firstrect) = g_renew (AltkRegionBox, (firstrect), 2 * (reg)->size);    \
           (reg)->size *= 2;							 \
-          (rect) = &(firstrect)[(reg)->numRects];				 \
+          (rect) = &(firstrect)[(reg)->n_rects];				 \
          }									 \
        }
 
@@ -89,7 +89,7 @@ SOFTWARE.
  */
 
 #define CHECK_PREVIOUS(Reg, R, Rx1, Ry1, Rx2, Ry2)\
-               (!(((Reg)->numRects > 0)&&\
+               (!(((Reg)->n_rects > 0)&&\
                   ((R-1)->y1 == (Ry1)) &&\
                   ((R-1)->y2 == (Ry2)) &&\
                   ((R-1)->x1 <= (Rx1)) &&\
@@ -104,7 +104,7 @@ SOFTWARE.
               (r)->x2 = (rx2);\
               (r)->y2 = (ry2);\
               EXTENTS((r), (reg));\
-              (reg)->numRects++;\
+              (reg)->n_rects++;\
               (r)++;\
             }\
         }
@@ -119,14 +119,14 @@ SOFTWARE.
               (r)->y1 = (ry1);\
               (r)->x2 = (rx2);\
               (r)->y2 = (ry2);\
-              (reg)->numRects++;\
+              (reg)->n_rects++;\
               (r)++;\
             }\
         }
 
-#define EMPTY_REGION(pReg) pReg->numRects = 0
+#define EMPTY_REGION(pReg) pReg->n_rects = 0
 
-#define REGION_NOT_EMPTY(pReg) pReg->numRects
+#define REGION_NOT_EMPTY(pReg) pReg->n_rects
 
 #define INBOX(r, x, y) \
       ( ( ((r).x2 >  x)) && \

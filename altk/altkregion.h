@@ -78,7 +78,7 @@ typedef struct _AltkRegion AltkRegion;
 struct _AltkRegion
 {
   long size;
-  long numRects;
+  long n_rects;
   AltkRegionBox *rects;
   AltkRegionBox extents;
 };
