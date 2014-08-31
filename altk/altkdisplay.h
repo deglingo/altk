@@ -28,8 +28,8 @@ struct _AltkDisplay
   guint redraw_source_id;
   /* area which needs a redraw */
   AltkRegion *update_area;
-  /* some back-buffer to safely draw a widget */
-  AltkDrawable *backbuf;
+  /* the double-buffer to safely draw widgets */
+  AltkDrawable *dblbuf;
 };
 
 

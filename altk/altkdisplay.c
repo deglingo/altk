@@ -123,13 +123,13 @@ struct child_redraw_data
 
 
 
-static void _grow_backbuf ( AltkDisplay *display,
+static void _grow_dblbuf ( AltkDisplay *display,
                             gint width,
                             gint height )
 {
   /* [FIXME] !!!! */
-  display->backbuf = NULL;
-  display->backbuf = altk_bitmap_new(display, width, height);
+  display->dblbuf = NULL;
+  display->dblbuf = altk_bitmap_new(display, width, height);
 }
 
 
@@ -148,15 +148,15 @@ static void _process_child_redraw ( AltkWidget *widget,
   altk_region_intersect(wid_area, data->area);
   altk_region_subtract(data->area, wid_area);
   altk_region_offset(wid_area, -widget->root_x, -widget->root_y);
-  /* create/grow the backbuf */
+  /* create/grow the dblbuf */
   altk_region_get_clipbox(wid_area, &wid_extents);
-  _grow_backbuf(data->display, wid_extents.width, wid_extents.height);
-  altk_drawable_set_offset(data->display->backbuf, -wid_extents.x, -wid_extents.y);
+  _grow_dblbuf(data->display, wid_extents.width, wid_extents.height);
+  altk_drawable_set_offset(data->display->dblbuf, -wid_extents.x, -wid_extents.y);
   /* create the expose event */
   event.type = ALTK_EVENT_EXPOSE;
   event.expose.widget = widget;
   event.expose.area = wid_area;
-  event.expose.window = data->display->backbuf;
+  event.expose.window = data->display->dblbuf;
   altk_event_process(&event);
   /* [TODO] widget_redraw(wid_area) */
   altk_region_destroy(wid_area);
