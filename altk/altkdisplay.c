@@ -159,6 +159,13 @@ static void _process_child_redraw ( AltkWidget *widget,
   event.expose.area = wid_area;
   event.expose.window = data->display->dblbuf;
   altk_event_process(&event);
+  /* blit double-buffer -> backbuffer */
+  altk_drawable_set_offset(data->display->backbuf,
+                           widget->root_x + wid_extents.x,
+                           widget->root_y + wid_extents.y);
+  altk_drawable_draw_bitmap_region(data->display->backbuf,
+                                   ALTK_BITMAP(data->display->dblbuf),
+                                   wid_area);
   /* [TODO] widget_redraw(wid_area) */
   altk_region_destroy(wid_area);
 }
@@ -171,10 +178,15 @@ static void _process_widget_redraw ( AltkDisplay *display,
                                      AltkWidget *widget,
                                      AltkRegion *area )
 {
+  ALLEGRO_STATE state;
   struct child_redraw_data data;
   data.display = display;
   data.area = area;
   _process_child_redraw(widget, &data);
+  al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_backbuffer(display->al_display);
+  al_flip_display();
+  al_restore_state(&state);
 }
 
 

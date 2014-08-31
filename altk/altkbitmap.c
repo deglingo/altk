@@ -4,6 +4,7 @@
 #include "altk/private.h"
 #include "altk/altkbitmap.h"
 #include "altk/altkdisplay.h"
+#include "altk/altkregion.h"
 #include "altk/altkgc.h"
 #include "altk/altkbitmap.inl"
 
@@ -14,6 +15,9 @@ static void _on_draw_text ( AltkDrawable *drawable,
                             gint x,
                             gint y,
                             const gchar *text );
+static void _on_draw_bitmap_region ( AltkDrawable *drawable,
+                                     AltkBitmap *bitmap,
+                                     AltkRegion *region );
 
 
 
@@ -22,6 +26,7 @@ static void _on_draw_text ( AltkDrawable *drawable,
 static void altk_bitmap_class_init ( LObjectClass *cls )
 {
   ((AltkDrawableClass *) cls)->draw_text = _on_draw_text;
+  ((AltkDrawableClass *) cls)->draw_bitmap_region = _on_draw_bitmap_region;
 }
 
 
@@ -74,5 +79,37 @@ static void _on_draw_text ( AltkDrawable *drawable,
                             gint y,
                             const gchar *text )
 {
-  CL_DEBUG("[TODO] draw_text(%d, %d, \"%s\")", x, y, text);
+  ALLEGRO_COLOR color = al_map_rgb(255, 255, 0);
+  ALLEGRO_STATE state;
+  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(ALTK_BITMAP(drawable)->al_bitmap);
+  al_clear_to_color(color);
+  al_restore_state(&state);
+}
+
+
+
+/* _on_draw_bitmap_region:
+ */
+static void _on_draw_bitmap_region ( AltkDrawable *drawable,
+                                     AltkBitmap *bitmap,
+                                     AltkRegion *region )
+{
+  gint r;
+  AltkRegionBox *box;
+  ALLEGRO_STATE state;
+  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(ALTK_BITMAP(drawable)->al_bitmap);
+  for (r = 0, box = region->rects; r < region->n_rects; r++, box++)
+    {
+      al_draw_bitmap_region(bitmap->al_bitmap,
+                            box->x1,
+                            box->y1,
+                            box->x2 - box->x1,
+                            box->y2 - box->y1,
+                            box->x1 + drawable->offset_x,
+                            box->y1 + drawable->offset_y,
+                            0);
+    }
+  al_restore_state(&state);
 }
