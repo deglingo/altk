@@ -14,6 +14,9 @@
 struct _AltkDrawable
 {
   ALTK_DRAWABLE_INSTANCE_HEADER;
+  /* [FIXME] should be handled by the implementations instead ? */
+  gint offset_x;
+  gint offset_y;
 };
 
 
@@ -24,6 +27,12 @@ struct _AltkDrawableClass
 {
   ALTK_DRAWABLE_CLASS_HEADER;
 };
+
+
+
+void altk_drawable_set_offset ( AltkDrawable *drawable,
+                                gint ofs_x,
+                                gint ofs_y );
 
 
 

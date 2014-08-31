@@ -135,7 +135,7 @@ static void _process_child_redraw ( AltkWidget *widget,
   /* create/grow the backbuf */
   altk_region_get_clipbox(wid_area, &wid_extents);
   _grow_backbuf(data->display, wid_extents.width, wid_extents.height);
-  /* altk_bitmap_set_offset(-wid_extents.x, -wid_extents.y); */
+  altk_drawable_set_offset(data->display->backbuf, -wid_extents.x, -wid_extents.y);
   /* create the expose event */
   event.type = ALTK_EVENT_EXPOSE;
   event.expose.widget = widget;

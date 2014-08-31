@@ -12,3 +12,15 @@
 static void altk_drawable_class_init ( LObjectClass *cls )
 {
 }
+
+
+
+/* altk_drawable_set_offset:
+ */
+void altk_drawable_set_offset ( AltkDrawable *drawable,
+                                gint ofs_x,
+                                gint ofs_y )
+{
+  drawable->offset_x = ofs_x;
+  drawable->offset_y = ofs_y;
+}
