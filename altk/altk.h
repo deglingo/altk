@@ -11,6 +11,8 @@
 
 #include <altk/altkmain.h>
 
+#include <altk/altkfont.h>
+
 #include <altk/altkdisplay.h>
 
 #include <altk/altkstyle.h>

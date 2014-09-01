@@ -1,6 +1,6 @@
 #
 
-AM_CFLAGS = -I$(top_srcdir) @CLOG_CFLAGS@ @LOS_CFLAGS@ @AL5_CFLAGS@
+AM_CFLAGS = -I$(top_srcdir) -I$(top_builddir) @CLOG_CFLAGS@ @LOS_CFLAGS@ @AL5_CFLAGS@
 
 AM_LDFLAGS = @CLOG_LIBS@ @LOS_LIBS@ @AL5_LIBS@ $(top_builddir)/altk/libaltk.la
 

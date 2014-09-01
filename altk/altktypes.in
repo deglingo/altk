@@ -3,6 +3,7 @@
 namespace Altk
 {
   class Display;
+  class Font;
   class GC;
   class Drawable;
   class Bitmap : Drawable;

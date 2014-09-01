@@ -9,11 +9,16 @@
 
 
 
+struct _AltkFont;
+
+
+
 /* AltkGC:
  */
 struct _AltkGC
 {
   ALTK_GC_INSTANCE_HEADER;
+  struct _AltkFont *font;
 };
 
 

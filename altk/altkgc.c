@@ -3,6 +3,7 @@
 
 #include "altk/private.h"
 #include "altk/altkgc.h"
+#include "altk/altkfont.h"
 #include "altk/altkgc.inl"
 
 
@@ -19,5 +20,7 @@ static void altk_gc_class_init ( LObjectClass *cls )
  */
 AltkGC *altk_gc_new ( void )
 {
-  return ALTK_GC(l_object_new(ALTK_CLASS_GC, NULL));
+  AltkGC *gc = ALTK_GC(l_object_new(ALTK_CLASS_GC, NULL));
+  gc->font = altk_font_new_builtin();
+  return gc;
 }
