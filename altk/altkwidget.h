@@ -69,6 +69,8 @@ struct _AltkWidget
   struct _AltkGC *gc[ALTK_STATE_COUNT];
   /* events mask */
   guint event_mask;
+  /* current state of the widget */
+  AltkState state;
 };
 
 
@@ -120,6 +122,8 @@ void altk_widget_forall ( AltkWidget *widget,
 void altk_widget_set_event_mask ( AltkWidget *widget,
                                   AltkEventType mask );
 AltkEventType altk_widget_get_event_mask ( AltkWidget *widget );
+void altk_widget_set_state ( AltkWidget *widget,
+                             AltkState state );
 
 
 

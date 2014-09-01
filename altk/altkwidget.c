@@ -180,3 +180,16 @@ AltkEventType altk_widget_get_event_mask ( AltkWidget *widget )
 {
   return widget->event_mask;
 }
+
+
+
+/* altk_widget_set_state:
+ */
+void altk_widget_set_state ( AltkWidget *widget,
+                             AltkState state )
+{
+  if (widget->state == state)
+    return;
+  widget->state = state;
+  /* altk_widget_queue_draw(widget); */
+}

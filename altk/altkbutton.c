@@ -101,6 +101,7 @@ static void _on_mouse_enter_event ( AltkWidget *wid,
                                     AltkEvent *event )
 {
   CL_DEBUG("button enter...");
+  altk_widget_set_state(wid, ALTK_STATE_PRELIGHT);
 }
 
 
@@ -111,4 +112,5 @@ static void _on_mouse_leave_event ( AltkWidget *wid,
                                     AltkEvent *event )
 {
   CL_DEBUG("button leave...");
+  altk_widget_set_state(wid, ALTK_STATE_NORMAL);
 }
