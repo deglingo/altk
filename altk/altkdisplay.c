@@ -235,8 +235,9 @@ static gboolean _idle_redraw ( AltkDisplay *display )
 void altk_display_queue_draw ( AltkDisplay *display,
                                AltkRegion *area )
 {
+  /* [TODO] clip to display bounds */
   if (area) {
-    CL_ERROR("[TODO]");
+    altk_region_union(display->update_area, area);
   } else {
     AltkRectangle rect;
     rect.x = rect.y = 0;

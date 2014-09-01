@@ -71,6 +71,8 @@ struct _AltkWidget
   guint event_mask;
   /* current state of the widget */
   AltkState state;
+  /* [FIXME] the display on which this widget is attached */
+  struct _AltkDisplay *display;
 };
 
 
@@ -116,6 +118,8 @@ void altk_widget_size_request ( AltkWidget *widget,
 void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc );
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget );
+AltkRegion *altk_widget_get_visible_area ( AltkWidget *widget,
+                                           gboolean clip_children );
 void altk_widget_forall ( AltkWidget *widget,
                           AltkForeachFunc func,
                           gpointer data );
@@ -124,6 +128,9 @@ void altk_widget_set_event_mask ( AltkWidget *widget,
 AltkEventType altk_widget_get_event_mask ( AltkWidget *widget );
 void altk_widget_set_state ( AltkWidget *widget,
                              AltkState state );
+void altk_widget_queue_draw ( AltkWidget *widget,
+                              gboolean children );
+struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget );
 
 
 

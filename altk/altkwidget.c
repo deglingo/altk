@@ -5,6 +5,7 @@
 #include "altk/altkwidget.h"
 #include "altk/altkstyle.h"
 #include "altk/altkgc.h"
+#include "altk/altkdisplay.h"
 #include "altk/altkwidget.inl"
 
 
@@ -52,6 +53,7 @@ void altk_widget_map ( AltkWidget *widget,
                        struct _AltkDisplay *display )
 {
   gint s;
+  widget->display = display;
   widget->style = altk_style_new();
   for (s = 0; s < ALTK_STATE_COUNT; s++) {
     widget->gc[s] = altk_gc_new();
@@ -114,6 +116,28 @@ AltkRegion *altk_widget_get_shape ( AltkWidget *widget )
   r.width = widget->width;
   r.height = widget->height;
   return altk_region_rectangle(&r);
+}
+
+
+
+/* altk_widget_get_visible_area:
+ */
+AltkRegion *altk_widget_get_visible_area ( AltkWidget *widget,
+                                           gboolean clip_children )
+{
+  /* [FIXME] */
+  AltkRegion *area = altk_widget_get_shape(widget);
+  altk_region_offset(area, widget->root_x, widget->root_y);
+  if (clip_children) {
+    AltkWidget *child;
+    for (child = widget->children; child; child = child->next) {
+      AltkRegion *child_area = altk_widget_get_shape(child);
+      altk_region_offset(child_area, child->root_x, child->root_y);
+      altk_region_subtract(area, child_area);
+      altk_region_destroy(child_area);
+    }
+  }
+  return area;
 }
 
 
@@ -191,5 +215,30 @@ void altk_widget_set_state ( AltkWidget *widget,
   if (widget->state == state)
     return;
   widget->state = state;
-  /* altk_widget_queue_draw(widget); */
+  altk_widget_queue_draw(widget, TRUE);
+}
+
+
+
+/* altk_widget_queue_draw:
+ */
+void altk_widget_queue_draw ( AltkWidget *widget,
+                              gboolean children )
+{
+  AltkDisplay *display;
+  AltkRegion *area;
+  display = altk_widget_get_display(widget);
+  ASSERT(display); /* [FIXME] */
+  area = altk_widget_get_visible_area(widget, !children);
+  altk_display_queue_draw(display, area);
+  altk_region_destroy(area);
+}
+
+
+
+/* altk_widget_get_display:
+ */
+struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget )
+{
+  return widget->display;
 }
