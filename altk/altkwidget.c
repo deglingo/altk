@@ -161,6 +161,12 @@ void altk_widget_event ( AltkWidget *widget,
   case ALTK_EVENT_MOUSE_LEAVE:
     ALTK_WIDGET_GET_CLASS(widget)->mouse_leave_event(widget, event);
     break;
+  case ALTK_EVENT_MOUSE_BUTTON_DOWN:
+    ALTK_WIDGET_GET_CLASS(widget)->mouse_button_down_event(widget, event);
+    break;
+  case ALTK_EVENT_MOUSE_BUTTON_UP:
+    ALTK_WIDGET_GET_CLASS(widget)->mouse_button_up_event(widget, event);
+    break;
   default:
     CL_DEBUG("[TODO] event %d", event->type);
   }
