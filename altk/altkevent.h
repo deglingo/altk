@@ -16,6 +16,7 @@ typedef enum _AltkEventType AltkEventType;
 typedef union _AltkEvent AltkEvent;
 typedef struct _AltkEventAny AltkEventAny;
 typedef struct _AltkEventExpose AltkEventExpose;
+typedef struct _AltkEventCrossing AltkEventCrossing;
 
 #define _ALTK_EVENT_HEADER \
   AltkEventType type; \
@@ -28,6 +29,8 @@ typedef struct _AltkEventExpose AltkEventExpose;
 enum _AltkEventType
   {
     ALTK_EVENT_EXPOSE = 1 << 0,
+    ALTK_EVENT_MOUSE_ENTER = 1 << 1,
+    ALTK_EVENT_MOUSE_LEAVE = 1 << 2,
   };
 
 
@@ -52,6 +55,17 @@ struct _AltkEventExpose
 
 
 
+/* AltkEventCrossing:
+ */
+struct _AltkEventCrossing
+{
+  _ALTK_EVENT_HEADER;
+  gint mx;
+  gint my;
+};
+
+
+
 /* AltkEvent:
  */
 union _AltkEvent
@@ -59,6 +73,7 @@ union _AltkEvent
   AltkEventType type;
   AltkEventAny any;
   AltkEventExpose expose;
+  AltkEventCrossing crossing;
 };
 
 

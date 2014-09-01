@@ -52,6 +52,9 @@ void altk_display_attach_widget ( AltkDisplay *display,
                                   struct _AltkWidget *widget );
 void altk_display_queue_draw ( AltkDisplay *display,
                                AltkRegion *area );
+struct _AltkWidget *altk_display_get_widget_at ( AltkDisplay *display,
+                                                 gint x,
+                                                 gint y );
 
 
 

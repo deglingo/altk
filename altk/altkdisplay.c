@@ -252,3 +252,43 @@ void altk_display_queue_draw ( AltkDisplay *display,
                                                 NULL);
   }
 }
+
+
+
+static AltkWidget *_widget_at ( AltkDisplay *display,
+                                AltkWidget *wid,
+                                gint x,
+                                gint y )
+{
+  if (x >= wid->root_x && x < (wid->root_x + wid->width) &&
+      y >= wid->root_y && y < (wid->root_y + wid->height))
+    {
+      AltkWidget *child = wid->children;
+      while (child) {
+        AltkWidget *r = _widget_at(display, child, x, y);
+        if (r) return r;
+        child = child->next;
+      }
+      return wid;
+    }
+  else
+    {
+      return NULL;
+    }
+}
+
+
+
+/* altk_display_get_widget_at:
+ */
+AltkWidget *altk_display_get_widget_at ( AltkDisplay *display,
+                                         gint x,
+                                         gint y )
+{
+  GList *l;
+  for (l = display->top_widgets; l; l = l->next) {
+    AltkWidget *w = _widget_at(display, ALTK_WIDGET(l->data), x, y);
+    if (w) return w;
+  }
+  return NULL;
+}

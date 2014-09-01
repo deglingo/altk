@@ -3,8 +3,15 @@
 
 #include "altk/private.h"
 #include "altk/altkmain.h"
+#include "altk/altkevent.h"
+#include "altk/altkwidget.h"
 /* [fixme] ?? */
 #include "altk/altkdisplay.h"
+
+
+
+/* [fixme] WM globals */
+static AltkWidget *_entered_widget = NULL;
 
 
 
@@ -63,21 +70,61 @@ static gboolean _al_source_check ( GSource *src )
 
 
 
+/* _filter_event:
+ */
+static void _filter_event ( ALLEGRO_EVENT *al_event )
+{
+  AltkEvent event;
+  AltkDisplay *display;
+  AltkWidget *fly, *entered;
+  switch (al_event->type)
+    {
+    case ALLEGRO_EVENT_MOUSE_AXES:
+      /* CL_DEBUG("mouse move: %d, %d", al_event->mouse.x, al_event->mouse.y); */
+      display = altk_display_from_al_display(al_event->mouse.display);
+      fly = altk_display_get_widget_at(display, al_event->mouse.x, al_event->mouse.y);
+      entered = fly;
+      while (entered && !(entered->event_mask & ALTK_EVENT_MOUSE_ENTER))
+        entered = entered->parent;
+      if (entered != _entered_widget) {
+        if (_entered_widget) {
+          event.type = ALTK_EVENT_MOUSE_LEAVE;
+          event.crossing.mx = al_event->mouse.x - _entered_widget->root_x;
+          event.crossing.my = al_event->mouse.y - _entered_widget->root_y;
+          altk_event_process(&event);
+        }
+        if (entered) {
+          event.type = ALTK_EVENT_MOUSE_ENTER;
+          event.crossing.mx = al_event->mouse.x - entered->root_x;
+          event.crossing.my = al_event->mouse.y - entered->root_y;
+          altk_event_process(&event);
+        }
+        _entered_widget = entered;
+      }
+      break;
+    default:
+      CL_DEBUG("[TODO] allegro event %d", al_event->type);
+    }
+}
+
+
+
 /* _al_source_dispatch:
  */
 static gboolean _al_source_dispatch ( GSource *src,
                                       GSourceFunc callback,
                                       gpointer data )
 {
-  ALLEGRO_EVENT event;
-  if (al_get_next_event(((AlSource *) src)->queue, &event))
+  ALLEGRO_EVENT al_event;
+  if (al_get_next_event(((AlSource *) src)->queue, &al_event))
     {
-      CL_DEBUG("EVENT: %d", event.type);
-      if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-        AltkDisplay *display = altk_display_from_al_display(event.display.source);
+      /* CL_DEBUG("EVENT: %d", al_event.type); */
+      if (al_event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+        AltkDisplay *display = altk_display_from_al_display(al_event.display.source);
         CL_DEBUG("display %p closed, bye", display);
         exit(0);
       }
+      _filter_event(&al_event);
     }
   return G_SOURCE_CONTINUE;
 }
