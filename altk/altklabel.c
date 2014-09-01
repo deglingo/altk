@@ -4,6 +4,8 @@
 #include "altk/private.h"
 #include "altk/altklabel.h"
 #include "altk/altkstyle.h"
+#include "altk/altkgc.h"
+#include "altk/altkfont.h"
 
 #include "altk/altklabel.inl"
 
@@ -43,9 +45,12 @@ AltkWidget *altk_label_new ( const gchar *text )
 static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req )
 {
-  /* [FIXME] */
-  req->width = 64;
-  req->height = 12;
+  gint bx, by, bw, bh;
+  altk_font_get_text_size(wid->gc[ALTK_STATE_NORMAL]->font,
+                          ALTK_LABEL(wid)->text,
+                          &bx, &by, &bw, &bh);
+  req->width = bw;
+  req->height = bh;
 }
 
 

@@ -30,6 +30,12 @@ struct _AltkFontClass
 
 
 AltkFont *altk_font_new_builtin ( void );
+void altk_font_get_text_size ( AltkFont *font,
+                               const gchar *text,
+                               gint *bx,
+                               gint *by,
+                               gint *bw,
+                               gint *bh );
 
 
 
