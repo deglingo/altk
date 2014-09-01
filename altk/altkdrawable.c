@@ -45,8 +45,11 @@ void altk_drawable_draw_text ( AltkDrawable *drawable,
  */
 void altk_drawable_draw_bitmap_region ( AltkDrawable *drawable,
                                         struct _AltkBitmap *bitmap,
-                                        struct _AltkRegion *region )
+                                        struct _AltkRegion *region,
+                                        gint dest_x,
+                                        gint dest_y )
 {
   ASSERT(ALTK_DRAWABLE_GET_CLASS(drawable)->draw_bitmap_region);
-  ALTK_DRAWABLE_GET_CLASS(drawable)->draw_bitmap_region(drawable, bitmap, region);
+  ALTK_DRAWABLE_GET_CLASS(drawable)->draw_bitmap_region
+    (drawable, bitmap, region, dest_x, dest_y);
 }

@@ -42,7 +42,9 @@ struct _AltkDrawableClass
 
   void (* draw_bitmap_region) ( AltkDrawable *drawable,
                                 struct _AltkBitmap *bitmap,
-                                struct _AltkRegion *region );
+                                struct _AltkRegion *region,
+                                gint dest_x,
+                                gint dest_y);
 };
 
 
@@ -58,7 +60,9 @@ void altk_drawable_draw_text ( AltkDrawable *drawable,
                                const gchar *text );
 void altk_drawable_draw_bitmap_region ( AltkDrawable *drawable,
                                         struct _AltkBitmap *bitmap,
-                                        struct _AltkRegion *region );
+                                        struct _AltkRegion *region,
+                                        gint dest_x,
+                                        gint dest_y );
 
 
 

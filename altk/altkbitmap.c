@@ -17,7 +17,9 @@ static void _on_draw_text ( AltkDrawable *drawable,
                             const gchar *text );
 static void _on_draw_bitmap_region ( AltkDrawable *drawable,
                                      AltkBitmap *bitmap,
-                                     AltkRegion *region );
+                                     AltkRegion *region,
+                                     gint dest_x,
+                                     gint dest_y );
 
 
 
@@ -81,9 +83,10 @@ static void _on_draw_text ( AltkDrawable *drawable,
 {
   ALLEGRO_COLOR color = al_map_rgb(255, 255, 0);
   ALLEGRO_STATE state;
+  CL_DEBUG("draw_text(%d, %d, \"%s\")", x, y, text);
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_bitmap(ALTK_BITMAP(drawable)->al_bitmap);
-  al_clear_to_color(color);
+  al_draw_filled_rectangle(x, y, x+strlen(text)*8, y+8, color);
   al_restore_state(&state);
 }
 
@@ -93,11 +96,15 @@ static void _on_draw_text ( AltkDrawable *drawable,
  */
 static void _on_draw_bitmap_region ( AltkDrawable *drawable,
                                      AltkBitmap *bitmap,
-                                     AltkRegion *region )
+                                     AltkRegion *region,
+                                     gint dest_x,
+                                     gint dest_y )
 {
   gint r;
   AltkRegionBox *box;
   ALLEGRO_STATE state;
+  CL_DEBUG("draw_bitmap_region(%p, %p, %p, %d, %d)",
+           drawable, bitmap, region, dest_x, dest_y);
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_bitmap(ALTK_BITMAP(drawable)->al_bitmap);
   for (r = 0, box = region->rects; r < region->n_rects; r++, box++)
@@ -107,8 +114,8 @@ static void _on_draw_bitmap_region ( AltkDrawable *drawable,
                             box->y1,
                             box->x2 - box->x1,
                             box->y2 - box->y1,
-                            box->x1 + drawable->offset_x,
-                            box->y1 + drawable->offset_y,
+                            box->x1 + dest_x,
+                            box->y1 + dest_y,
                             0);
     }
   al_restore_state(&state);
