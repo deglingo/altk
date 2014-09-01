@@ -7,6 +7,7 @@
 #include <glib.h> /* [removeme] */
 #include <los.h>
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
 
 
 
