@@ -104,6 +104,34 @@ static void _filter_event ( ALLEGRO_EVENT *al_event )
         _entered_widget = entered;
       }
       break;
+    case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+      display = altk_display_from_al_display(al_event->mouse.display);
+      fly = altk_display_get_widget_at(display, al_event->mouse.x, al_event->mouse.y);
+      while (fly && !(fly->event_mask & ALTK_EVENT_MOUSE_BUTTON_DOWN))
+        fly = fly->parent;
+      if (fly) {
+        event.type = ALTK_EVENT_MOUSE_BUTTON_DOWN;
+        event.button.widget = fly;
+        event.button.mx = al_event->mouse.x;
+        event.button.my = al_event->mouse.y;
+        event.button.button = al_event->mouse.button;
+        altk_event_process(&event);
+      }
+      break;
+    case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+      display = altk_display_from_al_display(al_event->mouse.display);
+      fly = altk_display_get_widget_at(display, al_event->mouse.x, al_event->mouse.y);
+      while (fly && !(fly->event_mask & ALTK_EVENT_MOUSE_BUTTON_UP))
+        fly = fly->parent;
+      if (fly) {
+        event.type = ALTK_EVENT_MOUSE_BUTTON_UP;
+        event.button.widget = fly;
+        event.button.mx = al_event->mouse.x;
+        event.button.my = al_event->mouse.y;
+        event.button.button = al_event->mouse.button;
+        altk_event_process(&event);
+      }
+      break;
     default:
       CL_DEBUG("[TODO] allegro event %d", al_event->type);
     }
