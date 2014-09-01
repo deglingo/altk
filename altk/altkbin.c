@@ -44,7 +44,8 @@ static void _on_add ( AltkContainer *cont,
                       AltkWidget *child )
 {
   AltkBin *bin = ALTK_BIN(cont);
+  /* [REMOVEME] */
   ASSERT(!bin->child);
   bin->child = l_object_ref(child);
-  _altk_widget_set_parent(child, ALTK_WIDGET(cont));
+  _altk_widget_attach_child(ALTK_WIDGET(cont), child);
 }

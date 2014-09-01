@@ -52,6 +52,10 @@ struct _AltkWidget
   ALTK_WIDGET_INSTANCE_HEADER;
   /* the parent widget */
   AltkWidget *parent;
+  AltkWidget *children;
+  AltkWidget *children_tail;
+  AltkWidget *next;
+  AltkWidget *prev;
   /* on-screen location */
   gint root_x;
   gint root_y;
@@ -93,8 +97,8 @@ struct _AltkWidgetClass
 
 
 
-void _altk_widget_set_parent ( AltkWidget *widget,
-                               AltkWidget *parent );
+void _altk_widget_attach_child ( AltkWidget *widget,
+                                 AltkWidget *child );
 void altk_widget_map ( AltkWidget *widget,
                        struct _AltkDisplay *display );
 void altk_widget_event ( AltkWidget *widget,

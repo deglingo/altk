@@ -26,14 +26,22 @@ static void altk_widget_class_init ( LObjectClass *cls )
 
 
 
-/* _altk_widget_set_parent:
+/* _altk_widget_attach_child:
  */
-void _altk_widget_set_parent ( AltkWidget *widget,
-                               AltkWidget *parent )
+void _altk_widget_attach_child ( AltkWidget *widget,
+                                 AltkWidget *child )
 {
-  /* [FIXME] use a weakref ? */
-  ASSERT(!widget->parent);
-  widget->parent = parent;
+  ASSERT(!child->parent);
+  ASSERT(!child->next);
+  ASSERT(!child->prev);
+  l_object_ref(child);
+  child->parent = widget;
+  child->prev = widget->children_tail;
+  if (widget->children) {
+    ASSERT(0); /* [TODO] */
+  } else {
+    widget->children = widget->children_tail = child;
+  }
 }
 
 
