@@ -6,6 +6,7 @@
 #include "altk/altkdisplay.h"
 #include "altk/altkregion.h"
 #include "altk/altkgc.h"
+#include "altk/altkfont.h"
 #include "altk/altkbitmap.inl"
 
 
@@ -86,7 +87,7 @@ static void _on_draw_text ( AltkDrawable *drawable,
   CL_DEBUG("draw_text(%d, %d, \"%s\")", x, y, text);
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_bitmap(ALTK_BITMAP(drawable)->al_bitmap);
-  al_draw_filled_rectangle(x, y, x+strlen(text)*8, y+8, color);
+  al_draw_text(gc->font->al_font, color, x, y, ALLEGRO_ALIGN_LEFT, text);
   al_restore_state(&state);
 }
 
