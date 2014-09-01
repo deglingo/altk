@@ -12,5 +12,6 @@ namespace Altk
   class Label : Widget;
   class Container : Widget;
   class Bin : Container;
+  class Button : Bin;
   class Dialog : Bin;
 }
