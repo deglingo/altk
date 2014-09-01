@@ -93,6 +93,12 @@ struct _AltkWidgetClass
   /* events */
   void (* expose_event) ( AltkWidget *widget,
                           AltkEvent *event );
+
+  void (* mouse_enter_event) ( AltkWidget *widget,
+                               AltkEvent *event );
+
+  void (* mouse_leave_event) ( AltkWidget *widget,
+                               AltkEvent *event );
 };
 
 

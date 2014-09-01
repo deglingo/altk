@@ -128,6 +128,12 @@ void altk_widget_event ( AltkWidget *widget,
   case ALTK_EVENT_EXPOSE:
     ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
     break;
+  case ALTK_EVENT_MOUSE_ENTER:
+    ALTK_WIDGET_GET_CLASS(widget)->mouse_enter_event(widget, event);
+    break;
+  case ALTK_EVENT_MOUSE_LEAVE:
+    ALTK_WIDGET_GET_CLASS(widget)->mouse_leave_event(widget, event);
+    break;
   default:
     CL_DEBUG("[TODO] event %d", event->type);
   }

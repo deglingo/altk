@@ -12,6 +12,10 @@ static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req );
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc );
+static void _on_mouse_enter_event ( AltkWidget *wid,
+                                    AltkEvent *event );
+static void _on_mouse_leave_event ( AltkWidget *wid,
+                                    AltkEvent *event );
 
 
 
@@ -21,6 +25,8 @@ static void altk_button_class_init ( LObjectClass *cls )
 {
   ((AltkWidgetClass *) cls)->size_request = _on_size_request;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
+  ((AltkWidgetClass *) cls)->mouse_enter_event = _on_mouse_enter_event;
+  ((AltkWidgetClass *) cls)->mouse_leave_event = _on_mouse_leave_event;
 }
 
 
@@ -85,4 +91,24 @@ static void _on_size_allocate ( AltkWidget *wid,
     child_alloc.height = alloc->height - 4;
     altk_widget_size_allocate(ALTK_BIN(wid)->child, &child_alloc);
   }
+}
+
+
+
+/* _on_mouse_enter_event:
+ */
+static void _on_mouse_enter_event ( AltkWidget *wid,
+                                    AltkEvent *event )
+{
+  CL_DEBUG("button enter...");
+}
+
+
+
+/* _on_mouse_leave_event:
+ */
+static void _on_mouse_leave_event ( AltkWidget *wid,
+                                    AltkEvent *event )
+{
+  CL_DEBUG("button leave...");
 }

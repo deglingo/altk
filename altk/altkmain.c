@@ -89,12 +89,14 @@ static void _filter_event ( ALLEGRO_EVENT *al_event )
       if (entered != _entered_widget) {
         if (_entered_widget) {
           event.type = ALTK_EVENT_MOUSE_LEAVE;
+          event.crossing.widget = _entered_widget;
           event.crossing.mx = al_event->mouse.x - _entered_widget->root_x;
           event.crossing.my = al_event->mouse.y - _entered_widget->root_y;
           altk_event_process(&event);
         }
         if (entered) {
           event.type = ALTK_EVENT_MOUSE_ENTER;
+          event.crossing.widget = entered;
           event.crossing.mx = al_event->mouse.x - entered->root_x;
           event.crossing.my = al_event->mouse.y - entered->root_y;
           altk_event_process(&event);
