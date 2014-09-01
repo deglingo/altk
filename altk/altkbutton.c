@@ -4,6 +4,7 @@
 #include "altk/private.h"
 #include "altk/altkbutton.h"
 #include "altk/altklabel.h"
+#include "altk/altkbitmap.h" /* [REMOVEME] */
 #include "altk/altkbutton.inl"
 
 
@@ -16,6 +17,8 @@ static void _on_mouse_enter_event ( AltkWidget *wid,
                                     AltkEvent *event );
 static void _on_mouse_leave_event ( AltkWidget *wid,
                                     AltkEvent *event );
+static void _on_expose_background_event ( AltkWidget *wid,
+                                          AltkEvent *event );
 
 
 
@@ -27,6 +30,7 @@ static void altk_button_class_init ( LObjectClass *cls )
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
   ((AltkWidgetClass *) cls)->mouse_enter_event = _on_mouse_enter_event;
   ((AltkWidgetClass *) cls)->mouse_leave_event = _on_mouse_leave_event;
+  ((AltkWidgetClass *) cls)->expose_background_event = _on_expose_background_event;
 }
 
 
@@ -37,7 +41,7 @@ AltkWidget *altk_button_new_with_label ( const gchar *text )
 {
   AltkWidget *but, *lbl;
   but = ALTK_WIDGET(l_object_new(ALTK_CLASS_BUTTON, NULL));
-  altk_widget_set_event_mask(but, ALTK_EVENT_EXPOSE | ALTK_EVENT_MOUSE_ENTER);
+  altk_widget_set_event_mask(but, ALTK_EVENT_EXPOSE | ALTK_EVENT_EXPOSE_BACKGROUND | ALTK_EVENT_MOUSE_ENTER);
   lbl = altk_label_new(text);
   altk_container_add(ALTK_CONTAINER(but), lbl);
   /* [FIXME] l_object_unref(lbl); */
@@ -113,4 +117,38 @@ static void _on_mouse_leave_event ( AltkWidget *wid,
 {
   CL_DEBUG("button leave...");
   altk_widget_set_state(wid, ALTK_STATE_NORMAL);
+}
+
+
+
+/* _on_expose_background_event:
+ */
+static void _on_expose_background_event ( AltkWidget *wid,
+                                          AltkEvent *event )
+{
+  gint r;
+  AltkRegionBox *box;
+  gint cx, cy, cw, ch;
+  /* [FIXME] use drawable methods */
+  ALLEGRO_COLOR col;
+  ALLEGRO_STATE state;
+  if (wid->state == ALTK_STATE_NORMAL)
+    col = al_map_rgb(0, 255, 255);
+  else
+    col = al_map_rgb(255, 0, 0);
+  al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(ALTK_BITMAP(event->expose.window)->al_bitmap);
+  al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
+  for (r = 0, box = event->expose.area->rects;
+       r < event->expose.area->n_rects;
+       r++, box++)
+    {
+      al_set_clipping_rectangle(box->x1,
+                                box->y1,
+                                box->x2 - box->x1,
+                                box->y2 - box->y1);
+      al_clear_to_color(col);
+    }
+  al_set_clipping_rectangle(cx, cy, cw, ch);
+  al_restore_state(&state);
 }
