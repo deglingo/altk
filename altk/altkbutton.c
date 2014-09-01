@@ -31,6 +31,7 @@ AltkWidget *altk_button_new_with_label ( const gchar *text )
 {
   AltkWidget *but, *lbl;
   but = ALTK_WIDGET(l_object_new(ALTK_CLASS_BUTTON, NULL));
+  altk_widget_set_event_mask(but, ALTK_EVENT_EXPOSE);
   lbl = altk_label_new(text);
   altk_container_add(ALTK_CONTAINER(but), lbl);
   /* [FIXME] l_object_unref(lbl); */

@@ -63,6 +63,8 @@ struct _AltkWidget
   struct _AltkStyle *style;
   /* graphic contexts */
   struct _AltkGC *gc[ALTK_STATE_COUNT];
+  /* events mask */
+  guint event_mask;
 };
 
 
@@ -105,6 +107,9 @@ AltkRegion *altk_widget_get_shape ( AltkWidget *widget );
 void altk_widget_forall ( AltkWidget *widget,
                           AltkForeachFunc func,
                           gpointer data );
+void altk_widget_set_event_mask ( AltkWidget *widget,
+                                  AltkEventType mask );
+AltkEventType altk_widget_get_event_mask ( AltkWidget *widget );
 
 
 

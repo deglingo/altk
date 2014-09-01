@@ -147,3 +147,22 @@ void altk_widget_forall ( AltkWidget *widget,
     ALTK_WIDGET_GET_CLASS(widget)->forall(widget, func, data);
   }
 }
+
+
+
+/* altk_widget_set_event_mask:
+ */
+void altk_widget_set_event_mask ( AltkWidget *widget,
+                                  AltkEventType mask )
+{
+  widget->event_mask = mask;
+}
+
+
+
+/* altk_widget_get_event_mask:
+ */
+AltkEventType altk_widget_get_event_mask ( AltkWidget *widget )
+{
+  return widget->event_mask;
+}
