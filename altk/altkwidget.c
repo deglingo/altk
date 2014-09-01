@@ -149,6 +149,9 @@ void altk_widget_event ( AltkWidget *widget,
 {
   /* [FIXME] virtual func ? */
   switch (event->type) {
+  case ALTK_EVENT_EXPOSE_BACKGROUND:
+    ALTK_WIDGET_GET_CLASS(widget)->expose_background_event(widget, event);
+    break;
   case ALTK_EVENT_EXPOSE:
     ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
     break;

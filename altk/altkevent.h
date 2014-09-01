@@ -31,6 +31,7 @@ enum _AltkEventType
     ALTK_EVENT_EXPOSE = 1 << 0,
     ALTK_EVENT_MOUSE_ENTER = 1 << 1,
     ALTK_EVENT_MOUSE_LEAVE = 1 << 2,
+    ALTK_EVENT_EXPOSE_BACKGROUND = 1 << 3,
   };
 
 

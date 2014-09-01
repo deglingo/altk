@@ -4,6 +4,7 @@
 #include "altk/private.h"
 #include "altk/altkdialog.h"
 #include "altk/altkdisplay.h"
+#include "altk/altkbitmap.h" /* [REMOVEME] */
 
 #include "altk/altkdialog.inl"
 
@@ -13,6 +14,8 @@ static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req );
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc );
+static void _on_expose_background_event ( AltkWidget *wid,
+                                          AltkEvent *event );
 
 
 
@@ -22,6 +25,7 @@ static void altk_dialog_class_init ( LObjectClass *cls )
 {
   ((AltkWidgetClass *) cls)->size_request = _on_size_request;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
+  ((AltkWidgetClass *) cls)->expose_background_event = _on_expose_background_event;
 }
 
 
@@ -32,6 +36,7 @@ AltkWidget *altk_dialog_new ( AltkDisplay *display )
 {
   AltkWidget *dlg;
   dlg = ALTK_WIDGET(l_object_new(ALTK_CLASS_DIALOG, NULL));
+  altk_widget_set_event_mask(dlg, ALTK_EVENT_EXPOSE_BACKGROUND);
   altk_display_attach_widget(display, dlg);
   return dlg;
 }
@@ -83,4 +88,34 @@ static void _on_size_allocate ( AltkWidget *wid,
     child_alloc.height = alloc->height - 4;
     altk_widget_size_allocate(ALTK_BIN(wid)->child, &child_alloc);
   }
+}
+
+
+
+/* _on_expose_background_event:
+ */
+static void _on_expose_background_event ( AltkWidget *wid,
+                                          AltkEvent *event )
+{
+  gint r;
+  AltkRegionBox *box;
+  gint cx, cy, cw, ch;
+  /* [FIXME] use drawable methods */
+  ALLEGRO_COLOR col = al_map_rgb(0, 255, 255);
+  ALLEGRO_STATE state;
+  al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(ALTK_BITMAP(event->expose.window)->al_bitmap);
+  al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
+  for (r = 0, box = event->expose.area->rects;
+       r < event->expose.area->n_rects;
+       r++, box++)
+    {
+      al_set_clipping_rectangle(box->x1,
+                                box->y1,
+                                box->x2 - box->x1,
+                                box->y2 - box->y1);
+      al_clear_to_color(col);
+    }
+  al_set_clipping_rectangle(cx, cy, cw, ch);
+  al_restore_state(&state);
 }
