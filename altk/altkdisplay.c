@@ -135,6 +135,31 @@ static void _grow_dblbuf ( AltkDisplay *display,
 
 
 
+static void _clear_dblbuf ( AltkDisplay *display,
+                            AltkRegion *area )
+{
+  gint r;
+  AltkRegionBox *box;
+  gint cx, cy, cw, ch;
+  ALLEGRO_STATE state;
+  ALLEGRO_COLOR col = al_map_rgba(0, 0, 0, 0);
+  al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(ALTK_BITMAP(display->dblbuf)->al_bitmap);
+  al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
+  for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
+    {
+      al_set_clipping_rectangle(box->x1,
+                                box->y1,
+                                box->x2 - box->x1,
+                                box->y2 - box->y1);
+      al_clear_to_color(col);
+    }
+  al_set_clipping_rectangle(cx, cy, cw, ch);
+  al_restore_state(&state);
+}
+
+
+
 static void _process_child_redraw ( AltkWidget *widget,
                                     struct child_redraw_data *data )
 {
@@ -154,6 +179,7 @@ static void _process_child_redraw ( AltkWidget *widget,
   _grow_dblbuf(data->display,
                wid_extents.x + wid_extents.width,
                wid_extents.y + wid_extents.height);
+  _clear_dblbuf(data->display, wid_area);
   /* altk_drawable_set_offset(data->display->dblbuf, -wid_extents.x, -wid_extents.y); */
   /* create the expose event */
   event.type = ALTK_EVENT_EXPOSE;
