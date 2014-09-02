@@ -163,43 +163,49 @@ static void _clear_dblbuf ( AltkDisplay *display,
 static void _process_child_redraw ( AltkWidget *widget,
                                     struct child_redraw_data *data )
 {
-  AltkRegion *wid_area;
-  AltkEvent event;
-  AltkRectangle wid_extents;
-  gint root_x, root_y;
-  altk_widget_get_root_coords(widget, &root_x, &root_y);
-  /* process children first */
+  if (widget->event_mask & ALTK_EVENT_EXPOSE)
+    {
+      AltkEvent event;
+      AltkRegion *wid_area;
+      AltkRectangle wid_extents;
+      gint root_x, root_y;
+      altk_widget_get_root_coords(widget, &root_x, &root_y);
+      /* get the widget's update area (and subract it from 'area') */
+      wid_area = altk_widget_get_shape(widget);
+      altk_region_offset(wid_area, root_x, root_y);
+      altk_region_intersect(wid_area, data->area);
+      if (!altk_region_empty(wid_area))
+        {
+          /* altk_region_subtract(data->area, wid_area); */
+          altk_region_offset(wid_area, -root_x, -root_y);
+          /* create/grow the dblbuf */
+          altk_region_get_clipbox(wid_area, &wid_extents);
+          _grow_dblbuf(data->display,
+                       wid_extents.x + wid_extents.width,
+                       wid_extents.y + wid_extents.height);
+          _clear_dblbuf(data->display, wid_area);
+          /* altk_drawable_set_offset(data->display->dblbuf, -wid_extents.x, -wid_extents.y); */
+          /* create the expose event */
+          event.type = ALTK_EVENT_EXPOSE;
+          event.expose.widget = widget;
+          event.expose.area = wid_area;
+          event.expose.window = data->display->dblbuf;
+          altk_event_process(&event);
+          /* blit double-buffer -> backbuffer */
+          /* altk_drawable_set_offset(data->display->backbuf, */
+          /*                          widget->root_x + wid_extents.x, */
+          /*                          widget->root_y + wid_extents.y); */
+          altk_drawable_draw_bitmap_region(data->display->backbuf,
+                                           ALTK_BITMAP(data->display->dblbuf),
+                                           wid_area,
+                                           root_x,
+                                           root_y);
+        }
+      /* [TODO] widget_redraw(wid_area) */
+      altk_region_destroy(wid_area);
+    }
+  /* process children */
   altk_widget_forall(widget, (AltkForeachFunc) _process_child_redraw, data);
-  /* get the widget's update area (and subract it from 'area') */
-  wid_area = altk_widget_get_shape(widget);
-  altk_region_offset(wid_area, root_x, root_y);
-  altk_region_intersect(wid_area, data->area);
-  altk_region_subtract(data->area, wid_area);
-  altk_region_offset(wid_area, -root_x, -root_y);
-  /* create/grow the dblbuf */
-  altk_region_get_clipbox(wid_area, &wid_extents);
-  _grow_dblbuf(data->display,
-               wid_extents.x + wid_extents.width,
-               wid_extents.y + wid_extents.height);
-  _clear_dblbuf(data->display, wid_area);
-  /* altk_drawable_set_offset(data->display->dblbuf, -wid_extents.x, -wid_extents.y); */
-  /* create the expose event */
-  event.type = ALTK_EVENT_EXPOSE;
-  event.expose.widget = widget;
-  event.expose.area = wid_area;
-  event.expose.window = data->display->dblbuf;
-  altk_event_process(&event);
-  /* blit double-buffer -> backbuffer */
-  /* altk_drawable_set_offset(data->display->backbuf, */
-  /*                          widget->root_x + wid_extents.x, */
-  /*                          widget->root_y + wid_extents.y); */
-  altk_drawable_draw_bitmap_region(data->display->backbuf,
-                                   ALTK_BITMAP(data->display->dblbuf),
-                                   wid_area,
-                                   root_x,
-                                   root_y);
-  /* [TODO] widget_redraw(wid_area) */
-  altk_region_destroy(wid_area);
 }
 
 
@@ -276,17 +282,17 @@ static gboolean _idle_redraw ( AltkDisplay *display )
 {
   GList *l;
   AltkRegion *update_area = display->update_area;
-  AltkRegion *bg_area = altk_region_copy(update_area);
+  /* AltkRegion *bg_area = altk_region_copy(update_area); */
   display->update_area = altk_region_new();
-  /* draw background */
-  for (l = display->top_widgets; l; l = l->next)
-    {
-      if (altk_region_empty(bg_area))
-        break;
-      _process_bg(display, ALTK_WIDGET(l->data), bg_area);
-    }
-  /* [TODO] clear display background */
-  altk_region_destroy(bg_area);
+  /* /\* draw background *\/ */
+  /* for (l = display->top_widgets; l; l = l->next) */
+  /*   { */
+  /*     if (altk_region_empty(bg_area)) */
+  /*       break; */
+  /*     _process_bg(display, ALTK_WIDGET(l->data), bg_area); */
+  /*   } */
+  /* /\* [TODO] clear display background *\/ */
+  /* altk_region_destroy(bg_area); */
   /* process widgets */
   for (l = display->top_widgets; l; l = l->next)
     {

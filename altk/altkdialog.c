@@ -14,8 +14,8 @@ static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req );
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc );
-static void _on_expose_background_event ( AltkWidget *wid,
-                                          AltkEvent *event );
+static void _on_expose_event ( AltkWidget *wid,
+                               AltkEvent *event );
 
 
 
@@ -25,7 +25,7 @@ static void altk_dialog_class_init ( LObjectClass *cls )
 {
   ((AltkWidgetClass *) cls)->size_request = _on_size_request;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
-  ((AltkWidgetClass *) cls)->expose_background_event = _on_expose_background_event;
+  ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
 }
 
 
@@ -36,7 +36,7 @@ AltkWidget *altk_dialog_new ( AltkDisplay *display )
 {
   AltkWidget *dlg;
   dlg = ALTK_WIDGET(l_object_new(ALTK_CLASS_DIALOG, NULL));
-  altk_widget_set_event_mask(dlg, ALTK_EVENT_EXPOSE_BACKGROUND);
+  altk_widget_set_event_mask(dlg, ALTK_EVENT_EXPOSE);
   altk_display_attach_widget(display, dlg);
   return dlg;
 }
@@ -84,10 +84,10 @@ static void _on_size_allocate ( AltkWidget *wid,
 
 
 
-/* _on_expose_background_event:
+/* _on_expose_event:
  */
-static void _on_expose_background_event ( AltkWidget *wid,
-                                          AltkEvent *event )
+static void _on_expose_event ( AltkWidget *wid,
+                               AltkEvent *event )
 {
   gint r;
   AltkRegionBox *box;

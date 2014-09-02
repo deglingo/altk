@@ -21,8 +21,8 @@ static void _on_mouse_button_down_event ( AltkWidget *wid,
                                           AltkEvent *event );
 static void _on_mouse_button_up_event ( AltkWidget *wid,
                                         AltkEvent *event );
-static void _on_expose_background_event ( AltkWidget *wid,
-                                          AltkEvent *event );
+static void _on_expose_event ( AltkWidget *wid,
+                               AltkEvent *event );
 
 
 
@@ -36,7 +36,7 @@ static void altk_button_class_init ( LObjectClass *cls )
   ((AltkWidgetClass *) cls)->mouse_leave_event = _on_mouse_leave_event;
   ((AltkWidgetClass *) cls)->mouse_button_down_event = _on_mouse_button_down_event;
   ((AltkWidgetClass *) cls)->mouse_button_up_event = _on_mouse_button_up_event;
-  ((AltkWidgetClass *) cls)->expose_background_event = _on_expose_background_event;
+  ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
 }
 
 
@@ -49,7 +49,6 @@ AltkWidget *altk_button_new_with_label ( const gchar *text )
   but = ALTK_WIDGET(l_object_new(ALTK_CLASS_BUTTON, NULL));
   altk_widget_set_event_mask(but,
                              ALTK_EVENT_EXPOSE |
-                             ALTK_EVENT_EXPOSE_BACKGROUND | 
                              ALTK_EVENT_MOUSE_ENTER |
                              ALTK_EVENT_MOUSE_BUTTON_DOWN |
                              ALTK_EVENT_MOUSE_BUTTON_UP);
@@ -144,10 +143,10 @@ static void _on_mouse_button_up_event ( AltkWidget *wid,
 
 
 
-/* _on_expose_background_event:
+/* _on_expose_event:
  */
-static void _on_expose_background_event ( AltkWidget *wid,
-                                          AltkEvent *event )
+static void _on_expose_event ( AltkWidget *wid,
+                               AltkEvent *event )
 {
   gint r;
   AltkRegionBox *box;
