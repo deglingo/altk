@@ -239,6 +239,27 @@ void altk_widget_queue_draw ( AltkWidget *widget,
 
 
 
+/* altk_widget_queue_resize:
+ */
+void altk_widget_queue_resize ( AltkWidget *widget )
+{
+  AltkWidget *w = widget;
+  while (TRUE)
+    {
+      w->flags |= ALTK_WIDGET_FLAG_NEEDS_RESIZE;
+      if (w->parent) {
+        w = w->parent;
+      } else {
+        AltkDisplay *display = altk_widget_get_display(w);
+        if (display)
+          altk_display_queue_resize(display, w);
+        break;
+      }
+    }
+}
+
+
+
 /* altk_widget_get_display:
  */
 struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget )

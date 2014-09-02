@@ -122,6 +122,8 @@ AltkDisplay *altk_display_from_al_display ( ALLEGRO_DISPLAY *al_display )
 
 
 /* _idle_resize:
+ *
+ * [REMOVEME]
  */
 static gboolean _idle_resize ( AltkDisplay *display )
 {
@@ -137,6 +139,31 @@ static gboolean _idle_resize ( AltkDisplay *display )
     alloc.height = req.height;
     altk_widget_size_allocate(wid, &alloc);
   }
+  return FALSE;
+}
+
+
+
+static gboolean _idle_resize2 ( AltkDisplay *display )
+{
+  GList *queue = display->resize_queue;
+  display->resize_queue = NULL;
+  while (queue)
+    {
+      AltkWidget *wid = queue->data;
+      AltkRequisition req = { 0, };
+      AltkAllocation alloc;
+      queue = g_list_delete_link(queue, queue);
+      altk_widget_size_request(wid, &req);
+      alloc.x = 0;
+      alloc.y = 0;
+      alloc.width = req.width;
+      alloc.height = req.height;
+      altk_widget_size_allocate(wid, &alloc);
+      /* [FIXME] l_object_unref(wid); */
+    }
+  /* remove the source */
+  display->resize_source_id = 0;
   return FALSE;
 }
 
@@ -408,6 +435,22 @@ void altk_display_queue_draw ( AltkDisplay *display,
                                                 display,
                                                 NULL);
   }
+}
+
+
+
+/* altk_widget_queue_resize:
+ */
+void altk_display_queue_resize ( AltkDisplay *display,
+                                 AltkWidget *widget )
+{
+  if (!g_list_find(display->resize_queue, widget))
+    display->resize_queue = g_list_prepend(display->resize_queue, l_object_ref(widget));
+  if (display->resize_source_id == 0)
+    display->resize_source_id = g_idle_add_full(ALTK_PRIORITY_RESIZE,
+                                                (GSourceFunc) _idle_resize2,
+                                                display,
+                                                NULL);
 }
 
 

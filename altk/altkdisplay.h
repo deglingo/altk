@@ -35,6 +35,9 @@ struct _AltkDisplay
   /* this one should be in private, only defined if DEBUG_UPDATES is
      enabled */
   AltkDrawable *debugbuf;
+  /* resize queue */
+  GList *resize_queue;
+  guint resize_source_id;
 };
 
 
@@ -55,6 +58,8 @@ void altk_display_attach_widget ( AltkDisplay *display,
                                   struct _AltkWidget *widget );
 void altk_display_queue_draw ( AltkDisplay *display,
                                AltkRegion *area );
+void altk_display_queue_resize ( AltkDisplay *display,
+                                 struct _AltkWidget *widget );
 struct _AltkWidget *altk_display_get_widget_at ( AltkDisplay *display,
                                                  gint x,
                                                  gint y );

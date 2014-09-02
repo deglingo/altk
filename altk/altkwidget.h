@@ -45,6 +45,16 @@ struct _AltkAllocation
 
 
 
+/* AltkWidgetFlags:
+ */
+typedef enum
+  {
+    ALTK_WIDGET_FLAG_NEEDS_RESIZE = 1 << 0,
+  }
+  AltkWidgetFlags;
+
+
+
 /* AltkWidget:
  */
 struct _AltkWidget
@@ -56,6 +66,8 @@ struct _AltkWidget
   AltkWidget *children_tail;
   AltkWidget *next;
   AltkWidget *prev;
+  /* flags */
+  AltkWidgetFlags flags;
   /* on-screen location (relative to parent widget) */
   gint x;
   gint y;
@@ -137,6 +149,7 @@ void altk_widget_set_state ( AltkWidget *widget,
                              AltkState state );
 void altk_widget_queue_draw ( AltkWidget *widget,
                               gboolean children );
+void altk_widget_queue_resize ( AltkWidget *widget );
 struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget );
 void altk_widget_get_root_coords ( AltkWidget *widget,
                                    gint *root_x,

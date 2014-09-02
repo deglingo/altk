@@ -129,6 +129,8 @@ static void _on_mouse_button_down_event ( AltkWidget *wid,
                                           AltkEvent *event )
 {
   CL_DEBUG("button down...");
+  altk_widget_set_state(wid, ALTK_STATE_ACTIVE);
+  altk_widget_queue_resize(wid);
 }
 
 
