@@ -5,6 +5,7 @@
 #include "altk/altkdisplay.h"
 #include "altk/altkmain.h"
 #include "altk/altkwidget.h"
+#include "altk/altkroot.h"
 #include "altk/altkevent.h"
 #include "altk/altkbitmap.h"
 
@@ -106,6 +107,7 @@ AltkDisplay *altk_display_new ( void )
   AltkDisplay *display;
   display = ALTK_DISPLAY(l_object_new(ALTK_CLASS_DISPLAY, NULL));
   /* [FIXME] insance init */
+  display->root = ALTK_WIDGET(l_object_new(ALTK_CLASS_ROOT, NULL));
   display->update_area = altk_region_new();
   return display;
 }

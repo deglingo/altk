@@ -22,8 +22,10 @@ struct _AltkDisplay
   ALTK_DISPLAY_INSTANCE_HEADER;
   /* the underlying allegro display */
   ALLEGRO_DISPLAY *al_display;
-  /* top-widgets attached to this display */
+  /* [REMOVEME] top-widgets attached to this display */
   GList *top_widgets;
+  /* the root widget, parent of all top-widgets */
+  struct _AltkWidget *root;
   /* id of the redraw idle source */
   guint redraw_source_id;
   /* area which needs a redraw */
