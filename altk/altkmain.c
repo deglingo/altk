@@ -77,6 +77,7 @@ static void _filter_event ( ALLEGRO_EVENT *al_event )
   AltkEvent event;
   AltkDisplay *display;
   AltkWidget *fly, *entered;
+  gint root_x, root_y;
   switch (al_event->type)
     {
     case ALLEGRO_EVENT_MOUSE_AXES:
@@ -88,17 +89,19 @@ static void _filter_event ( ALLEGRO_EVENT *al_event )
         entered = entered->parent;
       if (entered != _entered_widget) {
         if (_entered_widget) {
+          altk_widget_get_root_coords(_entered_widget, &root_x, &root_y);
           event.type = ALTK_EVENT_MOUSE_LEAVE;
           event.crossing.widget = _entered_widget;
-          event.crossing.mx = al_event->mouse.x - _entered_widget->root_x;
-          event.crossing.my = al_event->mouse.y - _entered_widget->root_y;
+          event.crossing.mx = al_event->mouse.x - root_x;
+          event.crossing.my = al_event->mouse.y - root_y;
           altk_event_process(&event);
         }
         if (entered) {
+          altk_widget_get_root_coords(entered, &root_x, &root_y);
           event.type = ALTK_EVENT_MOUSE_ENTER;
           event.crossing.widget = entered;
-          event.crossing.mx = al_event->mouse.x - entered->root_x;
-          event.crossing.my = al_event->mouse.y - entered->root_y;
+          event.crossing.mx = al_event->mouse.x - root_x;
+          event.crossing.my = al_event->mouse.y - root_y;
           altk_event_process(&event);
         }
         _entered_widget = entered;

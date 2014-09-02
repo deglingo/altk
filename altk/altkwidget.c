@@ -95,14 +95,6 @@ static void _on_size_allocate ( AltkWidget *wid,
   wid->y = alloc->y;
   wid->width = alloc->width;
   wid->height = alloc->height;
-  /* update root_x/y */
-  if (wid->parent) {
-    wid->root_x = wid->parent->root_x + alloc->x;
-    wid->root_y = wid->parent->root_y + alloc->y;
-  } else {
-    wid->root_x = alloc->x;
-    wid->root_y = alloc->y;
-  }
 }
 
 
@@ -127,12 +119,14 @@ AltkRegion *altk_widget_get_visible_area ( AltkWidget *widget,
 {
   /* [FIXME] */
   AltkRegion *area = altk_widget_get_shape(widget);
-  altk_region_offset(area, widget->root_x, widget->root_y);
+  gint root_x, root_y;
+  altk_widget_get_root_coords(widget, &root_x, &root_y);
+  altk_region_offset(area, root_x, root_y);
   if (clip_children) {
     AltkWidget *child;
     for (child = widget->children; child; child = child->next) {
       AltkRegion *child_area = altk_widget_get_shape(child);
-      altk_region_offset(child_area, child->root_x, child->root_y);
+      altk_region_offset(child_area, root_x + child->x, root_y + child->y);
       altk_region_subtract(area, child_area);
       altk_region_destroy(child_area);
     }
@@ -250,4 +244,20 @@ void altk_widget_queue_draw ( AltkWidget *widget,
 struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget )
 {
   return widget->display;
+}
+
+
+
+/* altk_widget_get_root_coords:
+ */
+void altk_widget_get_root_coords ( AltkWidget *widget,
+                                   gint *root_x,
+                                   gint *root_y )
+{
+  AltkWidget *w;
+  *root_x = *root_y = 0;
+  for (w = widget; w; w = w->parent) {
+    *root_x += w->x;
+    *root_y += w->y;
+  }
 }

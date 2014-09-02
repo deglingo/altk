@@ -89,14 +89,6 @@ static void _on_size_allocate ( AltkWidget *wid,
   wid->y = alloc->y;
   wid->width = alloc->width;
   wid->height = alloc->height;
-  /* update root_x/y */
-  if (wid->parent) {
-    wid->root_x = wid->parent->root_x + alloc->x;
-    wid->root_y = wid->parent->root_y + alloc->y;
-  } else {
-    wid->root_x = alloc->x;
-    wid->root_y = alloc->y;
-  }
   /* ---- */
   if (ALTK_BIN(wid)->child) {
     AltkAllocation child_alloc;

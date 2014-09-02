@@ -56,9 +56,7 @@ struct _AltkWidget
   AltkWidget *children_tail;
   AltkWidget *next;
   AltkWidget *prev;
-  /* on-screen location */
-  gint root_x;
-  gint root_y;
+  /* on-screen location (relative to parent widget) */
   gint x;
   gint y;
   gint width;
@@ -140,6 +138,9 @@ void altk_widget_set_state ( AltkWidget *widget,
 void altk_widget_queue_draw ( AltkWidget *widget,
                               gboolean children );
 struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget );
+void altk_widget_get_root_coords ( AltkWidget *widget,
+                                   gint *root_x,
+                                   gint *root_y );
 
 
 
