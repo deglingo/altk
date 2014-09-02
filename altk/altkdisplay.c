@@ -261,6 +261,28 @@ static gboolean _idle_redraw ( AltkDisplay *display )
   GList *l;
   AltkRegion *update_area = display->update_area;
   display->update_area = altk_region_new();
+  /* [FIXME] erase background */
+  {
+    ALLEGRO_STATE state;
+    gint r;
+    AltkRegionBox *box;
+    ALLEGRO_COLOR color = al_map_rgb(0, 0, 0);
+    gint cx, cy, cw, ch;
+    al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
+    al_set_target_bitmap(ALTK_BITMAP(display->backbuf)->al_bitmap);
+    al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
+    for (r = 0, box = update_area->rects; r < update_area->n_rects; r++, box++)
+      {
+        al_set_clipping_rectangle(box->x1,
+                                  box->y1,
+                                  box->x2 - box->x1,
+                                  box->y2 - box->y1);
+        al_clear_to_color(color);
+      }
+    al_set_clipping_rectangle(cx, cy, cw, ch);
+    al_restore_state(&state);
+  }
+  /* draw widgets */
   for (l = g_list_last(display->top_widgets); l; l = l->prev)
     {
       AltkWidget *wid = ALTK_WIDGET(l->data);
