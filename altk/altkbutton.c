@@ -91,10 +91,15 @@ static void _on_size_allocate ( AltkWidget *wid,
   /* ---- */
   if (ALTK_BIN(wid)->child) {
     AltkAllocation child_alloc;
-    child_alloc.x = 2;
-    child_alloc.y = 2;
-    child_alloc.width = alloc->width - 4;
-    child_alloc.height = alloc->height - 4;
+    gint disp;
+    if (wid->state == ALTK_STATE_ACTIVE)
+      disp = 1;
+    else
+      disp = 0;
+    child_alloc.x = 2 + disp;
+    child_alloc.y = 2 + disp;
+    child_alloc.width = alloc->width - (4 + disp);
+    child_alloc.height = alloc->height - (4 + disp);
     altk_widget_size_allocate(ALTK_BIN(wid)->child, &child_alloc);
   }
 }
@@ -141,6 +146,8 @@ static void _on_mouse_button_up_event ( AltkWidget *wid,
                                         AltkEvent *event )
 {
   CL_DEBUG("button up...");
+  altk_widget_set_state(wid, ALTK_STATE_PRELIGHT);
+  altk_widget_queue_resize(wid);
 }
 
 

@@ -20,6 +20,7 @@ static void _update_display ( AltkDisplay *display,
 /* debug */
 /* #define DEBUG_UPDATES */
 #ifdef DEBUG_UPDATES
+#define DEBUG_UPDATES_DELAY 100000 /* µs */
 #define DO_DEBUG_UPDATES(display, area, ofsx, ofsy, cr, cg, cb)  \
   _do_debug_updates((display), (area), (ofsx), (ofsy), (cr), (cg), (cb))
 static void _do_debug_updates ( AltkDisplay *display,
@@ -68,7 +69,7 @@ static void _do_debug_updates ( AltkDisplay *display,
       
     }
   al_flip_display();
-  g_usleep(1000000);
+  g_usleep(DEBUG_UPDATES_DELAY);
   /* restore the display */
   al_set_clipping_rectangle(0, 0,
                             al_get_display_width(display->al_display),

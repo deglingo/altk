@@ -73,6 +73,8 @@ struct _AltkWidget
   gint y;
   gint width;
   gint height;
+  /* current size_request */
+  AltkRequisition size_request;
   /* a style to draw the various part of the widget */
   struct _AltkStyle *style;
   /* graphic contexts */

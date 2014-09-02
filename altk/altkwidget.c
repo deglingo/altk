@@ -58,6 +58,8 @@ void altk_widget_map ( AltkWidget *widget,
   for (s = 0; s < ALTK_STATE_COUNT; s++) {
     widget->gc[s] = altk_gc_new();
   }
+  /* [REMOVEME] */
+  widget->flags |= ALTK_WIDGET_FLAG_NEEDS_RESIZE;
 }
 
 
@@ -67,7 +69,12 @@ void altk_widget_map ( AltkWidget *widget,
 void altk_widget_size_request ( AltkWidget *widget,
                                 AltkRequisition *req )
 {
-  ALTK_WIDGET_GET_CLASS(widget)->size_request(widget, req);
+  if (widget->flags & ALTK_WIDGET_FLAG_NEEDS_RESIZE)
+    {
+      ALTK_WIDGET_GET_CLASS(widget)->size_request(widget, &widget->size_request);
+      widget->flags &= ~ALTK_WIDGET_FLAG_NEEDS_RESIZE;
+    }
+  *req = widget->size_request;
   CL_DEBUG("size_request(%p) -> %d, %d",
            widget, req->width, req->height);
 }
