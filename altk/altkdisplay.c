@@ -12,8 +12,13 @@
 
 
 
+static void _update_display ( AltkDisplay *display,
+                              AltkRegion *area );
+
+
+
 /* debug */
-#define DEBUG_UPDATES
+/* #define DEBUG_UPDATES */
 #ifdef DEBUG_UPDATES
 #define DO_DEBUG_UPDATES(display, area, ofsx, ofsy, cr, cg, cb)  \
   _do_debug_updates((display), (area), (ofsx), (ofsy), (cr), (cg), (cb))
@@ -28,8 +33,10 @@ static void _do_debug_updates ( AltkDisplay *display,
   ALLEGRO_STATE state;
   gint r;
   AltkRegionBox *box;
-  ALLEGRO_COLOR color = al_map_rgba(cr, cg, cb, 127);
+  /* ALLEGRO_COLOR alpha_color = al_map_rgba(cr, cg, cb, 64); */
+  ALLEGRO_COLOR full_color = al_map_rgb(cr, cg, cb);
   gint cx, cy, cw, ch;
+  altk_region_offset(area, ofsx, ofsy);
   al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
   /* save the current display */
   al_set_target_bitmap(ALTK_BITMAP(display->debugbuf)->al_bitmap);
@@ -39,15 +46,26 @@ static void _do_debug_updates ( AltkDisplay *display,
   al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
   for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
     {
-      al_set_clipping_rectangle(ofsx + box->x1,
-                                ofsy + box->y1,
+      float rx1 = ((float) box->x1) + 0.5;
+      float ry1 = ((float) box->y1) + 0.5;
+      float rx2 = ((float) box->x2) - 0.5;
+      float ry2 = ((float) box->y2) - 0.5;
+      al_set_clipping_rectangle(box->x1,
+                                box->y1,
                                 box->x2 - box->x1,
                                 box->y2 - box->y1);
-      al_draw_filled_rectangle(ofsx + box->x1 - 1,
-                               ofsy + box->y1 - 1,
-                               ofsx + box->x2 + 1,
-                               ofsy + box->y2 + 1,
-                               color);
+      /* al_draw_filled_rectangle(box->x1 - 1, */
+      /*                          box->y1 - 1, */
+      /*                          box->x2 + 1, */
+      /*                          box->y2 + 1, */
+      /*                          alpha_color); */
+      al_draw_rectangle(rx1, ry1, rx2, ry2,
+                        full_color, 1.0);
+      al_draw_line(rx1, ry1, rx2, ry2,
+                   full_color, 1.0);
+      al_draw_line(rx2, ry1, rx1, ry2,
+                   full_color, 1.0);
+      
     }
   al_flip_display();
   g_usleep(1000000);
@@ -59,9 +77,11 @@ static void _do_debug_updates ( AltkDisplay *display,
   al_flip_display();
   al_set_clipping_rectangle(cx, cy, cw, ch);
   al_restore_state(&state);
+  /* _update_display(display, area); */
+  altk_region_offset(area, -ofsx, -ofsy);
 }
 #else
-#define DO_DEBUG_UPDATES(display, area, cr, cg, cb)
+#define DO_DEBUG_UPDATES(display, area, ofsx, ofsy, cr, cg, cb)
 #endif
 
 /* [FIXME] */
@@ -273,6 +293,11 @@ static void _process_widget_redraw ( AltkDisplay *display,
                                            wid_area,
                                            root_x,
                                            root_y);
+#ifdef DEBUG_UPDATES
+          altk_region_offset(wid_area, root_x, root_y);
+          _update_display(display, wid_area);
+          altk_region_offset(wid_area, -root_x, -root_y);
+#endif
         }
       /* process children */
       altk_region_offset(wid_area, root_x, root_y);
@@ -340,6 +365,9 @@ static gboolean _idle_redraw ( AltkDisplay *display )
       }
     al_set_clipping_rectangle(cx, cy, cw, ch);
     al_restore_state(&state);
+#ifdef DEBUG_UPDATES
+    _update_display(display, update_area);
+#endif
   }
   /* draw widgets */
   for (l = g_list_last(display->top_widgets); l; l = l->prev)
