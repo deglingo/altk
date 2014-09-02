@@ -85,9 +85,27 @@ static void _map_widget ( AltkWidget *widget,
  */
 void altk_display_open ( AltkDisplay *display )
 {
+  ALLEGRO_STATE state;
   GList *l;
-  display->al_display = al_create_display(640, 480);
-  display->backbuf = altk_bitmap_new_from_al_bitmap(al_get_backbuffer(display->al_display), FALSE);
+  al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_NEW_DISPLAY_PARAMETERS | ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_new_display_option(ALLEGRO_SINGLE_BUFFER, 1, ALLEGRO_REQUIRE);
+  /* al_set_new_display_option(ALLEGRO_SWAP_METHOD, 1, ALLEGRO_REQUIRE); */
+  if (!(display->al_display = al_create_display(640, 480)))
+    CL_ERROR("could not create allegro display");
+  al_restore_state(&state);
+  CL_DEBUG("allegro display created:");
+  CL_DEBUG(" - size         : %dx%d",
+           al_get_display_width(display->al_display),
+           al_get_display_height(display->al_display));
+  CL_DEBUG(" - color_size   : %d", al_get_display_option(display->al_display, ALLEGRO_COLOR_SIZE));
+  CL_DEBUG(" - render_method: %d", al_get_display_option(display->al_display, ALLEGRO_RENDER_METHOD));
+  CL_DEBUG(" - single_buffer: %d", al_get_display_option(display->al_display, ALLEGRO_SINGLE_BUFFER));
+  CL_DEBUG(" - swap_method  : %d", al_get_display_option(display->al_display, ALLEGRO_SWAP_METHOD));
+  if (!al_get_display_option(display->al_display, ALLEGRO_SINGLE_BUFFER) == 1)
+    CL_ERROR("[FIXME] display is not single-buffered!");
+  display->backbuf = altk_bitmap_new(display,
+                                     al_get_display_width(display->al_display),
+                                     al_get_display_height(display->al_display));
   g_dataset_id_set_data(display->al_display, ALTK_QUARK_AL_OWNER, display);
   altk_main_register_al_source(al_get_display_event_source(display->al_display));
   /* map all widgets */
@@ -210,11 +228,36 @@ static void _process_widget_redraw ( AltkDisplay *display,
 
 
 
+static void _update_display ( AltkDisplay *display,
+                              AltkRegion *area )
+{
+  /* [FIXME] don't know how to handle vsync */
+  ALLEGRO_STATE state;
+  gint r;
+  AltkRegionBox *box;
+  al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_backbuffer(display->al_display);
+  for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
+    {
+      al_draw_bitmap_region(ALTK_BITMAP(display->backbuf)->al_bitmap,
+                            box->x1,
+                            box->y1,
+                            box->x2 - box->x1,
+                            box->y2 - box->y1,
+                            box->x1,
+                            box->y1,
+                            0);
+    }
+  al_flip_display();
+  al_restore_state(&state);
+}
+
+
+
 /* _idle_redraw:
  */
 static gboolean _idle_redraw ( AltkDisplay *display )
 {
-  ALLEGRO_STATE state;
   GList *l;
   AltkRegion *update_area = display->update_area;
   display->update_area = altk_region_new();
@@ -223,11 +266,8 @@ static gboolean _idle_redraw ( AltkDisplay *display )
       AltkWidget *wid = ALTK_WIDGET(l->data);
       _process_widget_redraw(display, wid, update_area);
     }
-  /* flip display */
-  al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_backbuffer(display->al_display);
-  al_flip_display();
-  al_restore_state(&state);
+  /* update the display */
+  _update_display(display, update_area);
   /* cleanup */
   altk_region_destroy(update_area);
   /* uninstall the event source */
