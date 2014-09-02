@@ -12,6 +12,58 @@
 
 
 
+/* debug */
+#define DEBUG_UPDATES
+#ifdef DEBUG_UPDATES
+#define DO_DEBUG_UPDATES(display, area, ofsx, ofsy, cr, cg, cb)  \
+  _do_debug_updates((display), (area), (ofsx), (ofsy), (cr), (cg), (cb))
+static void _do_debug_updates ( AltkDisplay *display,
+                                AltkRegion *area,
+                                gint ofsx,
+                                gint ofsy,
+                                gint cr,
+                                gint cg,
+                                gint cb )
+{
+  ALLEGRO_STATE state;
+  gint r;
+  AltkRegionBox *box;
+  ALLEGRO_COLOR color = al_map_rgba(cr, cg, cb, 127);
+  gint cx, cy, cw, ch;
+  al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
+  /* save the current display */
+  al_set_target_bitmap(ALTK_BITMAP(display->debugbuf)->al_bitmap);
+  al_draw_bitmap(al_get_backbuffer(display->al_display), 0, 0, 0);
+  /* draw the region */
+  al_set_target_backbuffer(display->al_display);
+  al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
+  for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
+    {
+      al_set_clipping_rectangle(ofsx + box->x1,
+                                ofsy + box->y1,
+                                box->x2 - box->x1,
+                                box->y2 - box->y1);
+      al_draw_filled_rectangle(ofsx + box->x1 - 1,
+                               ofsy + box->y1 - 1,
+                               ofsx + box->x2 + 1,
+                               ofsy + box->y2 + 1,
+                               color);
+    }
+  al_flip_display();
+  g_usleep(1000000);
+  /* restore the display */
+  al_set_clipping_rectangle(0, 0,
+                            al_get_display_width(display->al_display),
+                            al_get_display_height(display->al_display));
+  al_draw_bitmap(ALTK_BITMAP(display->debugbuf)->al_bitmap, 0, 0, 0);
+  al_flip_display();
+  al_set_clipping_rectangle(cx, cy, cw, ch);
+  al_restore_state(&state);
+}
+#else
+#define DO_DEBUG_UPDATES(display, area, cr, cg, cb)
+#endif
+
 /* [FIXME] */
 #define ALTK_PRIORITY_RESIZE 0
 #define ALTK_PRIORITY_REDRAW 100
@@ -106,6 +158,11 @@ void altk_display_open ( AltkDisplay *display )
   display->backbuf = altk_bitmap_new(display,
                                      al_get_display_width(display->al_display),
                                      al_get_display_height(display->al_display));
+#ifdef DEBUG_UPDATES
+  display->debugbuf = altk_bitmap_new(display,
+                                     al_get_display_width(display->al_display),
+                                     al_get_display_height(display->al_display));
+#endif
   g_dataset_id_set_data(display->al_display, ALTK_QUARK_AL_OWNER, display);
   altk_main_register_al_source(al_get_display_event_source(display->al_display));
   /* map all widgets */
@@ -198,6 +255,7 @@ static void _process_widget_redraw ( AltkDisplay *display,
       if (widget->event_mask & ALTK_EVENT_EXPOSE)
         {
           AltkEvent event;
+          DO_DEBUG_UPDATES(display, wid_area, root_x, root_y, 0, 0, 255);
           /* create/grow the dblbuf */
           altk_region_get_clipbox(wid_area, &wid_extents);
           _grow_dblbuf(display,
@@ -261,6 +319,7 @@ static gboolean _idle_redraw ( AltkDisplay *display )
   GList *l;
   AltkRegion *update_area = display->update_area;
   display->update_area = altk_region_new();
+  DO_DEBUG_UPDATES(display, update_area, 0, 0, 255, 255, 0);
   /* [FIXME] erase background */
   {
     ALLEGRO_STATE state;

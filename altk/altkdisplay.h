@@ -32,6 +32,9 @@ struct _AltkDisplay
   AltkDrawable *backbuf;
   /* the double-buffer to safely draw widgets */
   AltkDrawable *dblbuf;
+  /* this one should be in private, only defined if DEBUG_UPDATES is
+     enabled */
+  AltkDrawable *debugbuf;
 };
 
 
