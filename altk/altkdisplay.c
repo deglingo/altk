@@ -125,29 +125,6 @@ AltkDisplay *altk_display_from_al_display ( ALLEGRO_DISPLAY *al_display )
 
 
 
-/* _idle_resize:
- *
- * [REMOVEME]
- */
-static gboolean _idle_resize ( AltkDisplay *display )
-{
-  GList *l;
-  for (l = display->top_widgets; l; l = l->next) {
-    AltkWidget *wid = ALTK_WIDGET(l->data);
-    AltkRequisition req = { 0, };
-    AltkAllocation alloc;
-    altk_widget_size_request(wid, &req);
-    alloc.x = 0;
-    alloc.y = 0;
-    alloc.width = req.width;
-    alloc.height = req.height;
-    altk_widget_size_allocate(wid, &alloc);
-  }
-  return FALSE;
-}
-
-
-
 static gboolean _idle_resize2 ( AltkDisplay *display )
 {
   GList *queue = display->resize_queue;
@@ -180,6 +157,30 @@ static void _map_widget ( AltkWidget *widget,
 {
   altk_widget_map(widget, display);
   altk_widget_forall(widget, (AltkForeachFunc) _map_widget, display);
+}
+
+
+
+/* _process_resize:
+ *
+ * Process all pending resizes for this display.
+ */
+static void _process_resize ( AltkDisplay *display )
+{
+  GList *l;
+  /* [FIXME] use the resize_queue instead */
+  for (l = display->top_widgets; l; l = l->next)
+    {
+      AltkWidget *wid = ALTK_WIDGET(l->data);
+      AltkRequisition req = { 0, 0 };
+      AltkAllocation alloc;
+      altk_widget_size_request(wid, &req);
+      alloc.x = 0;
+      alloc.y = 0;
+      alloc.width = req.width;
+      alloc.height = req.height;
+      altk_widget_size_allocate(wid, &alloc);
+    }
 }
 
 
@@ -223,11 +224,9 @@ void altk_display_open ( AltkDisplay *display )
   for (l = display->top_widgets; l; l = l->next) {
     _map_widget(ALTK_WIDGET(l->data), display);
   }
-  /* [FIXME] */
-  g_idle_add_full(ALTK_PRIORITY_RESIZE,
-                  (GSourceFunc) _idle_resize,
-                  display,
-                  NULL);
+  /* process all resize immediately */
+  _process_resize(display);
+  /* [TODO] realize all widgets */
   /* [FIXME] */
   altk_display_queue_draw(display, NULL);
 }
