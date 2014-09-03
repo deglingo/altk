@@ -153,6 +153,19 @@ static void _on_expose_event ( AltkWidget *wid,
 
 
 
+/* altk_widget_foreach:
+ */
+void altk_widget_foreach ( AltkWidget *widget,
+                           AltkForeachFunc func,
+                           gpointer data )
+{
+  if (ALTK_WIDGET_GET_CLASS(widget)->foreach) {
+    ALTK_WIDGET_GET_CLASS(widget)->foreach(widget, func, data);
+  }
+}
+
+
+
 /* altk_widget_forall:
  */
 void altk_widget_forall ( AltkWidget *widget,

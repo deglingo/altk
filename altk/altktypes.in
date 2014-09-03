@@ -18,7 +18,9 @@ namespace Altk
   class Label : Widget {
     void class_init ();
   };
-  class Container : Widget;
+  class Container : Widget {
+    void class_init ();
+  };
   class Bin : Container {
     void class_init ();
   };

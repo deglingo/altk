@@ -104,6 +104,10 @@ struct _AltkWidgetClass
                             AltkAllocation *alloc );
 
   /* [FIXME] should be in AltkContainer only ? */
+  void (* foreach) ( AltkWidget *widget,
+                     AltkForeachFunc func,
+                     gpointer data );
+
   void (* forall) ( AltkWidget *widget,
                     AltkForeachFunc func,
                     gpointer data );
@@ -141,6 +145,9 @@ void altk_widget_size_request ( AltkWidget *widget,
 void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc );
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget );
+void altk_widget_foreach ( AltkWidget *widget,
+                           AltkForeachFunc func,
+                           gpointer data );
 void altk_widget_forall ( AltkWidget *widget,
                           AltkForeachFunc func,
                           gpointer data );
