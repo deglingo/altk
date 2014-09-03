@@ -8,9 +8,9 @@
 
 
 
-static void _on_forall ( AltkWidget *wid,
-                         AltkForeachFunc func,
-                         gpointer data );
+/* static void _on_forall ( AltkWidget *wid, */
+/*                          AltkForeachFunc func, */
+/*                          gpointer data ); */
 static void _on_add ( AltkContainer *cont,
                       AltkWidget *child );
 
@@ -20,21 +20,21 @@ static void _on_add ( AltkContainer *cont,
  */
 static void altk_bin_class_init ( LObjectClass *cls )
 {
-  ((AltkWidgetClass *) cls)->forall = _on_forall;
+  /* ((AltkWidgetClass *) cls)->forall = _on_forall; */
   ((AltkContainerClass *) cls)->add = _on_add;
 }
 
 
 
-/* _on_forall:
- */
-static void _on_forall ( AltkWidget *wid,
-                         AltkForeachFunc func,
-                         gpointer data )
-{
-  if (ALTK_BIN(wid)->child)
-    func(ALTK_BIN(wid)->child, data);
-}
+/* /\* _on_forall: */
+/*  *\/ */
+/* static void _on_forall ( AltkWidget *wid, */
+/*                          AltkForeachFunc func, */
+/*                          gpointer data ) */
+/* { */
+/*   if (ALTK_BIN(wid)->child) */
+/*     func(ALTK_BIN(wid)->child, data); */
+/* } */
 
 
 
