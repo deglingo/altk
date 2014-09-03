@@ -12,6 +12,7 @@
 
 
 struct _AltkWidget;
+struct _AltkWindow;
 
 
 
@@ -26,6 +27,8 @@ struct _AltkDisplay
   GList *top_widgets;
   /* the root widget, parent of all top-widgets */
   struct _AltkWidget *root;
+  /* the root window */
+  struct _AltkWindow *root_window;
   /* id of the redraw idle source */
   guint redraw_source_id;
   /* area which needs a redraw */

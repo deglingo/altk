@@ -9,6 +9,10 @@
 
 
 
+struct _AltkDisplay;
+
+
+
 /* AltkWindow:
  */
 struct _AltkWindow
@@ -24,6 +28,10 @@ struct _AltkWindowClass
 {
   ALTK_WINDOW_CLASS_HEADER;
 };
+
+
+
+AltkWindow *altk_window_new_root ( struct _AltkDisplay *display );
 
 
 

@@ -8,6 +8,7 @@
 #include "altk/altkroot.h"
 #include "altk/altkevent.h"
 #include "altk/altkbitmap.h"
+#include "altk/altkwindow.h"
 
 #include "altk/altkdisplay.inl"
 
@@ -214,6 +215,9 @@ void altk_display_open ( AltkDisplay *display )
                                      al_get_display_height(display->al_display));
 #endif
   g_dataset_id_set_data(display->al_display, ALTK_QUARK_AL_OWNER, display);
+  /* create the root window */
+  display->root_window = altk_window_new_root(display);
+  /* register the display event source */
   altk_main_register_al_source(al_get_display_event_source(display->al_display));
   /* map all widgets */
   for (l = display->top_widgets; l; l = l->next) {
