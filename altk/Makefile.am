@@ -12,6 +12,7 @@ includealtk_HEADERS = \
 	altkfont.h altkfont-def.h \
 	altkgc.h altkgc-def.h \
 	altkdrawable.h altkdrawable-def.h \
+	altkwindow.h altkwindow-def.h \
 	altkbitmap.h altkbitmap-def.h \
 	altkdisplay.h altkdisplay-def.h \
 	altkstyle.h altkstyle-def.h \
@@ -33,6 +34,7 @@ libaltk_la_SOURCES = \
 	altkfont.c \
 	altkgc.c \
 	altkdrawable.c \
+	altkwindow.c \
 	altkbitmap.c \
 	altkdisplay.c \
 	altkstyle.c \
@@ -48,6 +50,7 @@ BUILT_SOURCES = \
 	altkfont-def.h altkfont.inl \
 	altkgc-def.h altkgc.inl \
 	altkdrawable-def.h altkdrawable.inl \
+	altkwindow-def.h altkwindow.inl \
 	altkbitmap-def.h altkbitmap.inl \
 	altkdisplay-def.h altkdisplay.inl \
 	altkstyle-def.h altkstyle.inl \
@@ -62,6 +65,7 @@ BUILT_SOURCES = \
 altkfont-def.h altkfont.inl \
 altkgc-def.h altkgc.inl \
 altkdrawable-def.h altkdrawable.inl \
+altkwindow-def.h altkwindow.inl \
 altkbitmap-def.h altkbitmap.inl \
 altkdisplay-def.h altkdisplay.inl \
 altkstyle-def.h altkstyle.inl \
