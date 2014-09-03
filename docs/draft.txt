@@ -1,0 +1,59 @@
+======================================================================
+                                 ALTK
+======================================================================
+
+
+Resize/realize...
+=================
+
+
+Display.open()
+--------------
+
+  - map all visible widgets
+  - process all resize
+  - realize all visible widgets
+
+
+Top-widget init
+---------------
+
+attach the widget to display (AltkDisplay.topwidgets)
+
+
+Widget.queue_resize()
+---------------------
+
+// [FIXME] invalidate the window ?
+BEGIN
+  w <- widget
+  WHILE TRUE DO
+    IF w is not visible THEN
+      BREAK
+    ENDIF
+    // [FIXME] stop here if NEEDS_RESIZE is already set ?
+    set NEEDS_RESIZE flag for w
+    IF w is a top-widget THEN
+      add w to the resize queue
+      IF w is realized THEN
+        install the 'idle resize' event
+      ENDIF
+      BREAK
+    ENDIF
+    w <- w.parent
+  DONE
+END
+
+
+Widget.show()
+-------------
+
+  - Set the VISIBLE flag
+  - Call altk_widget_queue_resize().
+
+
+Container.add()
+---------------
+
+Implementation must call altk_widget_queue_resize(child) - no need to
+check for visibility as this is done by the queue_resize method.
