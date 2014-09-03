@@ -50,8 +50,11 @@ struct _AltkAllocation
 typedef enum
   {
     ALTK_WIDGET_FLAG_NEEDS_RESIZE = 1 << 0,
+    ALTK_WIDGET_FLAG_VISIBLE = 1 << 1,
   }
   AltkWidgetFlags;
+
+#define ALTK_WIDGET_VISIBLE(w) (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_VISIBLE)
 
 
 

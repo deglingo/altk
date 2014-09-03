@@ -172,14 +172,17 @@ static void _process_resize ( AltkDisplay *display )
   for (l = display->top_widgets; l; l = l->next)
     {
       AltkWidget *wid = ALTK_WIDGET(l->data);
-      AltkRequisition req = { 0, 0 };
-      AltkAllocation alloc;
-      altk_widget_size_request(wid, &req);
-      alloc.x = 0;
-      alloc.y = 0;
-      alloc.width = req.width;
-      alloc.height = req.height;
-      altk_widget_size_allocate(wid, &alloc);
+      if (ALTK_WIDGET_VISIBLE(wid))
+        {
+          AltkRequisition req = { 0, 0 };
+          AltkAllocation alloc;
+          altk_widget_size_request(wid, &req);
+          alloc.x = 0;
+          alloc.y = 0;
+          alloc.width = req.width;
+          alloc.height = req.height;
+          altk_widget_size_allocate(wid, &alloc);
+        }
     }
 }
 
@@ -222,7 +225,8 @@ void altk_display_open ( AltkDisplay *display )
   altk_main_register_al_source(al_get_display_event_source(display->al_display));
   /* map all widgets */
   for (l = display->top_widgets; l; l = l->next) {
-    _map_widget(ALTK_WIDGET(l->data), display);
+    if (ALTK_WIDGET_VISIBLE(l->data))
+      _map_widget(ALTK_WIDGET(l->data), display);
   }
   /* process all resize immediately */
   _process_resize(display);
