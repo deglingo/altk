@@ -8,6 +8,7 @@
 #include "altk/altkevent.h"
 #include "altk/altkbitmap.h"
 #include "altk/altkwindow.h"
+#include "altk/altkwm.h"
 
 #include "altk/altkdisplay.inl"
 
@@ -101,16 +102,6 @@ AltkDisplay *altk_display_new ( void )
   /* [FIXME] insance init */
   display->update_area = altk_region_new();
   return display;
-}
-
-
-
-/* altk_display_from_al_display:
- */
-AltkDisplay *altk_display_from_al_display ( ALLEGRO_DISPLAY *al_display )
-{
-  gpointer display = g_dataset_id_get_data(al_display, ALTK_QUARK_AL_OWNER);
-  return display ? ALTK_DISPLAY(display) : NULL;
 }
 
 
@@ -210,11 +201,12 @@ void altk_display_open ( AltkDisplay *display )
                                      al_get_display_width(display->al_display),
                                      al_get_display_height(display->al_display));
 #endif
-  g_dataset_id_set_data(display->al_display, ALTK_QUARK_AL_OWNER, display);
+  /* register the display */
+  altk_wm_register_display(display);
   /* create the root window */
   display->root_window = altk_window_new_root(display);
   /* register the display event source */
-  altk_main_register_al_source(al_get_display_event_source(display->al_display));
+  altk_wm_register_al_source(al_get_display_event_source(display->al_display));
   /* map all widgets */
   for (l = display->top_widgets; l; l = l->next) {
     if (ALTK_WIDGET_VISIBLE(l->data))

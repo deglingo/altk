@@ -13,6 +13,7 @@ includealtk_HEADERS = \
 	altkgc.h altkgc-def.h \
 	altkdrawable.h altkdrawable-def.h \
 	altkwindow.h altkwindow-def.h \
+	altkwm.h \
 	altkbitmap.h altkbitmap-def.h \
 	altkdisplay.h altkdisplay-def.h \
 	altkstyle.h altkstyle-def.h \
@@ -34,6 +35,7 @@ libaltk_la_SOURCES = \
 	altkgc.c \
 	altkdrawable.c \
 	altkwindow.c \
+	altkwm.c \
 	altkbitmap.c \
 	altkdisplay.c \
 	altkstyle.c \

@@ -8,8 +8,7 @@
 
 
 void _altk_main_init ( void );
-
-GQuark ALTK_QUARK_AL_OWNER = 0;
+void _altk_wm_init ( void );
 
 
 
@@ -27,8 +26,7 @@ int altk_init ( void )
     CL_ERROR("could not initialize the font addon");
   if (!al_install_mouse())
     CL_ERROR("could not initialize the mouse driver");
-  ALTK_QUARK_AL_OWNER = g_quark_from_string("altk-quark-al-owner");
   _altk_main_init();
-  altk_main_register_al_source(al_get_mouse_event_source());
+  _altk_wm_init();
   return 0;
 }
