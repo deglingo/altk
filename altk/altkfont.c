@@ -7,14 +7,6 @@
 
 
 
-/* altk_font_class_init:
- */
-static void altk_font_class_init ( LObjectClass *cls )
-{
-}
-
-
-
 /* altk_font_new_builtin:
  */
 AltkFont *altk_font_new_builtin ( void )

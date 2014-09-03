@@ -7,14 +7,6 @@
 
 
 
-/* altk_window_class_init:
- */
-static void altk_window_class_init ( LObjectClass *cls )
-{
-}
-
-
-
 /* altk_window_new_root:
  */
 AltkWindow *altk_window_new_root ( struct _AltkDisplay *display )
