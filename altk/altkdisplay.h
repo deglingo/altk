@@ -39,7 +39,7 @@ struct _AltkDisplay
      enabled */
   AltkDrawable *debugbuf;
   /* resize queue */
-  GList *resize_queue;
+  GSList *resize_queue;
   guint resize_source_id;
 };
 

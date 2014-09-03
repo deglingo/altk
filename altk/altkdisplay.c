@@ -106,31 +106,6 @@ AltkDisplay *altk_display_new ( void )
 
 
 
-static gboolean _idle_resize2 ( AltkDisplay *display )
-{
-  GList *queue = display->resize_queue;
-  display->resize_queue = NULL;
-  while (queue)
-    {
-      AltkWidget *wid = queue->data;
-      AltkRequisition req = { 0, };
-      AltkAllocation alloc;
-      queue = g_list_delete_link(queue, queue);
-      altk_widget_size_request(wid, &req);
-      alloc.x = 0;
-      alloc.y = 0;
-      alloc.width = req.width;
-      alloc.height = req.height;
-      altk_widget_size_allocate(wid, &alloc);
-      /* [FIXME] l_object_unref(wid); */
-    }
-  /* remove the source */
-  display->resize_source_id = 0;
-  return FALSE;
-}
-
-
-
 /* _map_widget:
  */
 static void _map_widget ( AltkWidget *widget,
@@ -150,11 +125,13 @@ static void _map_widget ( AltkWidget *widget,
  */
 static void _process_resize ( AltkDisplay *display )
 {
-  GList *l;
-  /* [FIXME] use the resize_queue instead */
-  for (l = display->top_widgets; l; l = l->next)
+  GSList *queue;
+  queue = display->resize_queue;
+  display->resize_queue = NULL;
+  while (queue)
     {
-      AltkWidget *wid = ALTK_WIDGET(l->data);
+      AltkWidget *wid = ALTK_WIDGET(queue->data);
+      queue = g_slist_delete_link(queue, queue);
       if (ALTK_WIDGET_VISIBLE(wid))
         {
           AltkRequisition req = { 0, 0 };
@@ -177,6 +154,7 @@ void altk_display_open ( AltkDisplay *display )
 {
   ALLEGRO_STATE state;
   GList *l;
+  /* create the ALLEGRO_DISPLAY */
   al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_NEW_DISPLAY_PARAMETERS | ALLEGRO_STATE_TARGET_BITMAP);
   al_set_new_display_option(ALLEGRO_SINGLE_BUFFER, 1, ALLEGRO_REQUIRE);
   /* al_set_new_display_option(ALLEGRO_SWAP_METHOD, 1, ALLEGRO_REQUIRE); */
@@ -193,9 +171,11 @@ void altk_display_open ( AltkDisplay *display )
   CL_DEBUG(" - swap_method  : %d", al_get_display_option(display->al_display, ALLEGRO_SWAP_METHOD));
   if (!al_get_display_option(display->al_display, ALLEGRO_SINGLE_BUFFER) == 1)
     CL_ERROR("[FIXME] display is not single-buffered!");
+  /* create our own backbuffer */
   display->backbuf = altk_bitmap_new(display,
                                      al_get_display_width(display->al_display),
                                      al_get_display_height(display->al_display));
+  /* [REMOVEME] (and create some bitmap in the debug_update func) */
 #ifdef DEBUG_UPDATES
   display->debugbuf = altk_bitmap_new(display,
                                      al_get_display_width(display->al_display),
@@ -203,10 +183,10 @@ void altk_display_open ( AltkDisplay *display )
 #endif
   /* register the display */
   altk_wm_register_display(display);
-  /* create the root window */
-  display->root_window = altk_window_new_root(display);
   /* register the display event source */
   altk_wm_register_al_source(al_get_display_event_source(display->al_display));
+  /* create the root window */
+  display->root_window = altk_window_new_root(display);
   /* map all widgets */
   for (l = display->top_widgets; l; l = l->next) {
     if (ALTK_WIDGET_VISIBLE(l->data))
@@ -215,8 +195,6 @@ void altk_display_open ( AltkDisplay *display )
   /* process all resize immediately */
   _process_resize(display);
   /* [TODO] realize all widgets */
-  /* [FIXME] */
-  altk_display_queue_draw(display, NULL);
 }
 
 
@@ -438,13 +416,14 @@ void altk_display_queue_draw ( AltkDisplay *display,
 void altk_display_queue_resize ( AltkDisplay *display,
                                  AltkWidget *widget )
 {
-  if (!g_list_find(display->resize_queue, widget))
-    display->resize_queue = g_list_prepend(display->resize_queue, l_object_ref(widget));
-  if (display->resize_source_id == 0)
-    display->resize_source_id = g_idle_add_full(ALTK_PRIORITY_RESIZE,
-                                                (GSourceFunc) _idle_resize2,
-                                                display,
-                                                NULL);
+  CL_DEBUG("[TODO] queue_resize(%p)", widget);
+  /* if (!g_list_find(display->resize_queue, widget)) */
+  /*   display->resize_queue = g_list_prepend(display->resize_queue, l_object_ref(widget)); */
+  /* if (display->resize_source_id == 0) */
+  /*   display->resize_source_id = g_idle_add_full(ALTK_PRIORITY_RESIZE, */
+  /*                                               (GSourceFunc) _idle_resize2, */
+  /*                                               display, */
+  /*                                               NULL); */
 }
 
 
