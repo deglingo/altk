@@ -20,7 +20,6 @@ includealtk_HEADERS = \
 	altklabel.h altklabel-def.h \
 	altkcontainer.h altkcontainer-def.h \
 	altkbin.h altkbin-def.h \
-	altkroot.h altkroot-def.h \
 	altkbutton.h altkbutton-def.h \
 	altkdialog.h altkdialog-def.h
 
@@ -42,7 +41,6 @@ libaltk_la_SOURCES = \
 	altklabel.c \
 	altkcontainer.c \
 	altkbin.c \
-	altkroot.c \
 	altkbutton.c \
 	altkdialog.c
 
@@ -58,7 +56,6 @@ BUILT_SOURCES = \
 	altklabel-def.h altklabel.inl \
 	altkcontainer-def.h altkcontainer.inl \
 	altkbin-def.h altkbin.inl \
-	altkroot-def.h altkroot.inl \
 	altkbutton-def.h altkbutton.inl \
 	altkdialog-def.h altkdialog.inl
 
@@ -73,7 +70,6 @@ altkwidget-def.h altkwidget.inl \
 altklabel-def.h altklabel.inl \
 altkcontainer-def.h altkcontainer.inl \
 altkbin-def.h altkbin.inl \
-altkroot-def.h altkroot.inl \
 altkbutton-def.h altkbutton.inl \
 altkdialog-def.h altkdialog.inl \
 : altktypes.stamp-h
