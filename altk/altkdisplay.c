@@ -170,8 +170,10 @@ static gboolean _idle_resize2 ( AltkDisplay *display )
 static void _map_widget ( AltkWidget *widget,
                           AltkDisplay *display )
 {
+  AltkWidget *child;
   altk_widget_map(widget, display);
-  altk_widget_forall(widget, (AltkForeachFunc) _map_widget, display);
+  for (child = widget->children; child; child = child->next)
+    _map_widget(widget, display);
 }
 
 

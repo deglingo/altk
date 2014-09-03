@@ -18,8 +18,8 @@ struct _AltkGC;
 typedef struct _AltkRequisition AltkRequisition;
 typedef struct _AltkAllocation AltkAllocation;
 
-typedef void (* AltkForeachFunc) ( AltkWidget *widget,
-                                   gpointer data );
+/* typedef void (* AltkForeachFunc) ( AltkWidget *widget, */
+/*                                    gpointer data ); */
 
 
 
@@ -101,10 +101,10 @@ struct _AltkWidgetClass
   void (* size_allocate ) ( AltkWidget *widget,
                             AltkAllocation *alloc );
 
-  /* [FIXME] should be in AltkContainer only ? */
-  void (* forall) ( AltkWidget *widget,
-                    AltkForeachFunc func,
-                    gpointer data );
+  /* /\* [FIXME] should be in AltkContainer only ? *\/ */
+  /* void (* forall) ( AltkWidget *widget, */
+  /*                   AltkForeachFunc func, */
+  /*                   gpointer data ); */
 
   /* events */
   void (* expose_event) ( AltkWidget *widget,
@@ -141,9 +141,9 @@ void altk_widget_size_allocate ( AltkWidget *widget,
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget );
 AltkRegion *altk_widget_get_visible_area ( AltkWidget *widget,
                                            gboolean clip_children );
-void altk_widget_forall ( AltkWidget *widget,
-                          AltkForeachFunc func,
-                          gpointer data );
+/* void altk_widget_forall ( AltkWidget *widget, */
+/*                           AltkForeachFunc func, */
+/*                           gpointer data ); */
 void altk_widget_set_event_mask ( AltkWidget *widget,
                                   AltkEventType mask );
 AltkEventType altk_widget_get_event_mask ( AltkWidget *widget );
