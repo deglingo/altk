@@ -235,13 +235,14 @@ void altk_widget_set_state ( AltkWidget *widget,
 void altk_widget_queue_draw ( AltkWidget *widget,
                               gboolean children )
 {
-  AltkDisplay *display;
-  AltkRegion *area;
-  display = altk_widget_get_display(widget);
-  ASSERT(display); /* [FIXME] */
-  area = altk_widget_get_visible_area(widget, !children);
-  altk_display_queue_draw(display, area);
-  altk_region_destroy(area);
+  CL_DEBUG("[TODO] widget_queue_draw(%p)", widget);
+  /* AltkDisplay *display; */
+  /* AltkRegion *area; */
+  /* display = altk_widget_get_display(widget); */
+  /* ASSERT(display); /\* [FIXME] *\/ */
+  /* area = altk_widget_get_visible_area(widget, !children); */
+  /* altk_display_queue_draw(display, area); */
+  /* altk_region_destroy(area); */
 }
 
 
@@ -250,19 +251,20 @@ void altk_widget_queue_draw ( AltkWidget *widget,
  */
 void altk_widget_queue_resize ( AltkWidget *widget )
 {
-  AltkWidget *w = widget;
-  while (TRUE)
-    {
-      w->flags |= ALTK_WIDGET_FLAG_NEEDS_RESIZE;
-      if (w->parent) {
-        w = w->parent;
-      } else {
-        AltkDisplay *display = altk_widget_get_display(w);
-        if (display)
-          altk_display_queue_resize(display, w);
-        break;
-      }
-    }
+  CL_DEBUG("[TODO] widget_queue_resize(%p)", widget);
+  /* AltkWidget *w = widget; */
+  /* while (TRUE) */
+  /*   { */
+  /*     w->flags |= ALTK_WIDGET_FLAG_NEEDS_RESIZE; */
+  /*     if (w->parent) { */
+  /*       w = w->parent; */
+  /*     } else { */
+  /*       AltkDisplay *display = altk_widget_get_display(w); */
+  /*       if (display) */
+  /*         altk_display_queue_resize(display, w); */
+  /*       break; */
+  /*     } */
+  /*   } */
 }
 
 

@@ -27,20 +27,8 @@ struct _AltkDisplay
   GList *top_widgets;
   /* the root window */
   struct _AltkWindow *root_window;
-  /* id of the redraw idle source */
-  guint redraw_source_id;
-  /* area which needs a redraw */
-  AltkRegion *update_area;
-  /* the display back-buffer */
+  /* [FIXME] remove ? - the display back-buffer */
   AltkDrawable *backbuf;
-  /* the double-buffer to safely draw widgets */
-  AltkDrawable *dblbuf;
-  /* this one should be in private, only defined if DEBUG_UPDATES is
-     enabled */
-  AltkDrawable *debugbuf;
-  /* resize queue */
-  GSList *resize_queue;
-  guint resize_source_id;
 };
 
 
@@ -58,13 +46,6 @@ AltkDisplay *altk_display_new ( void );
 void altk_display_open ( AltkDisplay *display );
 void altk_display_attach_widget ( AltkDisplay *display,
                                   struct _AltkWidget *widget );
-void altk_display_queue_draw ( AltkDisplay *display,
-                               AltkRegion *area );
-void altk_display_queue_resize ( AltkDisplay *display,
-                                 struct _AltkWidget *widget );
-struct _AltkWidget *altk_display_get_widget_at ( AltkDisplay *display,
-                                                 gint x,
-                                                 gint y );
 
 
 
