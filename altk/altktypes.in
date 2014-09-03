@@ -7,13 +7,28 @@ namespace Altk
   class GC;
   class Drawable;
   class Window;
-  class Bitmap : Drawable;
+  class Bitmap : Drawable {
+    void class_init ();
+  };
   class Style;
-  class Widget;
-  class Label : Widget;
+  class Widget
+  {
+    void class_init ();
+  };
+  class Label : Widget {
+    void class_init ();
+  };
   class Container : Widget;
-  class Bin : Container;
-  class Root : Container;
-  class Button : Bin;
-  class Dialog : Bin;
+  class Bin : Container {
+    void class_init ();
+  };
+  class Root : Container {
+    void class_init ();
+  };
+  class Button : Bin {
+    void class_init ();
+  };
+  class Dialog : Bin {
+    void class_init ();
+  };
 }

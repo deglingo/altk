@@ -93,14 +93,6 @@ static void _do_debug_updates ( AltkDisplay *display,
 
 
 
-/* altk_display_class_init:
- */
-static void altk_display_class_init ( LObjectClass *cls )
-{
-}
-
-
-
 /* altk_display_new:
  */
 AltkDisplay *altk_display_new ( void )

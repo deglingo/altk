@@ -7,14 +7,6 @@
 
 
 
-/* altk_drawable_class_init:
- */
-static void altk_drawable_class_init ( LObjectClass *cls )
-{
-}
-
-
-
 /* altk_drawable_set_offset:
  */
 void altk_drawable_set_offset ( AltkDrawable *drawable,

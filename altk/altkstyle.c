@@ -10,14 +10,6 @@
 
 
 
-/* altk_style_class_init:
- */
-static void altk_style_class_init ( LObjectClass *cls )
-{
-}
-
-
-
 /* altk_style_new:
  */
 AltkStyle *altk_style_new ( void )
