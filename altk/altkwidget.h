@@ -18,8 +18,11 @@ struct _AltkGC;
 typedef struct _AltkRequisition AltkRequisition;
 typedef struct _AltkAllocation AltkAllocation;
 
-/* typedef void (* AltkForeachFunc) ( AltkWidget *widget, */
-/*                                    gpointer data ); */
+typedef gboolean (* AltkForeachFunc) ( AltkWidget *widget,
+                                       gpointer data );
+
+#define ALTK_FOREACH_CONT (TRUE)
+#define ALTK_FOREACH_STOP (FALSE)
 
 
 
@@ -65,10 +68,6 @@ struct _AltkWidget
   ALTK_WIDGET_INSTANCE_HEADER;
   /* the parent widget */
   AltkWidget *parent;
-  AltkWidget *children;
-  AltkWidget *children_tail;
-  AltkWidget *next;
-  AltkWidget *prev;
   /* flags */
   AltkWidgetFlags flags;
   /* on-screen location (relative to parent widget) */
@@ -104,10 +103,10 @@ struct _AltkWidgetClass
   void (* size_allocate ) ( AltkWidget *widget,
                             AltkAllocation *alloc );
 
-  /* /\* [FIXME] should be in AltkContainer only ? *\/ */
-  /* void (* forall) ( AltkWidget *widget, */
-  /*                   AltkForeachFunc func, */
-  /*                   gpointer data ); */
+  /* [FIXME] should be in AltkContainer only ? */
+  void (* forall) ( AltkWidget *widget,
+                    AltkForeachFunc func,
+                    gpointer data );
 
   /* events */
   void (* expose_event) ( AltkWidget *widget,
@@ -131,8 +130,8 @@ struct _AltkWidgetClass
 
 
 
-void _altk_widget_attach_child ( AltkWidget *widget,
-                                 AltkWidget *child );
+void _altk_widget_set_parent ( AltkWidget *widget,
+                               AltkWidget *parent );
 void altk_widget_map ( AltkWidget *widget,
                        struct _AltkDisplay *display );
 void altk_widget_event ( AltkWidget *widget,
@@ -142,11 +141,9 @@ void altk_widget_size_request ( AltkWidget *widget,
 void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc );
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget );
-AltkRegion *altk_widget_get_visible_area ( AltkWidget *widget,
-                                           gboolean clip_children );
-/* void altk_widget_forall ( AltkWidget *widget, */
-/*                           AltkForeachFunc func, */
-/*                           gpointer data ); */
+void altk_widget_forall ( AltkWidget *widget,
+                          AltkForeachFunc func,
+                          gpointer data );
 void altk_widget_set_event_mask ( AltkWidget *widget,
                                   AltkEventType mask );
 AltkEventType altk_widget_get_event_mask ( AltkWidget *widget );

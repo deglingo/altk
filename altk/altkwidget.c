@@ -27,22 +27,14 @@ static void altk_widget_class_init ( LObjectClass *cls )
 
 
 
-/* _altk_widget_attach_child:
+/* _altk_widget_set_parent:
  */
-void _altk_widget_attach_child ( AltkWidget *widget,
-                                 AltkWidget *child )
+void _altk_widget_set_parent ( AltkWidget *widget,
+                               AltkWidget *parent )
 {
-  ASSERT(!child->parent);
-  ASSERT(!child->next);
-  ASSERT(!child->prev);
-  l_object_ref(child);
-  child->parent = widget;
-  child->prev = widget->children_tail;
-  if (widget->children) {
-    ASSERT(0); /* [TODO] */
-  } else {
-    widget->children = widget->children_tail = child;
-  }
+  ASSERT(!widget->parent);
+  widget->parent = parent;
+  /* [TODO] map, resize, queue_draw, realize... */
 }
 
 
@@ -119,30 +111,6 @@ AltkRegion *altk_widget_get_shape ( AltkWidget *widget )
 
 
 
-/* altk_widget_get_visible_area:
- */
-AltkRegion *altk_widget_get_visible_area ( AltkWidget *widget,
-                                           gboolean clip_children )
-{
-  /* [FIXME] */
-  AltkRegion *area = altk_widget_get_shape(widget);
-  gint root_x, root_y;
-  altk_widget_get_root_coords(widget, &root_x, &root_y);
-  altk_region_offset(area, root_x, root_y);
-  if (clip_children) {
-    AltkWidget *child;
-    for (child = widget->children; child; child = child->next) {
-      AltkRegion *child_area = altk_widget_get_shape(child);
-      altk_region_offset(child_area, root_x + child->x, root_y + child->y);
-      altk_region_subtract(area, child_area);
-      altk_region_destroy(child_area);
-    }
-  }
-  return area;
-}
-
-
-
 /* altk_widget_event:
  */
 void altk_widget_event ( AltkWidget *widget,
@@ -185,16 +153,16 @@ static void _on_expose_event ( AltkWidget *wid,
 
 
 
-/* /\* altk_widget_forall: */
-/*  *\/ */
-/* void altk_widget_forall ( AltkWidget *widget, */
-/*                           AltkForeachFunc func, */
-/*                           gpointer data ) */
-/* { */
-/*   if (ALTK_WIDGET_GET_CLASS(widget)->forall) { */
-/*     ALTK_WIDGET_GET_CLASS(widget)->forall(widget, func, data); */
-/*   } */
-/* } */
+/* altk_widget_forall:
+ */
+void altk_widget_forall ( AltkWidget *widget,
+                          AltkForeachFunc func,
+                          gpointer data )
+{
+  if (ALTK_WIDGET_GET_CLASS(widget)->forall) {
+    ALTK_WIDGET_GET_CLASS(widget)->forall(widget, func, data);
+  }
+}
 
 
 
