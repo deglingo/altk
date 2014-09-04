@@ -89,8 +89,6 @@ struct _AltkWidget
   guint event_mask;
   /* current state of the widget */
   AltkState state;
-  /* [FIXME] the display on which this widget is attached */
-  struct _AltkDisplay *display;
 };
 
 
@@ -100,6 +98,8 @@ struct _AltkWidget
 struct _AltkWidgetClass
 {
   ALTK_WIDGET_CLASS_HEADER;
+
+  struct _AltkDisplay * (*get_display) ( AltkWidget *widget );
 
   void (* map) ( AltkWidget *widget,
                  struct _AltkDisplay *display );

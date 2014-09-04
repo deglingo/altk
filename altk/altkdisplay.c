@@ -87,6 +87,15 @@ void altk_display_open ( AltkDisplay *display )
 
 
 
+/* altk_display_is_open:
+ */
+gboolean altk_display_is_open ( AltkDisplay *display )
+{
+  return display->al_display ? TRUE : FALSE;
+}
+
+
+
 /* altk_display_attach_widget:
  */
 void altk_display_attach_widget ( AltkDisplay *display,

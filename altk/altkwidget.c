@@ -10,6 +10,7 @@
 
 
 
+static AltkDisplay *_on_get_display ( AltkWidget *widget );
 static void _on_map ( AltkWidget *widget,
                       AltkDisplay *display );
 static void _on_size_allocate ( AltkWidget *wid,
@@ -23,6 +24,7 @@ static void _on_expose_event ( AltkWidget *wid,
  */
 static void altk_widget_class_init ( LObjectClass *cls )
 {
+  ((AltkWidgetClass *) cls)->get_display = _on_get_display;
   ((AltkWidgetClass *) cls)->map = _on_map;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
   ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
@@ -42,6 +44,29 @@ void _altk_widget_set_parent ( AltkWidget *widget,
 
 
 
+/* _on_get_display:
+ */
+static AltkDisplay *_on_get_display ( AltkWidget *widget )
+{
+  while (widget) {
+    if (ALTK_WIDGET_TOP_WIDGET(widget))
+      return altk_widget_get_display(widget);
+    widget = widget->parent;
+  }
+  return NULL;
+}
+
+
+
+/* altk_widget_get_display:
+ */
+struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget )
+{
+  return ALTK_WIDGET_GET_CLASS(widget)->get_display(widget);
+}
+
+
+
 /* altk_widget_map:
  */
 void altk_widget_map ( AltkWidget *widget,
@@ -57,14 +82,15 @@ void altk_widget_map ( AltkWidget *widget,
 static void _on_map ( AltkWidget *widget,
                       AltkDisplay *display )
 {
-  gint s;
-  widget->display = display;
-  widget->style = altk_style_new();
-  for (s = 0; s < ALTK_STATE_COUNT; s++) {
-    widget->gc[s] = altk_gc_new();
-  }
   /* [REMOVEME] */
-  widget->flags |= ALTK_WIDGET_FLAG_NEEDS_RESIZE;
+  /* gint s; */
+  /* widget->display = display; */
+  /* widget->style = altk_style_new(); */
+  /* for (s = 0; s < ALTK_STATE_COUNT; s++) { */
+  /*   widget->gc[s] = altk_gc_new(); */
+  /* } */
+  /* /\* [REMOVEME] *\/ */
+  /* widget->flags |= ALTK_WIDGET_FLAG_NEEDS_RESIZE; */
 }
 
 
@@ -77,7 +103,7 @@ static gboolean _realize_child ( AltkWidget *widget,
   ASSERT(!ALTK_WIDGET_REALIZED(widget));
   ASSERT(ALTK_WIDGET_TOP_WIDGET(widget) ||
          (widget->parent && ALTK_WIDGET_REALIZED(widget->parent)));
-  /* ASSERT(altk_display_is_open(altk_widget_get_display(widget))); */
+  ASSERT(altk_display_is_open(altk_widget_get_display(widget)));
   CL_DEBUG("[TODO] widget_realize(%p)", widget);
   /* Widget.realize(widget) */
   widget->flags |= ALTK_WIDGET_FLAG_REALIZED; /* [removeme] ?? */
@@ -320,15 +346,6 @@ void altk_widget_queue_resize ( AltkWidget *widget )
   /*       break; */
   /*     } */
   /*   } */
-}
-
-
-
-/* altk_widget_get_display:
- */
-struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget )
-{
-  return widget->display;
 }
 
 

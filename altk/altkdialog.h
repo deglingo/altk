@@ -17,6 +17,8 @@ struct _AltkDisplay;
 struct _AltkDialog
 {
   ALTK_DIALOG_INSTANCE_HEADER;
+
+  struct _AltkDisplay *display;
 };
 
 

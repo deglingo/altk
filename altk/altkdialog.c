@@ -10,6 +10,7 @@
 
 
 
+static AltkDisplay *_on_get_display ( AltkWidget *widget );
 static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req );
 static void _on_size_allocate ( AltkWidget *wid,
@@ -23,6 +24,7 @@ static void _on_expose_event ( AltkWidget *wid,
  */
 static void altk_dialog_class_init ( LObjectClass *cls )
 {
+  ((AltkWidgetClass *) cls)->get_display = _on_get_display;
   ((AltkWidgetClass *) cls)->size_request = _on_size_request;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
   ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
@@ -46,8 +48,19 @@ AltkWidget *altk_dialog_new ( AltkDisplay *display )
   AltkWidget *dlg;
   dlg = ALTK_WIDGET(l_object_new(ALTK_CLASS_DIALOG, NULL));
   altk_widget_set_event_mask(dlg, ALTK_EVENT_EXPOSE);
+  /* [fixme] atach dialog <> display */
   altk_display_attach_widget(display, dlg);
+  ALTK_DIALOG(dlg)->display = display;
   return dlg;
+}
+
+
+
+/* _on_get_display:
+ */
+static AltkDisplay *_on_get_display ( AltkWidget *widget )
+{
+  return ALTK_DIALOG(widget)->display;
 }
 
 
