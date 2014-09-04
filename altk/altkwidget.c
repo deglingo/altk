@@ -10,6 +10,8 @@
 
 
 
+static void _on_map ( AltkWidget *widget,
+                      AltkDisplay *display );
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc );
 static void _on_expose_event ( AltkWidget *wid,
@@ -21,6 +23,7 @@ static void _on_expose_event ( AltkWidget *wid,
  */
 static void altk_widget_class_init ( LObjectClass *cls )
 {
+  ((AltkWidgetClass *) cls)->map = _on_map;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
   ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
 }
@@ -43,6 +46,16 @@ void _altk_widget_set_parent ( AltkWidget *widget,
  */
 void altk_widget_map ( AltkWidget *widget,
                        struct _AltkDisplay *display )
+{
+  ALTK_WIDGET_GET_CLASS(widget)->map(widget, display);
+}
+
+
+
+/* _on_map:
+ */
+static void _on_map ( AltkWidget *widget,
+                      AltkDisplay *display )
 {
   gint s;
   widget->display = display;

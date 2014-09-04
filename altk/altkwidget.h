@@ -97,6 +97,9 @@ struct _AltkWidgetClass
 {
   ALTK_WIDGET_CLASS_HEADER;
 
+  void (* map) ( AltkWidget *widget,
+                 struct _AltkDisplay *display );
+
   void (* size_request) ( AltkWidget *widget,
                           AltkRequisition *req );
 
