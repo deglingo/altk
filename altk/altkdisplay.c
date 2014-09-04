@@ -37,13 +37,11 @@ static gboolean _map_widget ( AltkWidget *widget,
 
 
 
-/* altk_display_open:
+/* _create_al_display:
  */
-void altk_display_open ( AltkDisplay *display )
+static void _create_al_display ( AltkDisplay *display )
 {
   ALLEGRO_STATE state;
-  GList *l;
-  /* create the ALLEGRO_DISPLAY */
   al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_NEW_DISPLAY_PARAMETERS | ALLEGRO_STATE_TARGET_BITMAP);
   al_set_new_display_option(ALLEGRO_SINGLE_BUFFER, 1, ALLEGRO_REQUIRE);
   /* al_set_new_display_option(ALLEGRO_SWAP_METHOD, 1, ALLEGRO_REQUIRE); */
@@ -60,6 +58,18 @@ void altk_display_open ( AltkDisplay *display )
   CL_DEBUG(" - swap_method  : %d", al_get_display_option(display->al_display, ALLEGRO_SWAP_METHOD));
   if (!al_get_display_option(display->al_display, ALLEGRO_SINGLE_BUFFER) == 1)
     CL_ERROR("[FIXME] display is not single-buffered!");
+}
+
+
+
+/* altk_display_open:
+ */
+void altk_display_open ( AltkDisplay *display )
+{
+  GList *l;
+  ASSERT(!display->al_display);
+  /* create the ALLEGRO_DISPLAY */
+  _create_al_display(display);
   /* create our own backbuffer */
   display->backbuf = altk_bitmap_new(display,
                                      al_get_display_width(display->al_display),
