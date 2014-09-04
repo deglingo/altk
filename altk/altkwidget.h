@@ -54,10 +54,12 @@ typedef enum
   {
     ALTK_WIDGET_FLAG_NEEDS_RESIZE = 1 << 0,
     ALTK_WIDGET_FLAG_VISIBLE = 1 << 1,
+    ALTK_WIDGET_FLAG_TOP_WIDGET = 1 << 2,
   }
   AltkWidgetFlags;
 
 #define ALTK_WIDGET_VISIBLE(w) (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_VISIBLE)
+#define ALTK_WIDGET_TOP_WIDGET(w) (ALTK_WIDGET(w)->flags & ALTK_WIDGET_TOP_WIDGET)
 
 
 

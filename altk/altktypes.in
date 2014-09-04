@@ -29,5 +29,6 @@ namespace Altk
   };
   class Dialog : Bin {
     void class_init ();
+    void init ();
   };
 }
