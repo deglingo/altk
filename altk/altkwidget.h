@@ -104,6 +104,8 @@ struct _AltkWidgetClass
   void (* map) ( AltkWidget *widget,
                  struct _AltkDisplay *display );
 
+  void (* realize) ( AltkWidget *widget );
+
   void (* size_request) ( AltkWidget *widget,
                           AltkRequisition *req );
 

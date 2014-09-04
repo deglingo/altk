@@ -13,6 +13,7 @@
 static AltkDisplay *_on_get_display ( AltkWidget *widget );
 static void _on_map ( AltkWidget *widget,
                       AltkDisplay *display );
+static void _on_realize ( AltkWidget *widget );
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc );
 static void _on_expose_event ( AltkWidget *wid,
@@ -26,6 +27,7 @@ static void altk_widget_class_init ( LObjectClass *cls )
 {
   ((AltkWidgetClass *) cls)->get_display = _on_get_display;
   ((AltkWidgetClass *) cls)->map = _on_map;
+  ((AltkWidgetClass *) cls)->realize = _on_realize;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
   ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
 }
@@ -104,8 +106,7 @@ static gboolean _realize_child ( AltkWidget *widget,
   ASSERT(ALTK_WIDGET_TOP_WIDGET(widget) ||
          (widget->parent && ALTK_WIDGET_REALIZED(widget->parent)));
   ASSERT(altk_display_is_open(altk_widget_get_display(widget)));
-  CL_DEBUG("[TODO] widget_realize(%p)", widget);
-  /* Widget.realize(widget) */
+  ALTK_WIDGET_GET_CLASS(widget)->realize(widget);
   widget->flags |= ALTK_WIDGET_FLAG_REALIZED; /* [removeme] ?? */
   altk_widget_foreach(widget, (AltkForeachFunc) _realize_child, NULL);
   return ALTK_FOREACH_CONT;
@@ -118,6 +119,15 @@ static gboolean _realize_child ( AltkWidget *widget,
 void altk_widget_realize ( AltkWidget *widget )
 {
   _realize_child(widget, NULL);
+}
+
+
+
+/* _on_realize:
+ */
+static void _on_realize ( AltkWidget *widget )
+{
+  CL_DEBUG("[TODO] realize(%p)", widget);
 }
 
 
