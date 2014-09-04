@@ -76,10 +76,10 @@ void altk_display_open ( AltkDisplay *display )
   altk_wm_register_al_source(al_get_display_event_source(display->al_display));
   /* create the root window */
   display->root_window = altk_window_new_root(display);
-  /* map all widgets */
+  /* realize all visible widgets */
   for (l = display->top_widgets; l; l = l->next) {
     if (ALTK_WIDGET_VISIBLE(l->data))
-      _map_widget(ALTK_WIDGET(l->data), display);
+      altk_widget_realize(ALTK_WIDGET(l->data));
   }
   /* [TODO] process all resize immediately */
   /* [TODO] realize all widgets */

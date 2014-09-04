@@ -69,6 +69,33 @@ static void _on_map ( AltkWidget *widget,
 
 
 
+/* _realize_child:
+ */
+static gboolean _realize_child ( AltkWidget *widget,
+                                 gpointer data )
+{
+  ASSERT(!ALTK_WIDGET_REALIZED(widget));
+  ASSERT(ALTK_WIDGET_TOP_WIDGET(widget) ||
+         (widget->parent && ALTK_WIDGET_REALIZED(widget->parent)));
+  /* ASSERT(altk_display_is_open(altk_widget_get_display(widget))); */
+  CL_DEBUG("[TODO] widget_realize(%p)", widget);
+  /* Widget.realize(widget) */
+  widget->flags |= ALTK_WIDGET_FLAG_REALIZED; /* [removeme] ?? */
+  altk_widget_foreach(widget, (AltkForeachFunc) _realize_child, NULL);
+  return ALTK_FOREACH_CONT;
+}
+
+
+
+/* altk_widget_realize:
+ */
+void altk_widget_realize ( AltkWidget *widget )
+{
+  _realize_child(widget, NULL);
+}
+
+
+
 /* altk_widget_size_request:
  */
 void altk_widget_size_request ( AltkWidget *widget,
