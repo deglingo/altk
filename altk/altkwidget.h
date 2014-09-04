@@ -149,6 +149,8 @@ void altk_widget_size_request ( AltkWidget *widget,
                                 AltkRequisition *req );
 void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc );
+void altk_widget_show ( AltkWidget *widget );
+void altk_widget_show_all ( AltkWidget *widget );
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget );
 void altk_widget_foreach ( AltkWidget *widget,
                            AltkForeachFunc func,

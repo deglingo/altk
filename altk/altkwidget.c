@@ -111,6 +111,40 @@ static void _on_size_allocate ( AltkWidget *wid,
 
 
 
+/* altk_widget_show:
+ */
+void altk_widget_show ( AltkWidget *widget )
+{
+  if (ALTK_WIDGET_VISIBLE(widget))
+    return;
+  widget->flags |= ALTK_WIDGET_FLAG_VISIBLE;
+  CL_DEBUG("[TODO] widget_show(%p)", widget);
+}
+
+
+
+/* _show_all:
+ */
+static gboolean _show_all ( AltkWidget *widget,
+                            gpointer data )
+{
+  /* show children first */
+  altk_widget_foreach(widget, (AltkForeachFunc) _show_all, NULL);
+  altk_widget_show(widget);
+  return ALTK_FOREACH_CONT;
+}
+
+
+
+/* altk_widget_show_all:
+ */
+void altk_widget_show_all ( AltkWidget *widget )
+{
+  _show_all(widget, NULL);
+}
+
+
+
 /* altk_widget_get_shape:
  */
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget )
