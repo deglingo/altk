@@ -143,7 +143,6 @@ static void _filter_event ( ALLEGRO_EVENT *al_event )
           if (entered->event_mask & ALTK_EVENT_MASK_MOUSE_CROSSING)
             break;
         }
-        CL_DEBUG("entered window: %p (%p)", entered, flywin);
         if (entered != wm->entered_window)
           {
             if (wm->entered_window)
