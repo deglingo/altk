@@ -96,6 +96,9 @@ void altk_window_begin_draw ( AltkWindow *window,
                               AltkRegion *area );
 void altk_window_end_draw ( AltkWindow *window,
                             AltkRegion *area );
+AltkWindow *altk_window_get_child_at ( AltkWindow *window,
+                                       gint x,
+                                       gint y );
 
 
 

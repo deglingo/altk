@@ -49,6 +49,7 @@ enum _AltkEventMask
     ALTK_EVENT_MASK_EXPOSE = 1 << 0,
     ALTK_EVENT_MASK_MOUSE_MOTION = 1 << 1,
     ALTK_EVENT_MASK_MOUSE_BUTTON = 1 << 2,
+    ALTK_EVENT_MASK_MOUSE_CROSSING = 1 << 3,
   };
 
 

@@ -432,3 +432,27 @@ void altk_window_end_draw ( AltkWindow *window,
   altk_display_invalidate_region(window->display, area);
   altk_region_offset(area, -window->root_x, -window->root_y);
 }
+
+
+
+/* altk_window_get_child_at:
+ */
+AltkWindow *altk_window_get_child_at ( AltkWindow *window,
+                                       gint x,
+                                       gint y )
+{
+  if (x >= 0 && x < window->width && y >= 0 && y < window->height)
+    {
+      AltkWindow *child, *r;
+      for (child = window->children; child; child = child->next)
+        {
+          if ((r = altk_window_get_child_at(child, x - child->x, y - child->y)))
+            return r;
+        }
+      return window;
+    }
+  else
+    {
+      return NULL;
+    }
+}

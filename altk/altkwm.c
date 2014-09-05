@@ -4,6 +4,8 @@
 #include "altk/private.h"
 #include "altk/altkwm.h"
 #include "altk/altkdisplay.h"
+#include "altk/altkevent.h"
+#include "altk/altkwindow.h"
 
 
 
@@ -26,6 +28,8 @@ typedef struct _AltkWM
   AlSource *al_source;
   /* map <ALLEGRO_DISPLAY *, AltkDisplay *> */
   GHashTable *display_map;
+  /* currently 'entered' window */
+  AltkWindow *entered_window;
 }
   AltkWM;
 
@@ -122,7 +126,48 @@ static gboolean _al_source_check ( GSource *src )
  */
 static void _filter_event ( ALLEGRO_EVENT *al_event )
 {
-  CL_DEBUG("[TODO] filter_event(%d)", al_event->type);
+  AltkEvent event;
+  switch (al_event->type)
+    {
+    case ALLEGRO_EVENT_MOUSE_AXES:
+      {
+        AltkDisplay *display;
+        AltkWindow *flywin, *entered;
+        display = altk_wm_lookup_display(al_event->mouse.display);
+        ASSERT(display);
+        flywin = altk_window_get_child_at(altk_display_get_root_window(display),
+                                          al_event->mouse.x,
+                                          al_event->mouse.y);
+        /* entered/leave event */
+        for (entered = flywin; entered; entered = entered->parent) {
+          if (entered->event_mask & ALTK_EVENT_MASK_MOUSE_CROSSING)
+            break;
+        }
+        CL_DEBUG("entered window: %p (%p)", entered, flywin);
+        if (entered != wm->entered_window)
+          {
+            if (wm->entered_window)
+              {
+                event.type = ALTK_EVENT_MOUSE_LEAVE;
+                event.crossing.window = wm->entered_window;
+                event.crossing.mx = al_event->mouse.x - wm->entered_window->root_x;
+                event.crossing.my = al_event->mouse.y - wm->entered_window->root_y;
+                altk_event_process(&event);
+              }
+            if ((wm->entered_window = entered))
+              {
+                event.type = ALTK_EVENT_MOUSE_ENTER;
+                event.crossing.window = wm->entered_window;
+                event.crossing.mx = al_event->mouse.x - wm->entered_window->root_x;
+                event.crossing.my = al_event->mouse.y - wm->entered_window->root_y;
+                altk_event_process(&event);
+              }
+          }
+      }
+      break;
+    default:
+      CL_DEBUG("[TODO] filter_event(%d)", al_event->type);
+    }
 }
 
 

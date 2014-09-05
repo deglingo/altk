@@ -82,7 +82,7 @@ static void _on_realize ( AltkWidget *wid )
                                                    wid->width,
                                                    wid->height);
   altk_window_set_event_mask(ALTK_BUTTON(wid)->event_window,
-                             ALTK_EVENT_MASK_MOUSE_MOTION |
+                             ALTK_EVENT_MASK_MOUSE_CROSSING |
                              ALTK_EVENT_MASK_MOUSE_BUTTON);
 }
 
@@ -116,6 +116,12 @@ static void _on_size_allocate ( AltkWidget *wid,
   wid->y = alloc->y;
   wid->width = alloc->width;
   wid->height = alloc->height;
+  /* */
+  altk_window_set_bounds(ALTK_BUTTON(wid)->event_window,
+                         alloc->x,
+                         alloc->y,
+                         alloc->width,
+                         alloc->height);
   /* ---- */
   if (ALTK_BIN(wid)->child) {
     AltkAllocation child_alloc;
