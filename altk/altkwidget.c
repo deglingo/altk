@@ -287,6 +287,25 @@ AltkRegion *altk_widget_get_shape ( AltkWidget *widget )
 
 
 
+/* _event_expose:
+ */
+static gboolean _event_expose ( AltkWidget *widget,
+                                AltkEvent *event )
+{
+  /* stop traversal for widget having a window */
+  if ((gpointer) widget != event->expose.window->user_data
+      && !ALTK_WIDGET_NOWINDOW(widget))
+    return ALTK_FOREACH_CONT;
+  /* process the event */
+  /* [FIXME] call altk_widget_event() for each child ? */
+  ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
+  /* process children */
+  altk_widget_forall(widget, (AltkForeachFunc) _event_expose, event);
+  return ALTK_FOREACH_CONT;
+}
+
+
+
 /* altk_widget_event:
  */
 void altk_widget_event ( AltkWidget *widget,
@@ -298,7 +317,7 @@ void altk_widget_event ( AltkWidget *widget,
     ALTK_WIDGET_GET_CLASS(widget)->expose_background_event(widget, event);
     break;
   case ALTK_EVENT_EXPOSE:
-    ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
+    _event_expose(widget, event);
     break;
   case ALTK_EVENT_MOUSE_ENTER:
     ALTK_WIDGET_GET_CLASS(widget)->mouse_enter_event(widget, event);

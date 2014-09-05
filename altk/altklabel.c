@@ -71,6 +71,7 @@ static void _on_size_request ( AltkWidget *wid,
 static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
+  CL_DEBUG("[TODO] Label.expose_event()");
   /* altk_style_draw_text(wid->style, */
   /*                      event->expose.window, */
   /*                      wid->gc[ALTK_STATE_NORMAL/\*[fixme]*\/], */
