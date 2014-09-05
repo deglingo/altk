@@ -28,5 +28,6 @@ void altk_event_set_handler ( AltkEventHandler handler,
  */
 void altk_event_process ( AltkEvent *event )
 {
-  CL_DEBUG("[TODO] event_process(%d)", event->type);
+  ASSERT(event_handler);
+  event_handler(event, event_handler_data);
 }
