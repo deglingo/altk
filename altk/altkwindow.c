@@ -96,7 +96,12 @@ static void _process_redraw ( AltkWindow *window )
   GSList *q;
   event.type = ALTK_EVENT_EXPOSE;
   event.expose.window = window;
+  /* [TODO] clip area to visible area */
+  event.expose.area = window->update_area;
   altk_event_process(&event);
+  /* [FIXME] clear update_area */
+  altk_region_destroy(window->update_area);
+  window->update_area = altk_region_new();
   /* remove from redraw_queue */
   if ((q = g_slist_find(redraw_queue, window))) {
     /* [TODO] l_object_unref(window) */
