@@ -5,10 +5,12 @@
 #include "altk/altkbutton.h"
 #include "altk/altklabel.h"
 #include "altk/altkbitmap.h" /* [REMOVEME] */
+#include "altk/altkwindow.h"
 #include "altk/altkbutton.inl"
 
 
 
+static void _on_realize ( AltkWidget *wid );
 static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req );
 static void _on_size_allocate ( AltkWidget *wid,
@@ -30,6 +32,7 @@ static void _on_expose_event ( AltkWidget *wid,
  */
 static void altk_button_class_init ( LObjectClass *cls )
 {
+  ((AltkWidgetClass *) cls)->realize = _on_realize;
   ((AltkWidgetClass *) cls)->size_request = _on_size_request;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
   ((AltkWidgetClass *) cls)->mouse_enter_event = _on_mouse_enter_event;
@@ -65,6 +68,21 @@ AltkWidget *altk_button_new_with_label ( const gchar *text )
   altk_container_add(ALTK_CONTAINER(but), lbl);
   /* [FIXME] l_object_unref(lbl); */
   return but;
+}
+
+
+
+/* _on_realize:
+ */
+static void _on_realize ( AltkWidget *wid )
+{
+  wid->window = wid->parent->window;
+  ALTK_BUTTON(wid)->event_window = altk_window_new(wid->parent->window,
+                                                   wid->x,
+                                                   wid->y,
+                                                   wid->width,
+                                                   wid->height);
+  /* [TODO] set event_mask */
 }
 
 

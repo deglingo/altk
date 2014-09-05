@@ -14,6 +14,9 @@
 struct _AltkButton
 {
   ALTK_BUTTON_INSTANCE_HEADER;
+
+  /* input-only window to catch mouse events */
+  struct _AltkWindow *event_window;
 };
 
 
