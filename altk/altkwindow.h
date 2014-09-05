@@ -33,6 +33,8 @@ struct _AltkWindow
   /* global coordinates (relative to root window) */
   gint root_x;
   gint root_y;
+  /* area of the window which needs redraw */
+  AltkRegion *update_area;
   /* some data for the user, totally ignored by the window itself */
   gpointer user_data;
 };
@@ -61,6 +63,7 @@ void altk_window_set_bounds ( AltkWindow *window,
                               gint height );
 void altk_window_invalidate ( AltkWindow *window,
                               AltkRegion *area );
+AltkRegion *altk_window_get_visible_area ( AltkWindow *window );
 
 
 

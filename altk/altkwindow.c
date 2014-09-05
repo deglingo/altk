@@ -23,6 +23,8 @@ AltkWindow *altk_window_new_root ( struct _AltkDisplay *display )
   win = ALTK_WINDOW(l_object_new(ALTK_CLASS_WINDOW, NULL));
   /* set size */
   altk_display_get_size(display, &win->width, &win->height);
+  /* update_area */
+  win->update_area = altk_region_new();
   return win;
 }
 
@@ -55,6 +57,8 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
   win->height = height;
   win->root_x = parent->root_x + x;
   win->root_y = parent->root_y + y;
+  /* update_area */
+  win->update_area = altk_region_new();
   /* invalidate the whole window */
   altk_window_invalidate(win, NULL);
   /* all done */
@@ -129,14 +133,47 @@ static gboolean _idle_redraw ( gpointer data )
 void altk_window_invalidate ( AltkWindow *window,
                               AltkRegion *area )
 {
-  /* [TODO] update_area */
-  /* add window to redraw_queue */
-  if (!g_slist_find(redraw_queue, window))
-    redraw_queue = g_slist_prepend(redraw_queue, l_object_ref(window));
-  /* install the expose event source */
-  if (redraw_source_id == 0)
-    redraw_source_id = g_idle_add_full(ALTK_PRIORITY_EXPOSE,
-                                       (GSourceFunc) _idle_redraw,
-                                       NULL,
-                                       NULL);
+  AltkRegion *vis_area;
+  vis_area = altk_window_get_visible_area(window);
+  if (!area) {
+    AltkRectangle rect;
+    rect.x = rect.y = 0;
+    rect.width = window->width;
+    rect.height = window->height;
+    /* [FIXME] altk_region_intersect_rect() */
+    area = altk_region_rectangle(&rect);
+    altk_region_intersect(vis_area, area);
+    altk_region_destroy(area);
+    area = NULL;
+  } else {
+    altk_region_intersect(vis_area, area);
+  }
+  altk_region_union(window->update_area, vis_area);
+  altk_region_destroy(vis_area);
+  if (!altk_region_empty(window->update_area))
+    {
+      /* add window to redraw_queue */
+      if (!g_slist_find(redraw_queue, window))
+        redraw_queue = g_slist_prepend(redraw_queue, l_object_ref(window));
+      /* install the expose event source */
+      if (redraw_source_id == 0)
+        redraw_source_id = g_idle_add_full(ALTK_PRIORITY_EXPOSE,
+                                           (GSourceFunc) _idle_redraw,
+                                           NULL,
+                                           NULL);
+    }
+}
+
+
+
+/* altk_window_get_visible_area:
+ */
+AltkRegion *altk_window_get_visible_area ( AltkWindow *window )
+{
+  /* [FIXME] */
+  AltkRectangle r;
+  r.x = r.y = 0;
+  r.width = window->width;
+  r.height = window->height;
+  return altk_region_rectangle(&r);
 }
