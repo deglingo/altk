@@ -20,6 +20,12 @@ static void _on_expose_event ( AltkWidget *wid,
 
 
 
+/* Globals */
+static GSList *resize_queue = NULL;
+static guint resize_source_id = 0;
+
+
+
 /* altk_widget_class_init:
  */
 static void altk_widget_class_init ( LObjectClass *cls )
@@ -41,6 +47,7 @@ void _altk_widget_set_parent ( AltkWidget *widget,
   ASSERT(!widget->parent);
   widget->parent = parent;
   /* [TODO] map, resize, queue_draw, realize... */
+  altk_widget_queue_resize(widget);
 }
 
 
@@ -157,6 +164,7 @@ static void _on_realize ( AltkWidget *widget )
 void altk_widget_size_request ( AltkWidget *widget,
                                 AltkRequisition *req )
 {
+  ASSERT(ALTK_WIDGET_GET_CLASS(widget)->size_request);
   if (widget->flags & ALTK_WIDGET_FLAG_NEEDS_RESIZE)
     {
       ALTK_WIDGET_GET_CLASS(widget)->size_request(widget, &widget->size_request);
@@ -174,9 +182,11 @@ void altk_widget_size_request ( AltkWidget *widget,
 void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc )
 {
+  ASSERT(ALTK_WIDGET_GET_CLASS(widget)->size_allocate);
   CL_DEBUG("size_allocate(%p, %d, %d, %d, %d)",
            widget, alloc->x, alloc->y, alloc->width, alloc->height);
   ALTK_WIDGET_GET_CLASS(widget)->size_allocate(widget, alloc);
+  CL_DEBUG("size_allocate(%p) OK", widget);
 }
 
 
@@ -186,10 +196,12 @@ void altk_widget_size_allocate ( AltkWidget *widget,
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc )
 {
+  CL_DEBUG("_on_size_allocate(%p)", wid);
   wid->x = alloc->x;
   wid->y = alloc->y;
   wid->width = alloc->width;
   wid->height = alloc->height;
+  CL_DEBUG("_on_size_allocate OK");
 }
 
 
@@ -201,7 +213,9 @@ void altk_widget_show ( AltkWidget *widget )
   if (ALTK_WIDGET_VISIBLE(widget))
     return;
   widget->flags |= ALTK_WIDGET_FLAG_VISIBLE;
+  /* [FIXME] */
   CL_DEBUG("[TODO] widget_show(%p)", widget);
+  altk_widget_queue_resize(widget);
 }
 
 
@@ -358,24 +372,71 @@ void altk_widget_queue_draw ( AltkWidget *widget,
 
 
 
+/* _negotiate_size:
+ */
+static void _negotiate_size ( AltkWidget *wid )
+{
+  AltkRequisition req = { 0, 0 };
+  AltkAllocation alloc;
+  altk_widget_size_request(wid, &req);
+  alloc.x = 0;
+  alloc.y = 0;
+  alloc.width = req.width;
+  alloc.height = req.height;
+  altk_widget_size_allocate(wid, &alloc);
+}
+
+
+
+/* _idle_resize:
+ */
+static gboolean _idle_resize ( gpointer data )
+{
+  GSList *queue, *q;
+  /* [FIXME] forbid resize_queue() during process */
+  queue = resize_queue;
+  resize_queue = NULL;
+  for (q = queue; q; q = q->next)
+    {
+      _negotiate_size(ALTK_WIDGET(q->data));
+    }
+  g_slist_free(queue); /* [FIXME] free_full(l_object_unref) */
+  /* remove the idle source */
+  resize_source_id = 0;
+  return G_SOURCE_REMOVE;
+}
+
+
+
 /* altk_widget_queue_resize:
  */
 void altk_widget_queue_resize ( AltkWidget *widget )
 {
-  CL_DEBUG("[TODO] widget_queue_resize(%p)", widget);
-  /* AltkWidget *w = widget; */
-  /* while (TRUE) */
-  /*   { */
-  /*     w->flags |= ALTK_WIDGET_FLAG_NEEDS_RESIZE; */
-  /*     if (w->parent) { */
-  /*       w = w->parent; */
-  /*     } else { */
-  /*       AltkDisplay *display = altk_widget_get_display(w); */
-  /*       if (display) */
-  /*         altk_display_queue_resize(display, w); */
-  /*       break; */
-  /*     } */
-  /*   } */
+  CL_DEBUG("widget_queue_resize(%p)", widget);
+  AltkWidget *w = widget;
+  while (w)
+    {
+      if (!ALTK_WIDGET_VISIBLE(w))
+        break;
+      /* [FIXME] can't we just stop here if NEEDS_RESIZE is already
+         set ? */
+      w->flags |= ALTK_WIDGET_FLAG_NEEDS_RESIZE;
+      if (ALTK_WIDGET_TOP_WIDGET(w))
+        {
+          if (altk_display_is_open(altk_widget_get_display(w)))
+            {
+              if (!g_slist_find(resize_queue, w))
+                resize_queue = g_slist_prepend(resize_queue, l_object_ref(w));
+              if (resize_source_id == 0)
+                resize_source_id = g_idle_add_full(ALTK_PRIORITY_RESIZE,
+                                                   (GSourceFunc) _idle_resize,
+                                                   NULL,
+                                                   NULL);
+              break;
+            }
+        }
+      w = w->parent;
+    }
 }
 
 
