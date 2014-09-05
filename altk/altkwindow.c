@@ -334,7 +334,7 @@ void altk_window_begin_draw ( AltkWindow *window,
   AltkRectangle clip;
   gint r;
   AltkRegionBox *box;
-  ALLEGRO_COLOR bg = al_map_rgba(0, 0, 0, 255);
+  ALLEGRO_COLOR bg = al_map_rgba(0, 0, 0, 0);
   ALLEGRO_STATE state;
   altk_region_get_clipbox(area, &clip);
   /* give an appropriate size to the double buffer */
