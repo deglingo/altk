@@ -15,12 +15,77 @@ static guint redraw_source_id = 0;
 
 
 
+/* _altk_window_draw_update:
+ *
+ * debug
+ */
+void _altk_window_draw_update ( AltkWindow *window,
+                                AltkRegion *area,
+                                guint32 hcol )
+{
+  ALLEGRO_BITMAP *save;
+  ALLEGRO_STATE state;
+  AltkDisplay *display = window->display;
+  ALLEGRO_COLOR col;
+  gint display_width, display_height;
+  col = al_map_rgba((hcol >> 16) & 0xff,
+                    (hcol >> 8)  & 0xff,
+                    hcol         & 0xff,
+                    (hcol >> 24) & 0xff);
+  display_width = al_get_display_width(display->al_display);
+  display_height = al_get_display_height(display->al_display);
+  /* store state */
+  al_store_state(&state,
+                 ALLEGRO_STATE_DISPLAY |
+                 ALLEGRO_STATE_NEW_BITMAP_PARAMETERS |
+                 ALLEGRO_STATE_TARGET_BITMAP);
+  /* create some backup buffer */
+  al_set_target_backbuffer(window->display->al_display);
+  al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY);
+  al_set_new_bitmap_flags(ALLEGRO_VIDEO_BITMAP);
+  if (!(save = al_create_bitmap(display_width,
+                                display_height)))
+    CL_ERROR("could not create backup bitmap");
+  /* save the whole display */
+  al_set_target_bitmap(save);
+  al_draw_bitmap(al_get_backbuffer(display->al_display), 0, 0, 0);
+  /* draw our area */
+  al_set_target_backbuffer(display->al_display);
+  {
+    gint r;
+    AltkRegionBox *box;
+    for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
+      {
+        float x1 = ((float) (box->x1 + window->root_x)) + 0.5;
+        float y1 = ((float) (box->y1 + window->root_y)) + 0.5;
+        float x2 = ((float) (box->x2 + window->root_x)) - 0.5;
+        float y2 = ((float) (box->y2 + window->root_y)) - 0.5;
+        al_draw_rectangle(x1, y1, x2, y2, col, 1.0);
+        al_draw_line(x1, y1, x2, y2, col, 1.0);
+        al_draw_line(x1, y2, x2, y1, col, 1.0);
+      }
+  }
+  al_flip_display();
+  /* sleep */
+  g_usleep(ALTK_DEBUG_UPDATE_DELAY);
+  /* restore the backbuffer */
+  al_set_target_backbuffer(window->display->al_display);
+  al_draw_bitmap(save, 0, 0, 0);
+  /* cleanup */
+  al_destroy_bitmap(save);
+  /* restore state */
+  al_restore_state(&state);
+}
+
+
+
 /* altk_window_new_root:
  */
 AltkWindow *altk_window_new_root ( struct _AltkDisplay *display )
 {
   AltkWindow *win;
   win = ALTK_WINDOW(l_object_new(ALTK_CLASS_WINDOW, NULL));
+  win->display = display;
   /* set size */
   altk_display_get_size(display, &win->width, &win->height);
   /* update_area */
@@ -41,6 +106,7 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
   AltkWindow *win;
   ASSERT(parent);
   win = ALTK_WINDOW(l_object_new(ALTK_CLASS_WINDOW, NULL));
+  win->display = parent->display;
   /* attach to parent [FIXME] ref ? */
   win->parent = parent;
   win->next = parent->children;
@@ -98,6 +164,7 @@ static void _process_redraw ( AltkWindow *window )
   event.expose.window = window;
   /* [TODO] clip area to visible area */
   event.expose.area = window->update_area;
+  ALTK_WINDOW_DRAW_UPDATE(window, event.expose.area, 0xffff00);
   altk_event_process(&event);
   /* [FIXME] clear update_area */
   altk_region_destroy(window->update_area);

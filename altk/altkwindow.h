@@ -19,6 +19,8 @@ struct _AltkDisplay;
 struct _AltkWindow
 {
   ALTK_WINDOW_INSTANCE_HEADER;
+  /* the display to which this window is attached */
+  struct _AltkDisplay *display;
   /* parent and children (where first child is above) */
   struct _AltkWindow *parent;
   struct _AltkWindow *children;
@@ -47,6 +49,23 @@ struct _AltkWindowClass
 {
   ALTK_WINDOW_CLASS_HEADER;
 };
+
+
+
+/* debug update stuff */
+#define ALTK_DEBUG_UPDATES
+#define ALTK_DEBUG_UPDATE_DELAY 1000000 /* µs */
+
+#ifdef ALTK_DEBUG_UPDATES
+#  define ALTK_WINDOW_DRAW_UPDATE(win, area, hcol) \
+  _altk_window_draw_update((win), (area), (hcol))
+#else
+#  define ALTK_WINDOW_DRAW_UPDATE(win, area, hcol)
+#endif
+
+void _altk_window_draw_update ( AltkWindow *window,
+                                AltkRegion *area,
+                                guint32 hcol );
 
 
 
