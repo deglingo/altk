@@ -5,6 +5,7 @@
 #include "altk/altkwindow.h"
 #include "altk/altkdisplay.h" /* ?? */
 #include "altk/altkevent.h"
+#include "altk/altkgc.h"
 #include "altk/altkwindow.inl"
 
 
@@ -12,6 +13,14 @@
 /* globals */
 static GSList *redraw_queue = NULL;
 static guint redraw_source_id = 0;
+
+
+
+static void _on_draw_text ( AltkDrawable *drawable,
+                            AltkGC *gc,
+                            gint x,
+                            gint y,
+                            const gchar *text );
 
 
 
@@ -75,6 +84,15 @@ void _altk_window_draw_update ( AltkWindow *window,
   al_destroy_bitmap(save);
   /* restore state */
   al_restore_state(&state);
+}
+
+
+
+/* altk_window_class_init:
+ */
+static void altk_window_class_init ( LObjectClass *cls )
+{
+  ((AltkDrawableClass *) cls)->draw_text = _on_draw_text;
 }
 
 
@@ -249,4 +267,17 @@ AltkRegion *altk_window_get_visible_area ( AltkWindow *window )
   r.width = window->width;
   r.height = window->height;
   return altk_region_rectangle(&r);
+}
+
+
+
+/* _on_draw_text:
+ */
+static void _on_draw_text ( AltkDrawable *drawable,
+                            AltkGC *gc,
+                            gint x,
+                            gint y,
+                            const gchar *text )
+{
+  CL_DEBUG("[TODO] draw_text(%d, %d, \"%s\")", x, y, text);
 }

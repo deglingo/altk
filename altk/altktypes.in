@@ -6,7 +6,9 @@ namespace Altk
   class Font;
   class GC;
   class Drawable;
-  class Window : Drawable;
+  class Window : Drawable {
+    void class_init ();
+  };
   class Bitmap : Drawable {
     void class_init ();
   };
