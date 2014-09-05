@@ -79,6 +79,7 @@ void altk_window_set_bounds ( AltkWindow *window,
   window->y = y;
   window->width = width;
   window->height = height;
+  /* [TODO] fix root_x/y for all children */
   window->root_x = window->parent->root_x + x;
   window->root_y = window->parent->root_y + y;
   /* [FIXME] only invalidate the revealed part ? */
