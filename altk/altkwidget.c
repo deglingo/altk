@@ -158,7 +158,7 @@ static void _on_realize ( AltkWidget *widget )
   CL_DEBUG("[TODO] realize(%p)", widget);
   if (ALTK_WIDGET_NOWINDOW(widget))
     {
-      CL_DEBUG("[TODO] realize nowindow widget");
+      widget->window = widget->parent->window;
     }
   else
     {
