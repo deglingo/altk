@@ -55,13 +55,12 @@ AltkWidget *altk_label_new ( const gchar *text )
 static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req )
 {
-  CL_DEBUG("[TODO] Label.size_request()");
-  /* gint bx, by, bw, bh; */
-  /* altk_font_get_text_size(wid->gc[ALTK_STATE_NORMAL]->font, */
-  /*                         ALTK_LABEL(wid)->text, */
-  /*                         &bx, &by, &bw, &bh); */
-  /* req->width = bw; */
-  /* req->height = bh; */
+  gint bx, by, bw, bh;
+  altk_font_get_text_size(wid->gc[ALTK_STATE_NORMAL]->font,
+                          ALTK_LABEL(wid)->text,
+                          &bx, &by, &bw, &bh);
+  req->width = bw;
+  req->height = bh;
 }
 
 
