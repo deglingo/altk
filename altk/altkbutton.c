@@ -81,7 +81,9 @@ static void _on_realize ( AltkWidget *wid )
                                                    wid->y,
                                                    wid->width,
                                                    wid->height);
-  /* [TODO] set event_mask */
+  altk_window_set_event_mask(ALTK_BUTTON(wid)->event_window,
+                             ALTK_EVENT_MASK_MOUSE_MOTION |
+                             ALTK_EVENT_MASK_MOUSE_BUTTON);
 }
 
 

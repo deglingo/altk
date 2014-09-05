@@ -6,6 +6,7 @@
 
 #include "altk/altkdrawable.h"
 #include "altk/altkregion.h"
+#include "altk/altkevent.h"
 #include "altk/altkwindow-def.h"
 
 
@@ -35,6 +36,8 @@ struct _AltkWindow
   /* global coordinates (relative to root window) */
   gint root_x;
   gint root_y;
+  /* event mask */
+  AltkEventMask event_mask;
   /* area of the window which needs redraw */
   AltkRegion *update_area;
   /* the double-buffer */
@@ -79,6 +82,8 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
                               gint y,
                               gint width,
                               gint height );
+void altk_window_set_event_mask ( AltkWindow *window,
+                                  AltkEventMask mask );
 void altk_window_set_bounds ( AltkWindow *window,
                               gint x,
                               gint y,

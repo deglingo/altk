@@ -160,6 +160,16 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
 
 
 
+/* altk_window_set_event_mask:
+ */
+void altk_window_set_event_mask ( AltkWindow *window,
+                                  AltkEventMask mask )
+{
+  window->event_mask = mask;
+}
+
+
+
 /* altk_window_set_bounds:
  */
 void altk_window_set_bounds ( AltkWindow *window,
