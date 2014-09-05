@@ -4,7 +4,14 @@
 #include "altk/private.h"
 #include "altk/altkwindow.h"
 #include "altk/altkdisplay.h" /* ?? */
+#include "altk/altkevent.h"
 #include "altk/altkwindow.inl"
+
+
+
+/* globals */
+static GSList *redraw_queue = NULL;
+static guint redraw_source_id = 0;
 
 
 
@@ -48,6 +55,9 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
   win->height = height;
   win->root_x = parent->root_x + x;
   win->root_y = parent->root_y + y;
+  /* invalidate the whole window */
+  altk_window_invalidate(win, NULL);
+  /* all done */
   return win;
 }
 
@@ -67,4 +77,66 @@ void altk_window_set_bounds ( AltkWindow *window,
   window->height = height;
   window->root_x = window->parent->root_x + x;
   window->root_y = window->parent->root_y + y;
+  /* [FIXME] only invalidate the revealed part ? */
+  altk_window_invalidate(window, NULL);
+}
+
+
+
+/* _process_redraw:
+ */
+static void _process_redraw ( AltkWindow *window )
+{
+  AltkEvent event;
+  GSList *q;
+  event.type = ALTK_EVENT_EXPOSE;
+  event.expose.window = window;
+  altk_event_process(&event);
+  /* remove from redraw_queue */
+  if ((q = g_slist_find(redraw_queue, window))) {
+    /* [TODO] l_object_unref(window) */
+    redraw_queue = g_slist_delete_link(redraw_queue, q);
+  }
+}
+
+
+
+/* _process_all_redraw:
+ */
+static void _process_all_redraw ( void )
+{
+  /* [FIXME] forbid invalidate() while processing */
+  while (redraw_queue)
+    _process_redraw(ALTK_WINDOW(redraw_queue->data));
+}
+
+
+
+/* _idle_redraw:
+ */
+static gboolean _idle_redraw ( gpointer data )
+{
+  _process_all_redraw();
+  /* remove the source */
+  redraw_source_id = 0;
+  return G_SOURCE_REMOVE;
+}
+
+
+
+/* altk_window_invalidate:
+ */
+void altk_window_invalidate ( AltkWindow *window,
+                              AltkRegion *area )
+{
+  /* [TODO] update_area */
+  /* add window to redraw_queue */
+  if (!g_slist_find(redraw_queue, window))
+    redraw_queue = g_slist_prepend(redraw_queue, l_object_ref(window));
+  /* install the expose event source */
+  if (redraw_source_id == 0)
+    redraw_source_id = g_idle_add_full(ALTK_PRIORITY_EXPOSE,
+                                       (GSourceFunc) _idle_redraw,
+                                       NULL,
+                                       NULL);
 }

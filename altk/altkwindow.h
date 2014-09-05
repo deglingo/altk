@@ -5,6 +5,7 @@
 #define _ALTKWINDOW_H_
 
 #include "altk/altkdrawable.h"
+#include "altk/altkregion.h"
 #include "altk/altkwindow-def.h"
 
 
@@ -58,6 +59,8 @@ void altk_window_set_bounds ( AltkWindow *window,
                               gint y,
                               gint width,
                               gint height );
+void altk_window_invalidate ( AltkWindow *window,
+                              AltkRegion *area );
 
 
 

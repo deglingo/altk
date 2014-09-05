@@ -11,5 +11,5 @@
  */
 void altk_event_process ( AltkEvent *event )
 {
-  altk_widget_event(event->any.widget, event);
+  CL_DEBUG("[TODO] event_process(%d)", event->type);
 }

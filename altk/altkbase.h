@@ -15,7 +15,7 @@
 
 /* priorities for the various event sources */
 #define ALTK_PRIORITY_RESIZE 0
-#define ALTK_PRIORITY_REDRAW 100
+#define ALTK_PRIORITY_EXPOSE 100
 
 
 

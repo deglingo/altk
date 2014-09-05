@@ -9,8 +9,7 @@
 
 
 
-struct _AltkWidget;
-struct _AltkDrawable;
+struct _AltkWindow;
 
 typedef enum _AltkEventType AltkEventType;
 typedef union _AltkEvent AltkEvent;
@@ -21,7 +20,7 @@ typedef struct _AltkEventButton AltkEventButton;
 
 #define _ALTK_EVENT_HEADER \
   AltkEventType type; \
-  struct _AltkWidget *widget
+  struct _AltkWindow *window
 
 
 
@@ -54,7 +53,6 @@ struct _AltkEventExpose
 {
   _ALTK_EVENT_HEADER;
   AltkRegion *area;
-  struct _AltkDrawable *window;
 };
 
 
