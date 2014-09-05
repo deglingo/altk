@@ -64,12 +64,6 @@ void altk_display_open ( AltkDisplay *display )
   display->backbuf = altk_bitmap_new(display,
                                      al_get_display_width(display->al_display),
                                      al_get_display_height(display->al_display));
-  /* [REMOVEME] (and create some bitmap in the debug_update func) */
-#ifdef DEBUG_UPDATES
-  display->debugbuf = altk_bitmap_new(display,
-                                     al_get_display_width(display->al_display),
-                                     al_get_display_height(display->al_display));
-#endif
   /* register the display */
   altk_wm_register_display(display);
   /* register the display event source */
