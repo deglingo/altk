@@ -123,16 +123,13 @@ void altk_widget_map ( AltkWidget *widget )
  */
 static void _on_map ( AltkWidget *widget )
 {
-  CL_DEBUG("[TODO] widget_map(%p)", widget);
-  /* [REMOVEME] */
-  /* gint s; */
-  /* widget->display = display; */
-  /* widget->style = altk_style_new(); */
-  /* for (s = 0; s < ALTK_STATE_COUNT; s++) { */
-  /*   widget->gc[s] = altk_gc_new(); */
-  /* } */
-  /* /\* [REMOVEME] *\/ */
-  /* widget->flags |= ALTK_WIDGET_FLAG_NEEDS_RESIZE; */
+  CL_DEBUG("widget_map(%p)", widget);
+  /* [FIXME] */
+  gint s;
+  widget->style = altk_style_new();
+  for (s = 0; s < ALTK_STATE_COUNT; s++) {
+    widget->gc[s] = altk_gc_new();
+  }
 }
 
 
