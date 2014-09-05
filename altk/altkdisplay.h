@@ -45,6 +45,9 @@ struct _AltkDisplayClass
 AltkDisplay *altk_display_new ( void );
 void altk_display_open ( AltkDisplay *display );
 gboolean altk_display_is_open ( AltkDisplay *display );
+void altk_display_get_size ( AltkDisplay *display,
+                             gint *width,
+                             gint *height );
 void altk_display_attach_widget ( AltkDisplay *display,
                                   struct _AltkWidget *widget );
 struct _AltkWindow *altk_display_get_root_window ( AltkDisplay *display );

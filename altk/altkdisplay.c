@@ -92,6 +92,19 @@ gboolean altk_display_is_open ( AltkDisplay *display )
 
 
 
+/* altk_display_get_size:
+ */
+void altk_display_get_size ( AltkDisplay *display,
+                             gint *width,
+                             gint *height )
+{
+  ASSERT(display->al_display);
+  *width = al_get_display_width(display->al_display);
+  *height = al_get_display_height(display->al_display);
+}
+
+
+
 /* altk_display_attach_widget:
  *
  * [REMOVEME] when we have signals

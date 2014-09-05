@@ -18,6 +18,20 @@ struct _AltkDisplay;
 struct _AltkWindow
 {
   ALTK_WINDOW_INSTANCE_HEADER;
+  /* parent and children (where first child is above) */
+  struct _AltkWindow *parent;
+  struct _AltkWindow *children;
+  struct _AltkWindow *children_tail;
+  struct _AltkWindow *next;
+  struct _AltkWindow *prev;
+  /* window bounds (relative to parent window) */
+  gint x;
+  gint y;
+  gint width;
+  gint height;
+  /* global coordinates (relative to root window) */
+  gint root_x;
+  gint root_y;
   /* some data for the user, totally ignored by the window itself */
   gpointer user_data;
 };

@@ -5,6 +5,7 @@
 #include "altk/altkdialog.h"
 #include "altk/altkdisplay.h"
 #include "altk/altkbitmap.h" /* [REMOVEME] */
+#include "altk/altkwindow.h"
 
 #include "altk/altkdialog.inl"
 
