@@ -34,6 +34,9 @@ struct _AltkDialogClass
 
 AltkWidget *altk_dialog_new ( struct _AltkDisplay *display );
 
+/* [REMOVEME] waiting for LSignal implementation */
+void _altk_dialog_handle_open_display ( AltkDialog *dlg );
+
 
 
 #endif

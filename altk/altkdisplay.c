@@ -4,11 +4,13 @@
 #include "altk/private.h"
 #include "altk/altkdisplay.h"
 #include "altk/altkmain.h"
-#include "altk/altkwidget.h"
 #include "altk/altkevent.h"
 #include "altk/altkbitmap.h"
 #include "altk/altkwindow.h"
 #include "altk/altkwm.h"
+/* [REMOVEME] */
+#include "altk/altkwidget.h"
+#include "altk/altkdialog.h"
 
 #include "altk/altkdisplay.inl"
 
@@ -21,18 +23,6 @@ AltkDisplay *altk_display_new ( void )
   AltkDisplay *display;
   display = ALTK_DISPLAY(l_object_new(ALTK_CLASS_DISPLAY, NULL));
   return display;
-}
-
-
-
-/* _map_widget:
- */
-static gboolean _map_widget ( AltkWidget *widget,
-                              AltkDisplay *display )
-{
-  altk_widget_map(widget, display);
-  altk_widget_forall(widget, (AltkForeachFunc) _map_widget, display);
-  return ALTK_FOREACH_CONT;
 }
 
 
@@ -86,13 +76,9 @@ void altk_display_open ( AltkDisplay *display )
   altk_wm_register_al_source(al_get_display_event_source(display->al_display));
   /* create the root window */
   display->root_window = altk_window_new_root(display);
-  /* realize all visible widgets */
-  for (l = display->top_widgets; l; l = l->next) {
-    if (ALTK_WIDGET_VISIBLE(l->data))
-      altk_widget_realize(ALTK_WIDGET(l->data));
-  }
-  /* [TODO] process all resize immediately */
-  /* [TODO] realize all widgets */
+  /* [FIXME] just a trick waiting for proper signal implementation */
+  for (l = display->top_widgets; l; l = l->next)
+    _altk_dialog_handle_open_display(ALTK_DIALOG(l->data));
 }
 
 
@@ -107,6 +93,8 @@ gboolean altk_display_is_open ( AltkDisplay *display )
 
 
 /* altk_display_attach_widget:
+ *
+ * [REMOVEME] when we have signals
  */
 void altk_display_attach_widget ( AltkDisplay *display,
                                   struct _AltkWidget *widget )

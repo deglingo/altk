@@ -56,6 +56,19 @@ AltkWidget *altk_dialog_new ( AltkDisplay *display )
 
 
 
+/* _altk_dialog_handle_open_display:
+ *
+ * [REMOVEME] waiting for LSignal implementation
+ */
+void _altk_dialog_handle_open_display ( AltkDialog *dlg )
+{
+  if (!ALTK_WIDGET_VISIBLE(dlg))
+    return;
+  altk_widget_map(ALTK_WIDGET(dlg));
+}
+
+
+
 /* _on_get_display:
  */
 static AltkDisplay *_on_get_display ( AltkWidget *widget )

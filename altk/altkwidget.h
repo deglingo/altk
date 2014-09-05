@@ -56,12 +56,14 @@ typedef enum
     ALTK_WIDGET_FLAG_VISIBLE = 1 << 1,
     ALTK_WIDGET_FLAG_TOP_WIDGET = 1 << 2,
     ALTK_WIDGET_FLAG_REALIZED = 1 << 3,
+    ALTK_WIDGET_FLAG_MAPPED = 1 << 4,
   }
   AltkWidgetFlags;
 
 #define ALTK_WIDGET_VISIBLE(w)    (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_VISIBLE)
 #define ALTK_WIDGET_TOP_WIDGET(w) (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_TOP_WIDGET)
 #define ALTK_WIDGET_REALIZED(w)   (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_REALIZED)
+#define ALTK_WIDGET_MAPPED(w)     (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_MAPPED)
 
 
 
@@ -101,8 +103,7 @@ struct _AltkWidgetClass
 
   struct _AltkDisplay * (*get_display) ( AltkWidget *widget );
 
-  void (* map) ( AltkWidget *widget,
-                 struct _AltkDisplay *display );
+  void (* map) ( AltkWidget *widget );
 
   void (* realize) ( AltkWidget *widget );
 
@@ -145,8 +146,7 @@ struct _AltkWidgetClass
 
 void _altk_widget_set_parent ( AltkWidget *widget,
                                AltkWidget *parent );
-void altk_widget_map ( AltkWidget *widget,
-                       struct _AltkDisplay *display );
+void altk_widget_map ( AltkWidget *widget );
 void altk_widget_realize ( AltkWidget *widget );
 void altk_widget_event ( AltkWidget *widget,
                          AltkEvent *event );

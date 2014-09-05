@@ -11,8 +11,7 @@
 
 
 static AltkDisplay *_on_get_display ( AltkWidget *widget );
-static void _on_map ( AltkWidget *widget,
-                      AltkDisplay *display );
+static void _on_map ( AltkWidget *widget );
 static void _on_realize ( AltkWidget *widget );
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc );
@@ -69,21 +68,42 @@ struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget )
 
 
 
+/* _map_recursive:
+ */
+static gboolean _map_recursive ( AltkWidget *widget,
+                                 gpointer data )
+{
+  ASSERT(!ALTK_WIDGET_MAPPED(widget));
+  ASSERT(ALTK_WIDGET_TOP_WIDGET(widget) ||
+         (widget->parent && ALTK_WIDGET_MAPPED(widget->parent)));
+  ASSERT(altk_display_is_open(altk_widget_get_display(widget)));
+
+  if (ALTK_WIDGET_VISIBLE(widget))
+    {
+      ALTK_WIDGET_GET_CLASS(widget)->map(widget);
+      widget->flags |= ALTK_WIDGET_FLAG_MAPPED;
+      altk_widget_foreach(widget, _map_recursive, NULL);
+    }
+  return ALTK_FOREACH_CONT;
+}
+
+
+
 /* altk_widget_map:
  */
-void altk_widget_map ( AltkWidget *widget,
-                       struct _AltkDisplay *display )
+void altk_widget_map ( AltkWidget *widget )
 {
-  ALTK_WIDGET_GET_CLASS(widget)->map(widget, display);
+
+  _map_recursive(widget, NULL);
 }
 
 
 
 /* _on_map:
  */
-static void _on_map ( AltkWidget *widget,
-                      AltkDisplay *display )
+static void _on_map ( AltkWidget *widget )
 {
+  CL_DEBUG("[TODO] widget_map(%p)", widget);
   /* [REMOVEME] */
   /* gint s; */
   /* widget->display = display; */
