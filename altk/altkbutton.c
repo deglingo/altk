@@ -60,10 +60,9 @@ AltkWidget *altk_button_new_with_label ( const gchar *text )
   AltkWidget *but, *lbl;
   but = ALTK_WIDGET(l_object_new(ALTK_CLASS_BUTTON, NULL));
   altk_widget_set_event_mask(but,
-                             ALTK_EVENT_EXPOSE |
-                             ALTK_EVENT_MOUSE_ENTER |
-                             ALTK_EVENT_MOUSE_BUTTON_DOWN |
-                             ALTK_EVENT_MOUSE_BUTTON_UP);
+                             ALTK_EVENT_MASK_EXPOSE |
+                             ALTK_EVENT_MASK_MOUSE_MOTION |
+                             ALTK_EVENT_MASK_MOUSE_BUTTON);
   lbl = altk_label_new(text);
   altk_container_add(ALTK_CONTAINER(but), lbl);
   /* [FIXME] l_object_unref(lbl); */

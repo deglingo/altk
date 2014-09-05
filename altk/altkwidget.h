@@ -91,7 +91,7 @@ struct _AltkWidget
   /* graphic contexts */
   struct _AltkGC *gc[ALTK_STATE_COUNT];
   /* events mask */
-  guint event_mask;
+  AltkEventMask event_mask;
   /* current state of the widget */
   AltkState state;
   /* window */
@@ -171,8 +171,8 @@ void altk_widget_forall ( AltkWidget *widget,
                           AltkForeachFunc func,
                           gpointer data );
 void altk_widget_set_event_mask ( AltkWidget *widget,
-                                  AltkEventType mask );
-AltkEventType altk_widget_get_event_mask ( AltkWidget *widget );
+                                  AltkEventMask mask );
+AltkEventMask altk_widget_get_event_mask ( AltkWidget *widget );
 void altk_widget_set_state ( AltkWidget *widget,
                              AltkState state );
 void altk_widget_queue_draw ( AltkWidget *widget,

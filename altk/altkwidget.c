@@ -323,6 +323,7 @@ void altk_widget_event ( AltkWidget *widget,
                          AltkEvent *event )
 {
   /* [FIXME] virtual func ? */
+  /* [FIXME] check event mask !? */
   switch (event->type) {
   case ALTK_EVENT_EXPOSE_BACKGROUND:
     ALTK_WIDGET_GET_CLASS(widget)->expose_background_event(widget, event);
@@ -388,7 +389,7 @@ void altk_widget_forall ( AltkWidget *widget,
 /* altk_widget_set_event_mask:
  */
 void altk_widget_set_event_mask ( AltkWidget *widget,
-                                  AltkEventType mask )
+                                  AltkEventMask mask )
 {
   widget->event_mask = mask;
 }
@@ -397,7 +398,7 @@ void altk_widget_set_event_mask ( AltkWidget *widget,
 
 /* altk_widget_get_event_mask:
  */
-AltkEventType altk_widget_get_event_mask ( AltkWidget *widget )
+AltkEventMask altk_widget_get_event_mask ( AltkWidget *widget )
 {
   return widget->event_mask;
 }

@@ -12,6 +12,7 @@
 struct _AltkWindow;
 
 typedef enum _AltkEventType AltkEventType;
+typedef enum _AltkEventMask AltkEventMask;
 typedef union _AltkEvent AltkEvent;
 typedef struct _AltkEventAny AltkEventAny;
 typedef struct _AltkEventExpose AltkEventExpose;
@@ -31,12 +32,23 @@ typedef void (* AltkEventHandler) ( AltkEvent *event,
  */
 enum _AltkEventType
   {
-    ALTK_EVENT_EXPOSE = 1 << 0,
-    ALTK_EVENT_MOUSE_ENTER = 1 << 1,
-    ALTK_EVENT_MOUSE_LEAVE = 1 << 2,
-    ALTK_EVENT_EXPOSE_BACKGROUND = 1 << 3,
-    ALTK_EVENT_MOUSE_BUTTON_DOWN = 1 << 4,
-    ALTK_EVENT_MOUSE_BUTTON_UP = 1 << 5,
+    ALTK_EVENT_EXPOSE,
+    ALTK_EVENT_MOUSE_ENTER,
+    ALTK_EVENT_MOUSE_LEAVE,
+    ALTK_EVENT_EXPOSE_BACKGROUND,
+    ALTK_EVENT_MOUSE_BUTTON_DOWN,
+    ALTK_EVENT_MOUSE_BUTTON_UP,
+  };
+
+
+
+/* AltkEventMask:
+ */
+enum _AltkEventMask
+  {
+    ALTK_EVENT_MASK_EXPOSE = 1 << 0,
+    ALTK_EVENT_MASK_MOUSE_MOTION = 1 << 1,
+    ALTK_EVENT_MASK_MOUSE_BUTTON = 1 << 2,
   };
 
 

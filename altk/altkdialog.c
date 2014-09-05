@@ -49,7 +49,7 @@ AltkWidget *altk_dialog_new ( AltkDisplay *display )
 {
   AltkWidget *dlg;
   dlg = ALTK_WIDGET(l_object_new(ALTK_CLASS_DIALOG, NULL));
-  altk_widget_set_event_mask(dlg, ALTK_EVENT_EXPOSE);
+  altk_widget_set_event_mask(dlg, ALTK_EVENT_MASK_EXPOSE);
   /* [fixme] atach dialog <> display */
   altk_display_attach_widget(display, dlg);
   ALTK_DIALOG(dlg)->display = display;

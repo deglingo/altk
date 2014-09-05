@@ -44,7 +44,7 @@ AltkWidget *altk_label_new ( const gchar *text )
 {
   AltkWidget *wid = ALTK_WIDGET(l_object_new(ALTK_CLASS_LABEL, NULL));
   /* [FIXME] instance init */
-  altk_widget_set_event_mask(wid, ALTK_EVENT_EXPOSE);
+  altk_widget_set_event_mask(wid, ALTK_EVENT_MASK_EXPOSE);
   ALTK_LABEL(wid)->text = g_strdup(text);
   return wid;
 }
