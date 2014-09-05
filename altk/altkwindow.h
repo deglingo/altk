@@ -39,6 +39,11 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
                               gint y,
                               gint width,
                               gint height );
+void altk_window_set_bounds ( AltkWindow *window,
+                              gint x,
+                              gint y,
+                              gint width,
+                              gint height );
 
 
 

@@ -109,6 +109,11 @@ static void _on_size_allocate ( AltkWidget *wid,
   wid->y = alloc->y;
   wid->width = alloc->width;
   wid->height = alloc->height;
+  /* resize the window */
+  if (ALTK_WIDGET_REALIZED(wid))
+    {
+      altk_window_set_bounds(wid->window, alloc->x, alloc->y, alloc->width, alloc->height);
+    }
   /* ---- */
   if (ALTK_BIN(wid)->child) {
     AltkAllocation child_alloc;
