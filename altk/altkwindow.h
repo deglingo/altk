@@ -57,7 +57,7 @@ struct _AltkWindowClass
 
 
 /* debug update stuff */
-#define ALTK_DEBUG_UPDATES
+/* #define ALTK_DEBUG_UPDATES */
 #define ALTK_DEBUG_UPDATE_DELAY 1000000 /* µs */
 
 #ifdef ALTK_DEBUG_UPDATES
