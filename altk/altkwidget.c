@@ -299,6 +299,8 @@ static gboolean _event_expose ( AltkWidget *widget,
   old_area = event->expose.area;
   event->expose.area = altk_region_copy(old_area);
   altk_widget_intersect_visible_area(widget, event->expose.area);
+  /* debug */
+  ALTK_WINDOW_DRAW_UPDATE(event->expose.window, event->expose.area, 0x0000ff);
   /* process the event */
   /* [FIXME] call altk_widget_event() for each child ? */
   ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
