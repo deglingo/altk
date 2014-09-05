@@ -28,6 +28,15 @@ static void altk_label_class_init ( LObjectClass *cls )
 
 
 
+/* altk_label_init:
+ */
+static void altk_label_init ( LObject *obj )
+{
+  ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_NOWINDOW;
+}
+
+
+
 /* altk_label_new:
  */
 AltkWidget *altk_label_new ( const gchar *text )
