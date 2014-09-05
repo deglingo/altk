@@ -303,7 +303,9 @@ static gboolean _event_expose ( AltkWidget *widget,
   ALTK_WINDOW_DRAW_UPDATE(event->expose.window, event->expose.area, 0x0000ff);
   /* process the event */
   /* [FIXME] call altk_widget_event() for each child ? */
+  altk_window_begin_draw(event->expose.window, event->expose.area);
   ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
+  altk_window_end_draw(event->expose.window, event->expose.area);
   /* process children */
   altk_widget_forall(widget, (AltkForeachFunc) _event_expose, event);
   /* restore update area */

@@ -37,6 +37,10 @@ struct _AltkWindow
   gint root_y;
   /* area of the window which needs redraw */
   AltkRegion *update_area;
+  /* the double-buffer */
+  ALLEGRO_BITMAP *dblbuf;
+  gint offset_x;
+  gint offset_y;
   /* some data for the user, totally ignored by the window itself */
   gpointer user_data;
 };
@@ -83,6 +87,10 @@ void altk_window_set_bounds ( AltkWindow *window,
 void altk_window_invalidate ( AltkWindow *window,
                               AltkRegion *area );
 AltkRegion *altk_window_get_visible_area ( AltkWindow *window );
+void altk_window_begin_draw ( AltkWindow *window,
+                              AltkRegion *area );
+void altk_window_end_draw ( AltkWindow *window,
+                            AltkRegion *area );
 
 
 

@@ -6,6 +6,7 @@
 #include "altk/altkdisplay.h" /* ?? */
 #include "altk/altkevent.h"
 #include "altk/altkgc.h"
+#include "altk/altkfont.h"
 #include "altk/altkwindow.inl"
 
 
@@ -184,6 +185,10 @@ static void _process_redraw ( AltkWindow *window )
   event.expose.area = window->update_area;
   ALTK_WINDOW_DRAW_UPDATE(window, event.expose.area, 0xffff00);
   altk_event_process(&event);
+  /* [FIXME] should only be called once for all redraws, but how to
+     know which display(s) is/are concerned ? We probably a
+     per-display redraw_queue */
+  altk_display_flip(window->display);
   /* [FIXME] clear update_area */
   altk_region_destroy(window->update_area);
   window->update_area = altk_region_new();
@@ -279,5 +284,106 @@ static void _on_draw_text ( AltkDrawable *drawable,
                             gint y,
                             const gchar *text )
 {
-  CL_DEBUG("[TODO] draw_text(%d, %d, \"%s\")", x, y, text);
+  ALLEGRO_COLOR col = al_map_rgb(255, 255, 0); /* [FIXME] */
+  ALLEGRO_STATE state;
+  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(ALTK_WINDOW(drawable)->dblbuf);
+  al_draw_text(gc->font->al_font, 
+               col,
+               x + ALTK_WINDOW(drawable)->offset_x,
+               y + ALTK_WINDOW(drawable)->offset_y,
+               ALLEGRO_ALIGN_LEFT,
+               text);
+  al_restore_state(&state);
+}
+
+
+
+/* _grow_double_buffer:
+ */
+static void _grow_double_buffer ( AltkWindow *window,
+                                  gint width,
+                                  gint height )
+{
+  if (window->dblbuf) {
+    gint dw = al_get_bitmap_width(window->dblbuf);
+    gint dh = al_get_bitmap_height(window->dblbuf);
+    if (width > dw || height > dh) {
+      al_destroy_bitmap(window->dblbuf);
+      window->dblbuf = NULL;
+      width = MAX(width, dw);
+      height = MAX(height, dh);
+    }
+  }
+  if (!window->dblbuf) {
+    ALLEGRO_STATE state;
+    al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
+    al_set_target_backbuffer(window->display->al_display);
+    window->dblbuf = al_create_bitmap(width, height);
+    al_restore_state(&state);
+  }
+}
+
+
+
+/* altk_window_begin_draw:
+ */
+void altk_window_begin_draw ( AltkWindow *window,
+                              AltkRegion *area )
+{
+  AltkRectangle clip;
+  gint r;
+  AltkRegionBox *box;
+  ALLEGRO_COLOR bg = al_map_rgba(0, 0, 0, 255);
+  ALLEGRO_STATE state;
+  altk_region_get_clipbox(area, &clip);
+  /* give an appropriate size to the double buffer */
+  _grow_double_buffer(window, clip.width, clip.height);
+  /* clear area */
+  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(window->dblbuf);
+  for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
+    {
+      al_set_clipping_rectangle(box->x1 - clip.x,
+                                box->y1 - clip.y,
+                                box->x2 - box->x1,
+                                box->y2 - box->y1);
+      al_clear_to_color(bg);
+    }
+  al_restore_state(&state);
+  /* adjust drawing offset */
+  window->offset_x = -clip.x;
+  window->offset_y = -clip.y;
+}
+
+
+
+/* altk_window_end_draw:
+ */
+void altk_window_end_draw ( AltkWindow *window,
+                            AltkRegion *area )
+{
+  AltkRectangle clip;
+  gint r;
+  AltkRegionBox *box;
+  ALLEGRO_STATE state;
+  altk_region_get_clipbox(area, &clip);
+  /* blit dblbuf -> backbuf */
+  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(altk_display_get_backbuf(window->display));
+  for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
+    {
+      al_draw_bitmap_region(window->dblbuf,
+                            box->x1 - clip.x,
+                            box->y1 - clip.y,
+                            box->x2 - box->x1,
+                            box->y2 - box->y1,
+                            box->x1,
+                            box->y1,
+                            0);
+    }
+  al_restore_state(&state);
+  altk_region_offset(area, window->root_x, window->root_y);
+  altk_display_invalidate_region(window->display, area);
+  altk_region_offset(area, -window->root_x, -window->root_y);
 }
