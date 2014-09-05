@@ -32,7 +32,9 @@ static guint resize_source_id = 0;
 void altk_widget_event_handler ( AltkEvent *event,
                                  gpointer data )
 {
-  CL_DEBUG("[TODO] handle event %d", event->type);
+  /* [FIXME] user_data is NULL for the root window */
+  if (event->any.window->user_data)
+    altk_widget_event(ALTK_WIDGET(event->any.window->user_data), event);
 }
 
 

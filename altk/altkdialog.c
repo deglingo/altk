@@ -133,25 +133,26 @@ static void _on_size_allocate ( AltkWidget *wid,
 static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
-  gint r;
-  AltkRegionBox *box;
-  gint cx, cy, cw, ch;
-  /* [FIXME] use drawable methods */
-  ALLEGRO_COLOR col = al_map_rgb(0, 255, 255);
-  ALLEGRO_STATE state;
-  al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_bitmap(ALTK_BITMAP(event->expose.window)->al_bitmap);
-  al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
-  for (r = 0, box = event->expose.area->rects;
-       r < event->expose.area->n_rects;
-       r++, box++)
-    {
-      al_set_clipping_rectangle(box->x1,
-                                box->y1,
-                                box->x2 - box->x1,
-                                box->y2 - box->y1);
-      al_clear_to_color(col);
-    }
-  al_set_clipping_rectangle(cx, cy, cw, ch);
-  al_restore_state(&state);
+  CL_DEBUG("[TODO] Dialog.expose_event()");
+  /* gint r; */
+  /* AltkRegionBox *box; */
+  /* gint cx, cy, cw, ch; */
+  /* /\* [FIXME] use drawable methods *\/ */
+  /* ALLEGRO_COLOR col = al_map_rgb(0, 255, 255); */
+  /* ALLEGRO_STATE state; */
+  /* al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP); */
+  /* al_set_target_bitmap(ALTK_BITMAP(event->expose.window)->al_bitmap); */
+  /* al_get_clipping_rectangle(&cx, &cy, &cw, &ch); */
+  /* for (r = 0, box = event->expose.area->rects; */
+  /*      r < event->expose.area->n_rects; */
+  /*      r++, box++) */
+  /*   { */
+  /*     al_set_clipping_rectangle(box->x1, */
+  /*                               box->y1, */
+  /*                               box->x2 - box->x1, */
+  /*                               box->y2 - box->y1); */
+  /*     al_clear_to_color(col); */
+  /*   } */
+  /* al_set_clipping_rectangle(cx, cy, cw, ch); */
+  /* al_restore_state(&state); */
 }
