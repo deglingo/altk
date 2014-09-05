@@ -14,6 +14,7 @@
 struct _AltkDisplay;
 struct _AltkStyle;
 struct _AltkGC;
+struct _AltkWindow;
 
 typedef struct _AltkRequisition AltkRequisition;
 typedef struct _AltkAllocation AltkAllocation;
@@ -57,6 +58,7 @@ typedef enum
     ALTK_WIDGET_FLAG_TOP_WIDGET = 1 << 2,
     ALTK_WIDGET_FLAG_REALIZED = 1 << 3,
     ALTK_WIDGET_FLAG_MAPPED = 1 << 4,
+    ALTK_WIDGET_FLAG_NOWINDOW = 1 << 5,
   }
   AltkWidgetFlags;
 
@@ -64,6 +66,7 @@ typedef enum
 #define ALTK_WIDGET_TOP_WIDGET(w) (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_TOP_WIDGET)
 #define ALTK_WIDGET_REALIZED(w)   (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_REALIZED)
 #define ALTK_WIDGET_MAPPED(w)     (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_MAPPED)
+#define ALTK_WIDGET_NOWINDOW(w)   (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_NOWINDOW)
 
 
 
@@ -91,6 +94,8 @@ struct _AltkWidget
   guint event_mask;
   /* current state of the widget */
   AltkState state;
+  /* window */
+  struct _AltkWindow *window;
 };
 
 

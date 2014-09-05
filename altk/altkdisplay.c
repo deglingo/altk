@@ -102,3 +102,12 @@ void altk_display_attach_widget ( AltkDisplay *display,
   display->top_widgets = g_list_append(display->top_widgets,
                                        l_object_ref(widget));
 }
+
+
+
+/* altk_display_get_root_window:
+ */
+struct _AltkWindow *altk_display_get_root_window ( AltkDisplay *display )
+{
+  return display->root_window;
+}

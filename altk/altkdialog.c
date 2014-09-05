@@ -65,7 +65,9 @@ void _altk_dialog_handle_open_display ( AltkDialog *dlg )
   if (!ALTK_WIDGET_VISIBLE(dlg))
     return;
   altk_widget_map(ALTK_WIDGET(dlg));
+  /* [FIXME] process resize immediately ? */
   altk_widget_queue_resize(ALTK_WIDGET(dlg));
+  altk_widget_realize(ALTK_WIDGET(dlg));
 }
 
 

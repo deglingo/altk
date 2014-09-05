@@ -6,6 +6,7 @@
 #include "altk/altkstyle.h"
 #include "altk/altkgc.h"
 #include "altk/altkdisplay.h"
+#include "altk/altkwindow.h"
 #include "altk/altkwidget.inl"
 
 
@@ -155,6 +156,25 @@ void altk_widget_realize ( AltkWidget *widget )
 static void _on_realize ( AltkWidget *widget )
 {
   CL_DEBUG("[TODO] realize(%p)", widget);
+  if (ALTK_WIDGET_NOWINDOW(widget))
+    {
+      CL_DEBUG("[TODO] realize nowindow widget");
+    }
+  else
+    {
+      AltkWindow *parent_window;
+      if (ALTK_WIDGET_TOP_WIDGET(widget)) {
+        parent_window = altk_display_get_root_window(altk_widget_get_display(widget));
+      } else {
+        parent_window = widget->parent->window;
+      }
+      widget->window = altk_window_new(parent_window,
+                                       widget->x,
+                                       widget->y,
+                                       widget->width,
+                                       widget->height);
+      widget->window->user_data = widget;
+    }
 }
 
 

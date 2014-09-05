@@ -15,3 +15,18 @@ AltkWindow *altk_window_new_root ( struct _AltkDisplay *display )
   win = ALTK_WINDOW(l_object_new(ALTK_CLASS_WINDOW, NULL));
   return win;
 }
+
+
+
+/* altk_window_new:
+ */
+AltkWindow *altk_window_new ( AltkWindow *parent,
+                              gint x,
+                              gint y,
+                              gint width,
+                              gint height )
+{
+  AltkWindow *win;
+  win = ALTK_WINDOW(l_object_new(ALTK_CLASS_WINDOW, NULL));
+  return win;
+}
