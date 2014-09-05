@@ -18,6 +18,7 @@ gint main ()
   dlg = altk_dialog_new(display);
   but = altk_button_new_with_label("Hello!");
   altk_container_add(ALTK_CONTAINER(dlg), but);
+  altk_widget_show_all(dlg);
   altk_display_open(display);
   altk_main();
   return 0;

@@ -41,6 +41,15 @@ static void altk_button_class_init ( LObjectClass *cls )
 
 
 
+/* altk_button_init:
+ */
+static void altk_button_init ( LObject *obj )
+{
+  ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_NOWINDOW;
+}
+
+
+
 /* altk_button_new_with_label:
  */
 AltkWidget *altk_button_new_with_label ( const gchar *text )
@@ -96,8 +105,8 @@ static void _on_size_allocate ( AltkWidget *wid,
       disp = 1;
     else
       disp = 0;
-    child_alloc.x = 2 + disp;
-    child_alloc.y = 2 + disp;
+    child_alloc.x = alloc->x + 2 + disp;
+    child_alloc.y = alloc->y + 2 + disp;
     child_alloc.width = alloc->width - (4 + disp);
     child_alloc.height = alloc->height - (4 + disp);
     altk_widget_size_allocate(ALTK_BIN(wid)->child, &child_alloc);
@@ -157,29 +166,30 @@ static void _on_mouse_button_up_event ( AltkWidget *wid,
 static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
-  gint r;
-  AltkRegionBox *box;
-  gint cx, cy, cw, ch;
-  /* [FIXME] use drawable methods */
-  ALLEGRO_COLOR col;
-  ALLEGRO_STATE state;
-  if (wid->state == ALTK_STATE_NORMAL)
-    col = al_map_rgb(0, 255, 255);
-  else
-    col = al_map_rgb(255, 0, 0);
-  al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_bitmap(ALTK_BITMAP(event->expose.window)->al_bitmap);
-  al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
-  for (r = 0, box = event->expose.area->rects;
-       r < event->expose.area->n_rects;
-       r++, box++)
-    {
-      al_set_clipping_rectangle(box->x1,
-                                box->y1,
-                                box->x2 - box->x1,
-                                box->y2 - box->y1);
-      al_clear_to_color(col);
-    }
-  al_set_clipping_rectangle(cx, cy, cw, ch);
-  al_restore_state(&state);
+  CL_DEBUG("[TODO] Button.expose_event()");
+  /* gint r; */
+  /* AltkRegionBox *box; */
+  /* gint cx, cy, cw, ch; */
+  /* /\* [FIXME] use drawable methods *\/ */
+  /* ALLEGRO_COLOR col; */
+  /* ALLEGRO_STATE state; */
+  /* if (wid->state == ALTK_STATE_NORMAL) */
+  /*   col = al_map_rgb(0, 255, 255); */
+  /* else */
+  /*   col = al_map_rgb(255, 0, 0); */
+  /* al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP); */
+  /* al_set_target_bitmap(ALTK_BITMAP(event->expose.window)->al_bitmap); */
+  /* al_get_clipping_rectangle(&cx, &cy, &cw, &ch); */
+  /* for (r = 0, box = event->expose.area->rects; */
+  /*      r < event->expose.area->n_rects; */
+  /*      r++, box++) */
+  /*   { */
+  /*     al_set_clipping_rectangle(box->x1, */
+  /*                               box->y1, */
+  /*                               box->x2 - box->x1, */
+  /*                               box->y2 - box->y1); */
+  /*     al_clear_to_color(col); */
+  /*   } */
+  /* al_set_clipping_rectangle(cx, cy, cw, ch); */
+  /* al_restore_state(&state); */
 }
