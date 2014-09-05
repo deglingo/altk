@@ -292,15 +292,25 @@ AltkRegion *altk_widget_get_shape ( AltkWidget *widget )
 static gboolean _event_expose ( AltkWidget *widget,
                                 AltkEvent *event )
 {
+  AltkRegion *old_area;
+
   /* stop traversal for widget having a window */
   if ((gpointer) widget != event->expose.window->user_data
       && !ALTK_WIDGET_NOWINDOW(widget))
     return ALTK_FOREACH_CONT;
+  /* clip area to widget's visible part */
+  old_area = event->expose.area;
+  event->expose.area = altk_region_copy(old_area);
+  altk_widget_intersect_visible_area(widget, event->expose.area);
   /* process the event */
   /* [FIXME] call altk_widget_event() for each child ? */
   ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
   /* process children */
   altk_widget_forall(widget, (AltkForeachFunc) _event_expose, event);
+  /* restore update area */
+  altk_region_destroy(event->expose.area);
+  event->expose.area = old_area;
+  /* ok */
   return ALTK_FOREACH_CONT;
 }
 
@@ -504,4 +514,26 @@ void altk_widget_get_root_coords ( AltkWidget *widget,
     *root_x += w->x;
     *root_y += w->y;
   }
+}
+
+
+
+/* altk_widget_intersect_visible_area:
+ */
+void altk_widget_intersect_visible_area ( AltkWidget *widget,
+                                          AltkRegion *area )
+{
+  AltkRectangle r;
+  AltkRegion *wr;
+  if (ALTK_WIDGET_NOWINDOW(widget)) {
+    r.x = widget->x;
+    r.y = widget->y;
+  } else {
+    r.x = r.y = 0;
+  }
+  r.width = widget->width;
+  r.height = widget->height;
+  wr = altk_region_rectangle(&r);
+  altk_region_intersect(area, wr);
+  altk_region_destroy(wr);
 }

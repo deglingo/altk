@@ -182,6 +182,8 @@ struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget );
 void altk_widget_get_root_coords ( AltkWidget *widget,
                                    gint *root_x,
                                    gint *root_y );
+void altk_widget_intersect_visible_area ( AltkWidget *widget,
+                                          AltkRegion *area );
 
 
 
