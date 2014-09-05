@@ -34,6 +34,14 @@ struct _AltkDrawableClass
   ALTK_DRAWABLE_CLASS_HEADER;
 
   /* drawing methods */
+  void (* draw_rectangle) ( AltkDrawable *drawable,
+                            struct _AltkGC *gc,
+                            gboolean filled,
+                            gint x,
+                            gint y,
+                            gint width,
+                            gint height );
+
   void (* draw_text) ( AltkDrawable *drawable,
                        struct _AltkGC *gc,
                        gint x,
@@ -53,6 +61,13 @@ void altk_drawable_set_offset ( AltkDrawable *drawable,
                                 gint ofs_x,
                                 gint ofs_y );
 
+void altk_drawable_draw_rectangle ( AltkDrawable *drawable,
+                                    struct _AltkGC *gc,
+                                    gboolean filled,
+                                    gint x,
+                                    gint y,
+                                    gint width,
+                                    gint height );
 void altk_drawable_draw_text ( AltkDrawable *drawable,
                                struct _AltkGC *gc,
                                gint x,

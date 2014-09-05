@@ -19,6 +19,28 @@ void altk_drawable_set_offset ( AltkDrawable *drawable,
 
 
 
+/* altk_drawable_draw_rectangle:
+ */
+void altk_drawable_draw_rectangle ( AltkDrawable *drawable,
+                                    struct _AltkGC *gc,
+                                    gboolean filled,
+                                    gint x,
+                                    gint y,
+                                    gint width,
+                                    gint height )
+{
+  ASSERT(ALTK_DRAWABLE_GET_CLASS(drawable)->draw_rectangle);
+  ALTK_DRAWABLE_GET_CLASS(drawable)->draw_rectangle(drawable,
+                                                    gc,
+                                                    filled,
+                                                    x,
+                                                    y,
+                                                    width,
+                                                    height);
+}
+
+
+
 /* altk_drawable_draw_text:
  */
 void altk_drawable_draw_text ( AltkDrawable *drawable,

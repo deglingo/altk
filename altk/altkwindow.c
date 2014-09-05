@@ -17,6 +17,13 @@ static guint redraw_source_id = 0;
 
 
 
+static void _on_draw_rectangle ( AltkDrawable *drawable,
+                                 AltkGC *gc,
+                                 gboolean filled,
+                                 gint x,
+                                 gint y,
+                                 gint width,
+                                 gint height );
 static void _on_draw_text ( AltkDrawable *drawable,
                             AltkGC *gc,
                             gint x,
@@ -93,6 +100,7 @@ void _altk_window_draw_update ( AltkWindow *window,
  */
 static void altk_window_class_init ( LObjectClass *cls )
 {
+  ((AltkDrawableClass *) cls)->draw_rectangle = _on_draw_rectangle;
   ((AltkDrawableClass *) cls)->draw_text = _on_draw_text;
 }
 
@@ -272,6 +280,33 @@ AltkRegion *altk_window_get_visible_area ( AltkWindow *window )
   r.width = window->width;
   r.height = window->height;
   return altk_region_rectangle(&r);
+}
+
+
+
+/* _on_draw_rectangle:
+ */
+static void _on_draw_rectangle ( AltkDrawable *drawable,
+                                 AltkGC *gc,
+                                 gboolean filled,
+                                 gint x,
+                                 gint y,
+                                 gint width,
+                                 gint height )
+{
+  float x1 = ((float) x) + 0.5;
+  float y1 = ((float) y) + 0.5;
+  float x2 = ((float) (x + width)) - 0.5;
+  float y2 = ((float) (y + height)) - 0.5;
+  ALLEGRO_COLOR col = al_map_rgb(127, 127, 127); /* [FIXME] */
+  ALLEGRO_STATE state;
+  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(ALTK_WINDOW(drawable)->dblbuf);
+  if (filled)
+    al_draw_filled_rectangle(x1, y1, x2, y2, col);
+  else
+    al_draw_rectangle(x1, y1, x2, y2, col, 1.0);
+  al_restore_state(&state);
 }
 
 

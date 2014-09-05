@@ -23,6 +23,28 @@ AltkStyle *altk_style_new ( void )
 
 
 
+/* altk_style_draw_box:
+ */
+void altk_style_draw_box ( AltkStyle *style,
+                           struct _AltkDrawable *drawable,
+                           struct _AltkGC *gc,
+                           gint box_type,
+                           gint x,
+                           gint y,
+                           gint width,
+                           gint height )
+{
+  altk_drawable_draw_rectangle(drawable,
+                               gc,
+                               TRUE,
+                               x,
+                               y,
+                               width,
+                               height);
+}
+
+
+
 /* altk_style_draw_text:
  */
 void altk_style_draw_text ( AltkStyle *style,
