@@ -18,6 +18,9 @@ typedef struct _AltkEventExpose AltkEventExpose;
 typedef struct _AltkEventCrossing AltkEventCrossing;
 typedef struct _AltkEventButton AltkEventButton;
 
+typedef void (* AltkEventHandler) ( AltkEvent *event,
+                                    gpointer data );
+
 #define _ALTK_EVENT_HEADER \
   AltkEventType type; \
   struct _AltkWindow *window
@@ -93,6 +96,8 @@ union _AltkEvent
 
 
 
+void altk_event_set_handler ( AltkEventHandler handler,
+                              gpointer data );
 void altk_event_process ( AltkEvent *event );
 
 

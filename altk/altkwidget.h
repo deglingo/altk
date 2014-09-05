@@ -148,6 +148,8 @@ struct _AltkWidgetClass
 };
 
 
+void altk_widget_event_handler ( AltkEvent *event,
+                                 gpointer data );
 
 void _altk_widget_set_parent ( AltkWidget *widget,
                                AltkWidget *parent );

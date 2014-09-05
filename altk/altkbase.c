@@ -4,6 +4,8 @@
 #include "altk/private.h"
 #include "altk/altkbase.h"
 #include "altk/altkmain.h"
+#include "altk/altkevent.h"
+#include "altk/altkwidget.h"
 
 
 
@@ -28,5 +30,6 @@ int altk_init ( void )
     CL_ERROR("could not initialize the mouse driver");
   _altk_main_init();
   _altk_wm_init();
+  altk_event_set_handler(altk_widget_event_handler, NULL);
   return 0;
 }

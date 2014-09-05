@@ -27,6 +27,16 @@ static guint resize_source_id = 0;
 
 
 
+/* altk_widget_event_handler:
+ */
+void altk_widget_event_handler ( AltkEvent *event,
+                                 gpointer data )
+{
+  CL_DEBUG("[TODO] handle event %d", event->type);
+}
+
+
+
 /* altk_widget_class_init:
  */
 static void altk_widget_class_init ( LObjectClass *cls )
