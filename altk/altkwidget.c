@@ -127,6 +127,7 @@ static void _on_map ( AltkWidget *widget )
   /* [FIXME] */
   gint s;
   widget->style = altk_style_new();
+  widget->style_context = altk_style_context_new(widget->style);
   for (s = 0; s < ALTK_STATE_COUNT; s++) {
     widget->gc[s] = altk_gc_new();
   }
@@ -544,4 +545,13 @@ void altk_widget_intersect_visible_area ( AltkWidget *widget,
   wr = altk_region_rectangle(&r);
   altk_region_intersect(area, wr);
   altk_region_destroy(wr);
+}
+
+
+
+/* altk_widget_get_style_context:
+ */
+AltkStyleContext *altk_widget_get_style_context ( AltkWidget *widget )
+{
+  return widget->style_context;
 }

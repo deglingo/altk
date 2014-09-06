@@ -7,6 +7,7 @@
 #include "altk/altkbase.h"
 #include "altk/altkregion.h"
 #include "altk/altkevent.h"
+#include "altk/altkstylecontext.h"
 #include "altk/altkwidget-def.h"
 
 
@@ -88,6 +89,7 @@ struct _AltkWidget
   AltkRequisition size_request;
   /* a style to draw the various part of the widget */
   struct _AltkStyle *style;
+  AltkStyleContext *style_context;
   /* graphic contexts */
   struct _AltkGC *gc[ALTK_STATE_COUNT];
   /* events mask */
@@ -183,6 +185,7 @@ void altk_widget_get_root_coords ( AltkWidget *widget,
                                    gint *root_y );
 void altk_widget_intersect_visible_area ( AltkWidget *widget,
                                           AltkRegion *area );
+AltkStyleContext *altk_widget_get_style_context ( AltkWidget *widget );
 
 
 

@@ -6,7 +6,7 @@
 #include "altk/altklabel.h"
 #include "altk/altkbitmap.h" /* [REMOVEME] */
 #include "altk/altkwindow.h"
-#include "altk/altkstyle.h"
+#include "altk/altkstylecontext.h"
 #include "altk/altkbutton.inl"
 
 
@@ -193,12 +193,19 @@ static void _on_mouse_button_up_event ( AltkWidget *wid,
 static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
-  altk_style_draw_box(wid->style,
-                      ALTK_DRAWABLE(event->expose.window),
-                      wid->gc[wid->state],
-                      0 /* [fixme] box type */,
-                      0,
-                      0,
-                      wid->width,
-                      wid->height);
+  AltkStyleContext *ctxt = altk_widget_get_style_context(wid);
+  altk_style_context_draw_box(ctxt,
+                              ALTK_DRAWABLE(event->expose.window),
+                              0,
+                              0,
+                              wid->width,
+                              wid->height);
+  /* altk_style_draw_box(wid->style, */
+  /*                     ALTK_DRAWABLE(event->expose.window), */
+  /*                     wid->gc[wid->state], */
+  /*                     0 /\* [fixme] box type *\/, */
+  /*                     0, */
+  /*                     0, */
+  /*                     wid->width, */
+  /*                     wid->height); */
 }

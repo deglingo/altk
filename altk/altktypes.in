@@ -13,6 +13,7 @@ namespace Altk
     void class_init ();
   };
   class Style;
+  class StyleContext;
   class Widget
   {
     void class_init ();
