@@ -153,10 +153,14 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
   win->height = height;
   win->root_x = parent->root_x + x;
   win->root_y = parent->root_y + y;
-  /* update_area */
-  win->update_area = altk_region_new();
-  /* invalidate the whole window */
-  altk_window_invalidate(win, NULL);
+  /* setup output window */
+  if (!(win->flags & ALTK_WINDOW_FLAG_INPUT_ONLY))
+    {
+      /* update_area */
+      win->update_area = altk_region_new();
+      /* invalidate the whole window */
+      altk_window_invalidate(win, NULL);
+    }
   /* all done */
   return win;
 }
@@ -188,8 +192,13 @@ void altk_window_set_bounds ( AltkWindow *window,
   /* [TODO] fix root_x/y for all children */
   window->root_x = window->parent->root_x + x;
   window->root_y = window->parent->root_y + y;
-  /* [FIXME] only invalidate the revealed part ? */
-  altk_window_invalidate(window, NULL);
+  if (!(window->flags & ALTK_WINDOW_FLAG_INPUT_ONLY))
+    {
+      /* [FIXME] only invalidate the revealed part ? */
+      /* [FIXME] also revealed other window parts which have become
+         visible */
+      altk_window_invalidate(window, NULL);
+    }
 }
 
 
@@ -251,6 +260,7 @@ void altk_window_invalidate ( AltkWindow *window,
                               AltkRegion *area )
 {
   AltkRegion *vis_area;
+  ASSERT(!(window->flags & ALTK_WINDOW_FLAG_INPUT_ONLY));
   vis_area = altk_window_get_visible_area(window);
   if (!area) {
     AltkRectangle rect;
