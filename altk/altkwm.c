@@ -29,7 +29,11 @@ typedef struct _AltkWM
   /* map <ALLEGRO_DISPLAY *, AltkDisplay *> */
   GHashTable *display_map;
   /* currently 'entered' window */
+  AltkDisplay *entered_display;
+  AltkWindow *flywin;
   AltkWindow *entered_window;
+  gint mouse_x;
+  gint mouse_y;
 }
   AltkWM;
 
@@ -122,45 +126,98 @@ static gboolean _al_source_check ( GSource *src )
 
 
 
+/* _mouse_motion:
+ */
+static void _mouse_motion ( ALLEGRO_DISPLAY *al_display,
+                            gint mx,
+                            gint my )
+{
+  AltkDisplay *display;
+  AltkWindow *entered;
+  AltkEvent event;
+  display = altk_wm_lookup_display(al_display);
+  ASSERT(display);
+  wm->entered_display = display;
+  wm->mouse_x = mx;
+  wm->mouse_y = my;
+  /* find the deepest overflew window */
+  wm->flywin = altk_window_get_child_at(altk_display_get_root_window(display),
+                                        mx,
+                                        my);
+  /* generate the entered/leave events */
+  for (entered = wm->flywin; entered; entered = entered->parent) {
+    if (entered->event_mask & ALTK_EVENT_MASK_MOUSE_CROSSING)
+      break;
+  }
+  if (entered != wm->entered_window)
+    {
+      if (wm->entered_window)
+        {
+          event.type = ALTK_EVENT_MOUSE_LEAVE;
+          event.crossing.window = wm->entered_window;
+          event.crossing.mx = mx - wm->entered_window->root_x;
+          event.crossing.my = my - wm->entered_window->root_y;
+          altk_event_process(&event);
+        }
+      if ((wm->entered_window = entered))
+        {
+          event.type = ALTK_EVENT_MOUSE_ENTER;
+          event.crossing.window = wm->entered_window;
+          event.crossing.mx = mx - wm->entered_window->root_x;
+          event.crossing.my = my - wm->entered_window->root_y;
+          altk_event_process(&event);
+        }
+    }
+}
+
+
+
 /* _filter_event:
  */
 static void _filter_event ( ALLEGRO_EVENT *al_event )
 {
-  AltkEvent event;
   switch (al_event->type)
     {
     case ALLEGRO_EVENT_MOUSE_AXES:
+      _mouse_motion(al_event->mouse.display, al_event->mouse.x, al_event->mouse.y);
+      break;
+    case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
       {
-        AltkDisplay *display;
-        AltkWindow *flywin, *entered;
-        display = altk_wm_lookup_display(al_event->mouse.display);
-        ASSERT(display);
-        flywin = altk_window_get_child_at(altk_display_get_root_window(display),
-                                          al_event->mouse.x,
-                                          al_event->mouse.y);
-        /* entered/leave event */
-        for (entered = flywin; entered; entered = entered->parent) {
-          if (entered->event_mask & ALTK_EVENT_MASK_MOUSE_CROSSING)
-            break;
-        }
-        if (entered != wm->entered_window)
+        AltkWindow *win;
+        _mouse_motion(al_event->mouse.display, al_event->mouse.x, al_event->mouse.y);
+        for (win = wm->flywin;
+             win && !(win->event_mask & ALTK_EVENT_MASK_MOUSE_BUTTON); 
+             win = win->parent)
+          ;
+        if (win)
           {
-            if (wm->entered_window)
-              {
-                event.type = ALTK_EVENT_MOUSE_LEAVE;
-                event.crossing.window = wm->entered_window;
-                event.crossing.mx = al_event->mouse.x - wm->entered_window->root_x;
-                event.crossing.my = al_event->mouse.y - wm->entered_window->root_y;
-                altk_event_process(&event);
-              }
-            if ((wm->entered_window = entered))
-              {
-                event.type = ALTK_EVENT_MOUSE_ENTER;
-                event.crossing.window = wm->entered_window;
-                event.crossing.mx = al_event->mouse.x - wm->entered_window->root_x;
-                event.crossing.my = al_event->mouse.y - wm->entered_window->root_y;
-                altk_event_process(&event);
-              }
+            AltkEvent event;
+            event.type = ALTK_EVENT_MOUSE_BUTTON_DOWN;
+            event.button.window = win;
+            event.button.mx = wm->mouse_x - win->root_x;
+            event.button.my = wm->mouse_y - win->root_y;
+            event.button.button = al_event->mouse.button;
+            altk_event_process(&event);
+          }
+      }
+      break;
+    case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+      {
+        AltkWindow *win;
+        _mouse_motion(al_event->mouse.display, al_event->mouse.x, al_event->mouse.y);
+        for (win = wm->flywin;
+             win && !(win->event_mask & ALTK_EVENT_MASK_MOUSE_BUTTON); 
+             win = win->parent)
+          ;
+        if (win)
+          {
+            AltkEvent event;
+            event.type = ALTK_EVENT_MOUSE_BUTTON_UP;
+            event.button.window = win;
+            event.button.mx = wm->mouse_x - win->root_x;
+            event.button.my = wm->mouse_y - win->root_y;
+            event.button.button = al_event->mouse.button;
+            altk_event_process(&event);
           }
       }
       break;
