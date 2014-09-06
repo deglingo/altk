@@ -50,6 +50,8 @@ static void altk_button_class_init ( LObjectClass *cls )
 static void altk_button_init ( LObject *obj )
 {
   ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_NOWINDOW;
+  altk_widget_set_event_mask(ALTK_WIDGET(obj),
+                             ALTK_EVENT_MASK_EXPOSE);
 }
 
 
@@ -194,6 +196,7 @@ static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
   AltkStyleContext *ctxt = altk_widget_get_style_context(wid);
+  CL_DEBUG("Button.expose_event()");
   altk_style_context_draw_box(ctxt,
                               ALTK_DRAWABLE(event->expose.window),
                               0,

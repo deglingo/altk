@@ -32,8 +32,8 @@ static AltkGC *_create_gc ( struct gc_info *info )
 AltkStyleContext *altk_style_context_new ( AltkStyle *style )
 {
   struct  gc_info gc_info[] = {
-    { 0x7f7f7f, 0x000000 }, /* normal */
-    { 0xc0c0c0, 0x000000 }, /* active */
+    { 0xff7f7f7f, 0x000000 }, /* normal */
+    { 0xffc0c0c0, 0x000000 }, /* active */
   };
   AltkStyleContext *ctxt;
   ctxt = ALTK_STYLE_CONTEXT(l_object_new(ALTK_CLASS_STYLE_CONTEXT, NULL));
@@ -50,7 +50,10 @@ AltkStyleContext *altk_style_context_new ( AltkStyle *style )
  */
 static AltkGC *_select_gc ( AltkStyleContext *context )
 {
-  return context->gc_normal;
+  if (context->state == ALTK_STATE_NORMAL)
+    return context->gc_normal;
+  else
+    return context->gc_active;
 }
 
 

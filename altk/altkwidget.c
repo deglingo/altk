@@ -287,35 +287,40 @@ AltkRegion *altk_widget_get_shape ( AltkWidget *widget )
 
 
 
-/* _event_expose:
- */
-static gboolean _event_expose ( AltkWidget *widget,
+static gboolean _expose_child ( AltkWidget *widget,
                                 AltkEvent *event )
 {
-  AltkRegion *old_area;
-
-  /* stop traversal for widget having a window */
-  if ((gpointer) widget != event->expose.window->user_data
-      && !ALTK_WIDGET_NOWINDOW(widget))
-    return ALTK_FOREACH_CONT;
-  /* clip area to widget's visible part */
-  old_area = event->expose.area;
-  event->expose.area = altk_region_copy(old_area);
-  altk_widget_intersect_visible_area(widget, event->expose.area);
-  /* debug */
-  ALTK_WINDOW_DRAW_UPDATE(event->expose.window, event->expose.area, 0x0000ff);
-  /* process the event */
-  /* [FIXME] call altk_widget_event() for each child ? */
-  altk_window_begin_draw(event->expose.window, event->expose.area);
-  ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
-  altk_window_end_draw(event->expose.window, event->expose.area);
-  /* process children */
-  altk_widget_forall(widget, (AltkForeachFunc) _event_expose, event);
-  /* restore update area */
-  altk_region_destroy(event->expose.area);
-  event->expose.area = old_area;
-  /* ok */
+  if (ALTK_WIDGET_NOWINDOW(widget))
+    altk_widget_event(widget, event);
   return ALTK_FOREACH_CONT;
+}
+
+
+
+/* _event_expose:
+ */
+static void _event_expose ( AltkWidget *widget,
+                            AltkEvent *event )
+{
+  if (widget->event_mask & ALTK_EVENT_MASK_EXPOSE)
+    {
+      /* clip area to widget's visible part */
+      AltkRegion *old_area = event->expose.area;
+      event->expose.area = altk_region_copy(old_area);
+      altk_widget_intersect_visible_area(widget, event->expose.area);
+      /* debug */
+      ALTK_WINDOW_DRAW_UPDATE(event->expose.window, event->expose.area, 0x0000ff);
+      /* process the event */
+      /* [FIXME] call altk_widget_event() for each child ? */
+      altk_window_begin_draw(event->expose.window, event->expose.area);
+      ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
+      altk_window_end_draw(event->expose.window, event->expose.area);
+      /* restore event */
+      altk_region_destroy(event->expose.area);
+      event->expose.area = old_area;
+    }
+  /* process children */
+  altk_widget_forall(widget, (AltkForeachFunc) _expose_child, event);
 }
 
 
