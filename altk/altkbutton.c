@@ -6,6 +6,7 @@
 #include "altk/altklabel.h"
 #include "altk/altkbitmap.h" /* [REMOVEME] */
 #include "altk/altkwindow.h"
+#include "altk/altkstyle.h"
 #include "altk/altkbutton.inl"
 
 
@@ -192,30 +193,12 @@ static void _on_mouse_button_up_event ( AltkWidget *wid,
 static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
-  CL_DEBUG("[TODO] Button.expose_event()");
-  /* gint r; */
-  /* AltkRegionBox *box; */
-  /* gint cx, cy, cw, ch; */
-  /* /\* [FIXME] use drawable methods *\/ */
-  /* ALLEGRO_COLOR col; */
-  /* ALLEGRO_STATE state; */
-  /* if (wid->state == ALTK_STATE_NORMAL) */
-  /*   col = al_map_rgb(0, 255, 255); */
-  /* else */
-  /*   col = al_map_rgb(255, 0, 0); */
-  /* al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP); */
-  /* al_set_target_bitmap(ALTK_BITMAP(event->expose.window)->al_bitmap); */
-  /* al_get_clipping_rectangle(&cx, &cy, &cw, &ch); */
-  /* for (r = 0, box = event->expose.area->rects; */
-  /*      r < event->expose.area->n_rects; */
-  /*      r++, box++) */
-  /*   { */
-  /*     al_set_clipping_rectangle(box->x1, */
-  /*                               box->y1, */
-  /*                               box->x2 - box->x1, */
-  /*                               box->y2 - box->y1); */
-  /*     al_clear_to_color(col); */
-  /*   } */
-  /* al_set_clipping_rectangle(cx, cy, cw, ch); */
-  /* al_restore_state(&state); */
+  altk_style_draw_box(wid->style,
+                      ALTK_DRAWABLE(event->expose.window),
+                      wid->gc[wid->state],
+                      0 /* [fixme] box type */,
+                      0,
+                      0,
+                      wid->width,
+                      wid->height);
 }
