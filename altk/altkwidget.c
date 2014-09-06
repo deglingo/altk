@@ -275,11 +275,13 @@ void altk_widget_show_all ( AltkWidget *widget )
  */
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget )
 {
-  AltkRectangle r;
-  r.x = r.y = 0;
-  r.width = widget->width;
-  r.height = widget->height;
-  return altk_region_rectangle(&r);
+  CL_ERROR("[TODO] altk_widget_get_shape() is deprecated");
+  return NULL;
+  /* AltkRectangle r; */
+  /* r.x = r.y = 0; */
+  /* r.width = widget->width; */
+  /* r.height = widget->height; */
+  /* return altk_region_rectangle(&r); */
 }
 
 
@@ -413,24 +415,28 @@ void altk_widget_set_state ( AltkWidget *widget,
   if (widget->state == state)
     return;
   widget->state = state;
-  altk_widget_queue_draw(widget, TRUE);
+  altk_widget_queue_draw(widget);
 }
 
 
 
 /* altk_widget_queue_draw:
  */
-void altk_widget_queue_draw ( AltkWidget *widget,
-                              gboolean children )
+void altk_widget_queue_draw ( AltkWidget *widget )
 {
-  CL_DEBUG("[TODO] widget_queue_draw(%p)", widget);
-  /* AltkDisplay *display; */
-  /* AltkRegion *area; */
-  /* display = altk_widget_get_display(widget); */
-  /* ASSERT(display); /\* [FIXME] *\/ */
-  /* area = altk_widget_get_visible_area(widget, !children); */
-  /* altk_display_queue_draw(display, area); */
-  /* altk_region_destroy(area); */
+  AltkRectangle r;
+  AltkRegion *wr;
+  if (ALTK_WIDGET_NOWINDOW(widget)) {
+    r.x = widget->x;
+    r.y = widget->y;
+  } else {
+    r.x = r.y = 0;
+  }
+  r.width = widget->width;
+  r.height = widget->height;
+  wr = altk_region_rectangle(&r);
+  altk_window_invalidate(widget->window, wr);
+  altk_region_destroy(wr);
 }
 
 

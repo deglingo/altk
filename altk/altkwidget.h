@@ -175,8 +175,7 @@ void altk_widget_set_event_mask ( AltkWidget *widget,
 AltkEventMask altk_widget_get_event_mask ( AltkWidget *widget );
 void altk_widget_set_state ( AltkWidget *widget,
                              AltkState state );
-void altk_widget_queue_draw ( AltkWidget *widget,
-                              gboolean children );
+void altk_widget_queue_draw ( AltkWidget *widget );
 void altk_widget_queue_resize ( AltkWidget *widget );
 struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget );
 void altk_widget_get_root_coords ( AltkWidget *widget,
