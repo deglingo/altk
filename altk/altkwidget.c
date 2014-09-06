@@ -416,6 +416,7 @@ void altk_widget_set_state ( AltkWidget *widget,
   if (widget->state == state)
     return;
   widget->state = state;
+  altk_style_context_set_state(widget->style_context, state);
   altk_widget_queue_draw(widget);
 }
 

@@ -20,6 +20,16 @@ AltkStyleContext *altk_style_context_new ( AltkStyle *style )
 
 
 
+/* altk_style_context_set_state:
+ */
+void altk_style_context_set_state ( AltkStyleContext *context,
+                                    AltkState state )
+{
+  context->state = state;
+}
+
+
+
 /* altk_style_context_draw_box:
  */
 void altk_style_context_draw_box ( AltkStyleContext *context,

@@ -33,6 +33,8 @@ struct _AltkStyleContextClass
 
 
 AltkStyleContext *altk_style_context_new ( AltkStyle *style );
+void altk_style_context_set_state ( AltkStyleContext *context,
+                                    AltkState state );
 void altk_style_context_draw_box ( AltkStyleContext *context,
                                    AltkDrawable *drawable,
                                    gint x,
