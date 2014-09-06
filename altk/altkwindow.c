@@ -308,14 +308,13 @@ static void _on_draw_rectangle ( AltkDrawable *drawable,
   float y1 = ((float) y) + 0.5;
   float x2 = ((float) (x + width)) - 0.5;
   float y2 = ((float) (y + height)) - 0.5;
-  ALLEGRO_COLOR col = al_map_rgb(127, 127, 127); /* [FIXME] */
   ALLEGRO_STATE state;
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_bitmap(ALTK_WINDOW(drawable)->dblbuf);
   if (filled)
-    al_draw_filled_rectangle(x1, y1, x2, y2, col);
+    al_draw_filled_rectangle(x1, y1, x2, y2, gc->fg);
   else
-    al_draw_rectangle(x1, y1, x2, y2, col, 1.0);
+    al_draw_rectangle(x1, y1, x2, y2, gc->fg, 1.0);
   al_restore_state(&state);
 }
 
