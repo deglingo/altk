@@ -18,6 +18,8 @@ struct _AltkFont;
 struct _AltkGC
 {
   ALTK_GC_INSTANCE_HEADER;
+  ALLEGRO_COLOR fg;
+  ALLEGRO_COLOR bg;
   struct _AltkFont *font;
 };
 
@@ -33,6 +35,10 @@ struct _AltkGCClass
 
 
 AltkGC *altk_gc_new ( void );
+void altk_gc_set_fg_h32 ( AltkGC *gc,
+                          guint32 color );
+void altk_gc_set_bg_h32 ( AltkGC *gc,
+                          guint32 color );
 
 
 

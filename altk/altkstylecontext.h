@@ -7,6 +7,7 @@
 #include "altk/altkbase.h"
 #include "altk/altkstyle.h"
 #include "altk/altkdrawable.h"
+#include "altk/altkgc.h"
 #include "altk/altkstylecontext-def.h"
 
 
@@ -19,6 +20,8 @@ struct _AltkStyleContext
 
   AltkStyle *style;
   AltkState state;
+  AltkGC *gc_normal;
+  AltkGC *gc_active;
 };
 
 
