@@ -15,11 +15,24 @@ struct _AltkDisplay;
 
 
 
+/* AltkWindowFlags:
+ */
+typedef enum _AltkWindowFlags
+  {
+    ALTK_WINDOW_FLAG_ROOT = 1 << 0,
+    ALTK_WINDOW_FLAG_INPUT_ONLY = 1 << 1,
+  }
+  AltkWindowFlags;
+
+
+
 /* AltkWindow:
  */
 struct _AltkWindow
 {
   ALTK_WINDOW_INSTANCE_HEADER;
+  /* window flags */
+  AltkWindowFlags flags;
   /* the display to which this window is attached */
   struct _AltkDisplay *display;
   /* parent and children (where first child is above) */
@@ -81,7 +94,8 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
                               gint x,
                               gint y,
                               gint width,
-                              gint height );
+                              gint height,
+                              AltkWindowFlags flags );
 void altk_window_set_event_mask ( AltkWindow *window,
                                   AltkEventMask mask );
 void altk_window_set_bounds ( AltkWindow *window,

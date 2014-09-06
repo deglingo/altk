@@ -113,6 +113,7 @@ AltkWindow *altk_window_new_root ( struct _AltkDisplay *display )
   AltkWindow *win;
   win = ALTK_WINDOW(l_object_new(ALTK_CLASS_WINDOW, NULL));
   win->display = display;
+  win->flags = ALTK_WINDOW_FLAG_ROOT;
   /* set size */
   altk_display_get_size(display, &win->width, &win->height);
   /* update_area */
@@ -128,11 +129,13 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
                               gint x,
                               gint y,
                               gint width,
-                              gint height )
+                              gint height,
+                              AltkWindowFlags flags )
 {
   AltkWindow *win;
   ASSERT(parent);
   win = ALTK_WINDOW(l_object_new(ALTK_CLASS_WINDOW, NULL));
+  win->flags = flags;
   win->display = parent->display;
   /* attach to parent [FIXME] ref ? */
   win->parent = parent;

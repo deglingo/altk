@@ -83,7 +83,8 @@ static void _on_realize ( AltkWidget *wid )
                                                    wid->x,
                                                    wid->y,
                                                    wid->width,
-                                                   wid->height);
+                                                   wid->height,
+                                                   ALTK_WINDOW_FLAG_INPUT_ONLY);
   altk_window_set_event_mask(ALTK_BUTTON(wid)->event_window,
                              ALTK_EVENT_MASK_MOUSE_CROSSING |
                              ALTK_EVENT_MASK_MOUSE_BUTTON);

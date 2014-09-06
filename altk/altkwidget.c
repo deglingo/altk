@@ -182,7 +182,8 @@ static void _on_realize ( AltkWidget *widget )
                                        widget->x,
                                        widget->y,
                                        widget->width,
-                                       widget->height);
+                                       widget->height,
+                                       0);
       widget->window->user_data = widget;
     }
 }
