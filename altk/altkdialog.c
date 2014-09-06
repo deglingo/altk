@@ -134,12 +134,12 @@ static void _on_size_allocate ( AltkWidget *wid,
 static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
-  altk_style_draw_box(wid->style,
-                      ALTK_DRAWABLE(event->expose.window),
-                      wid->gc[wid->state],
-                      0 /* [fixme] box type */,
-                      0,
-                      0,
-                      wid->width,
-                      wid->height);
+  AltkStyleContext *ctxt = altk_widget_get_style_context(wid);
+  CL_DEBUG("Dialog.expose_event()");
+  altk_style_context_draw_box(ctxt,
+                              ALTK_DRAWABLE(event->expose.window),
+                              0,
+                              0,
+                              wid->width,
+                              wid->height);
 }
