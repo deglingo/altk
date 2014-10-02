@@ -114,7 +114,7 @@ static void _on_size_request ( AltkWidget *wid,
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc )
 {
-  CL_DEBUG("[TODO] dialog size allocate: %d, %d, %d, %d",
+  CL_DEBUG("[TODO] button size allocate: %d, %d, %d, %d",
            alloc->x, alloc->y, alloc->width, alloc->height);
   /* [FIXME] chain to parent_class method */
   wid->x = alloc->x;

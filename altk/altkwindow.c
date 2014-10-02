@@ -177,6 +177,17 @@ void altk_window_set_event_mask ( AltkWindow *window,
 
 
 
+static void _fix_root_xy ( AltkWindow *window )
+{
+  AltkWindow *child;
+  window->root_x = window->parent->root_x + window->x;
+  window->root_y = window->parent->root_y + window->y;
+  for (child = window->children; child; child = child->next)
+    _fix_root_xy(child);
+}
+
+
+
 /* altk_window_set_bounds:
  */
 void altk_window_set_bounds ( AltkWindow *window,
@@ -189,9 +200,8 @@ void altk_window_set_bounds ( AltkWindow *window,
   window->y = y;
   window->width = width;
   window->height = height;
-  /* [TODO] fix root_x/y for all children */
-  window->root_x = window->parent->root_x + x;
-  window->root_y = window->parent->root_y + y;
+  /* fix root_x/y for all children */
+  _fix_root_xy(window);
   if (!(window->flags & ALTK_WINDOW_FLAG_INPUT_ONLY))
     {
       /* [FIXME] only invalidate the revealed part ? */
@@ -435,8 +445,8 @@ void altk_window_end_draw ( AltkWindow *window,
                             box->y1 - clip.y,
                             box->x2 - box->x1,
                             box->y2 - box->y1,
-                            box->x1,
-                            box->y1,
+                            window->root_x + box->x1,
+                            window->root_y + box->y1,
                             0);
     }
   al_restore_state(&state);

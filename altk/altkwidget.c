@@ -509,9 +509,19 @@ static void _negotiate_size ( AltkWidget *wid )
 {
   AltkRequisition req = { 0, 0 };
   AltkAllocation alloc;
+  AltkDisplay *display = altk_widget_get_display(wid);
   altk_widget_size_request(wid, &req);
-  alloc.x = 0;
-  alloc.y = 0;
+  CL_DEBUG("NEGOTIATE SIZE: %s", l_object_to_string(wid));
+  if (display && altk_display_is_open(display)) {
+    gint w, h;
+    altk_display_get_size(display, &w, &h);
+    CL_DEBUG(" -> display open (%dx%d)", w, h);
+    alloc.x = (w - req.width) / 2;
+    alloc.y = (h - req.height) / 2;
+  } else {
+    alloc.x = 0;
+    alloc.y = 0;
+  }
   alloc.width = req.width;
   alloc.height = req.height;
   altk_widget_size_allocate(wid, &alloc);
