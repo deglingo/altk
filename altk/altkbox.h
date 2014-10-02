@@ -30,7 +30,7 @@ struct _AltkBoxClass
 
 
 
-AltkWidget *altk_box_new ( void );
+AltkWidget *altk_box_new ( AltkOrientation orientation );
 void altk_box_pack_start ( AltkBox *box,
                            AltkWidget *child,
                            AltkPackFlags flags );

@@ -54,9 +54,11 @@ static void altk_box_class_init ( LObjectClass *cls )
 
 /* altk_box_new:
  */
-AltkWidget *altk_box_new ( void )
+AltkWidget *altk_box_new ( AltkOrientation orientation )
 {
-  return ALTK_WIDGET(l_object_new(ALTK_CLASS_BOX, NULL));
+  AltkBox *box = ALTK_BOX(l_object_new(ALTK_CLASS_BOX, NULL));
+  box->orientation = orientation;
+  return ALTK_WIDGET(box);
 }
 
 
