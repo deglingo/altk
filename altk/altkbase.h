@@ -33,6 +33,17 @@ typedef enum _AltkState
 
 
 
+/* AltkOrientation:
+ */
+typedef enum _AltkOrientation
+  {
+    ALTK_VERTICAL,
+    ALTK_HORIZONTAL,
+  }
+  AltkOrientation;
+
+
+
 /* AltkPackFlags:
  */
 typedef enum _AltkPackFlags

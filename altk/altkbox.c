@@ -3,15 +3,40 @@
 
 #include "altk/private.h"
 #include "altk/altkbox.h"
+#include "altk/altkwindow.h"
 #include "altk/altkbox.inl"
+
+
+
+/* Child:
+ */
+typedef struct _Child
+{
+  AltkWidget *widget;
+}
+  Child;
 
 
 
 static void _size_request ( AltkWidget *wid,
                             AltkRequisition *req );
+static void _size_allocate ( AltkWidget *wid,
+                             AltkAllocation *alloc );
 static void _foreach ( AltkWidget *widget,
                        AltkForeachFunc func,
                        gpointer data );
+static void _add ( AltkContainer *cont,
+                   AltkWidget *child );
+
+
+
+/* altk_box_init:
+ */
+static void altk_box_init ( LObject *obj )
+{
+  ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_NOWINDOW;
+  ALTK_BOX(obj)->orientation = ALTK_VERTICAL;
+}
 
 
 
@@ -20,7 +45,9 @@ static void _foreach ( AltkWidget *widget,
 static void altk_box_class_init ( LObjectClass *cls )
 {
   ALTK_WIDGET_CLASS(cls)->size_request = _size_request;
+  ALTK_WIDGET_CLASS(cls)->size_allocate = _size_allocate;
   ALTK_WIDGET_CLASS(cls)->foreach = _foreach;
+  ALTK_CONTAINER_CLASS(cls)->add = _add;
 }
 
 
@@ -34,12 +61,97 @@ AltkWidget *altk_box_new ( void )
 
 
 
+#define SIZE_REQUEST(X, Y, WIDTH, HEIGHT, wid, req) do {        \
+    GList *l;                                                   \
+    guint n_visible = 0;                                        \
+    req->WIDTH = 4;                                             \
+    req->HEIGHT = 4;                                            \
+    for (l = ALTK_BOX(wid)->children; l; l = l->next)           \
+      {                                                         \
+        Child *child = l->data;                                 \
+        AltkRequisition child_req;                              \
+        if (!ALTK_WIDGET_VISIBLE(child->widget))                \
+          continue;                                             \
+        n_visible++;                                            \
+        altk_widget_size_request(child->widget, &child_req);    \
+        req->WIDTH = MAX(req->WIDTH, child_req.WIDTH + 4);      \
+        req->HEIGHT += child_req.HEIGHT;                        \
+      }                                                         \
+    if (n_visible > 0)                                          \
+      req->HEIGHT += (2 * (n_visible - 1));                     \
+  } while (0)
+
+
+
+#define SIZE_ALLOCATE(X, Y, WIDTH, HEIGHT, wid, alloc) do {         \
+    GList *l;                                                       \
+    guint ofs = 2;                                                  \
+    for (l = ALTK_BOX(wid)->children; l; l = l->next)               \
+      {                                                             \
+        Child *child = l->data;                                     \
+        AltkAllocation child_alloc;                                 \
+        if (!ALTK_WIDGET_VISIBLE(child->widget))                    \
+          continue;                                                 \
+        child_alloc.X = alloc->X + 2;                               \
+        child_alloc.Y = alloc->Y + ofs;                             \
+        child_alloc.WIDTH = alloc->WIDTH - 4;                       \
+        child_alloc.HEIGHT = child->widget->size_request.HEIGHT;    \
+        ofs += (2 + child->widget->size_request.HEIGHT);            \
+        altk_widget_size_allocate(child->widget, &child_alloc);     \
+      }                                                             \
+  } while (0)
+
+
+
 /* _size_request:
  */
 static void _size_request ( AltkWidget *wid,
                             AltkRequisition *req )
 {
-  CL_DEBUG("[TODO] AltkBox.size_request()");
+  switch (ALTK_BOX(wid)->orientation)
+    {
+    case ALTK_VERTICAL:
+      SIZE_REQUEST(x, y, width, height, wid, req);
+      break;
+    case ALTK_HORIZONTAL:
+      SIZE_REQUEST(y, x, height, width, wid, req);
+      break;
+    default:
+      ASSERT(0);
+    }
+}
+
+
+
+/* _size_allocate:
+ */
+static void _size_allocate ( AltkWidget *wid,
+                             AltkAllocation *alloc )
+{
+  CL_DEBUG("[TODO] box size allocate: %d, %d, %d, %d",
+           alloc->x, alloc->y, alloc->width, alloc->height);
+  /* [FIXME] chain to parent_class method */
+  wid->x = alloc->x;
+  wid->y = alloc->y;
+  wid->width = alloc->width;
+  wid->height = alloc->height;
+  /* resize the window */
+  if (ALTK_WIDGET_REALIZED(wid))
+    {
+      altk_window_set_bounds(wid->window, alloc->x, alloc->y, alloc->width, alloc->height);
+    }
+  /* children */
+  switch (ALTK_BOX(wid)->orientation)
+    {
+    case ALTK_VERTICAL:
+      SIZE_ALLOCATE(x, y, width, height, wid, alloc);
+      break;
+    case ALTK_HORIZONTAL:
+      SIZE_ALLOCATE(y, x, height, width, wid, alloc);
+      break;
+    default:
+      ASSERT(0);
+    }
 }
 
 
@@ -50,7 +162,25 @@ static void _foreach ( AltkWidget *widget,
                        AltkForeachFunc func,
                        gpointer data )
 {
-  CL_DEBUG("[TODO] AltkBox.foreach()");
+  GList *l;
+  for (l = ALTK_BOX(widget)->children; l; l = l->next)
+    {
+      if (func(((Child *) (l->data))->widget, data) == ALTK_FOREACH_STOP)
+        return;
+    }
+}
+
+
+
+/* _add:
+ */
+static void _add ( AltkContainer *cont,
+                   AltkWidget *child )
+{
+  Child *bchild = g_new0(Child, 1);
+  _altk_widget_set_parent(child, ALTK_WIDGET(cont));
+  bchild->widget = l_object_ref(child);
+  ALTK_BOX(cont)->children = g_list_append(ALTK_BOX(cont)->children, bchild);
 }
 
 
@@ -61,4 +191,5 @@ void altk_box_pack_start ( AltkBox *box,
                            AltkWidget *child,
                            AltkPackFlags flags )
 {
+  altk_container_add(ALTK_CONTAINER(box), child);
 }

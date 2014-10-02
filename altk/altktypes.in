@@ -30,6 +30,7 @@ namespace Altk
   };
   class Box : Container {
     void class_init ();
+    void init ();
   };
   class Button : Bin {
     void class_init ();
