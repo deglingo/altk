@@ -33,6 +33,16 @@ typedef enum _AltkState
 
 
 
+/* AltkPackFlags:
+ */
+typedef enum _AltkPackFlags
+  {
+    ALTK_PACK_DUMMY, /* [todo] */
+  }
+  AltkPackFlags;
+
+
+
 int altk_init ( void );
 
 

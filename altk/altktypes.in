@@ -28,6 +28,9 @@ namespace Altk
   class Bin : Container {
     void class_init ();
   };
+  class Box : Container {
+    void class_init ();
+  };
   class Button : Bin {
     void class_init ();
     void init ();
