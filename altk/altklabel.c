@@ -51,6 +51,19 @@ AltkWidget *altk_label_new ( const gchar *text )
 
 
 
+/* altk_label_set_text:
+ */
+void altk_label_set_text ( AltkLabel *label,
+                           const gchar *text )
+{
+  g_free(label->text);
+  label->text = g_strdup(text);
+  altk_widget_queue_resize(ALTK_WIDGET(label));
+  altk_widget_queue_draw(ALTK_WIDGET(label)); /* [fixme] ?? */
+}
+
+
+
 /* _on_size_request:
  */
 static void _on_size_request ( AltkWidget *wid,

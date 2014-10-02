@@ -30,6 +30,8 @@ struct _AltkLabelClass
 
 
 AltkWidget *altk_label_new ( const gchar *text );
+void altk_label_set_text ( AltkLabel *label,
+                           const gchar *text );
 
 
 
