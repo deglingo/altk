@@ -78,6 +78,8 @@ struct _AltkWidget
   ALTK_WIDGET_INSTANCE_HEADER;
   /* the parent widget */
   AltkWidget *parent;
+  /* user name */
+  gchar *name;
   /* flags */
   AltkWidgetFlags flags;
   /* on-screen location (relative to parent widget) */
@@ -163,6 +165,10 @@ void altk_widget_size_request ( AltkWidget *widget,
                                 AltkRequisition *req );
 void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc );
+void altk_widget_set_name ( AltkWidget *widget,
+                            const gchar *name );
+AltkWidget *altk_widget_find ( AltkWidget *widget,
+                               const gchar *name );
 void altk_widget_show ( AltkWidget *widget );
 void altk_widget_show_all ( AltkWidget *widget );
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget );

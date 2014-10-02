@@ -237,6 +237,61 @@ static void _on_size_allocate ( AltkWidget *wid,
 
 
 
+/* altk_widget_set_name:
+ */
+void altk_widget_set_name ( AltkWidget *widget,
+                            const gchar *name )
+{
+  g_free(widget->name);
+  widget->name = g_strdup(name);
+}
+
+
+
+struct find_data
+{
+  const gchar *name;
+  AltkWidget *found;
+};
+
+
+
+static gboolean _widget_find ( AltkWidget *widget,
+                               gpointer data_ )
+{
+  struct find_data *data = data_;
+  /* [FIXME] altk_widget_foreach() should return STOP/CONT to avoid
+     that */
+  if (data->found)
+    return ALTK_FOREACH_STOP;
+  if (widget->name && !strcmp(widget->name, data->name))
+    {
+      data->found = widget;
+      return ALTK_FOREACH_STOP;
+    }
+  altk_widget_foreach(widget, _widget_find, data);
+  if (data->found)
+    return ALTK_FOREACH_STOP;
+  else
+    return ALTK_FOREACH_CONT;
+}
+
+
+
+/* altk_widget_find:
+ */
+AltkWidget *altk_widget_find ( AltkWidget *widget,
+                               const gchar *name )
+{
+  struct find_data data;
+  data.name = name;
+  data.found = NULL;
+  _widget_find(widget, &data);
+  return data.found;
+}
+
+
+
 /* altk_widget_show:
  */
 void altk_widget_show ( AltkWidget *widget )
