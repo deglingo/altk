@@ -34,6 +34,8 @@ static void altk_label_class_init ( LObjectClass *cls )
 static void altk_label_init ( LObject *obj )
 {
   ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_NOWINDOW;
+  altk_widget_set_event_mask(ALTK_WIDGET(obj), ALTK_EVENT_MASK_EXPOSE);
+  ALTK_LABEL(obj)->text = g_strdup("??"); /* [fixme] waiing for props */
 }
 
 
@@ -44,7 +46,6 @@ AltkWidget *altk_label_new ( const gchar *text )
 {
   AltkWidget *wid = ALTK_WIDGET(l_object_new(ALTK_CLASS_LABEL, NULL));
   /* [FIXME] instance init */
-  altk_widget_set_event_mask(wid, ALTK_EVENT_MASK_EXPOSE);
   ALTK_LABEL(wid)->text = g_strdup(text);
   return wid;
 }

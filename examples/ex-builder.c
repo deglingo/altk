@@ -44,6 +44,9 @@ gint main ()
   AltkWidget *dlg;
   CL_DEBUG("HELLO!");
   altk_init();
+  /* [FIXME] */
+  ALTK_CLASS_DIALOG;
+  ALTK_CLASS_LABEL;
   display = altk_display_new();
   dlg = create_dialog(display);
   altk_widget_show_all(dlg);

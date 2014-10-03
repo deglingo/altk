@@ -39,6 +39,7 @@ static void altk_dialog_class_init ( LObjectClass *cls )
 static void altk_dialog_init ( LObject *obj )
 {
   ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_TOP_WIDGET;
+  altk_widget_set_event_mask(ALTK_WIDGET(obj), ALTK_EVENT_MASK_EXPOSE);
 }
 
 
@@ -49,7 +50,6 @@ AltkWidget *altk_dialog_new ( AltkDisplay *display )
 {
   AltkWidget *dlg;
   dlg = ALTK_WIDGET(l_object_new(ALTK_CLASS_DIALOG, NULL));
-  altk_widget_set_event_mask(dlg, ALTK_EVENT_MASK_EXPOSE);
   if (display)
     altk_dialog_set_display(ALTK_DIALOG(dlg), display);
   return dlg;

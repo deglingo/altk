@@ -3,6 +3,7 @@
 
 #include "altk/private.h"
 #include "altk/altkbuilder.h"
+#include "altk/altkcontainer.h" /* [removeme] */
 #include "altk/altkbuilder.inl"
 
 
@@ -73,6 +74,9 @@ struct _ElemObject
 {
   ELEM_HEADER;
 
+  LObject *instance;
+  gchar *id;
+  gchar *obj_type;
   GList *properties;
   GList *children;
 };
@@ -129,6 +133,7 @@ static Elem *elem_push ( AltkBuilder *builder,
                          const gchar *name );
 static Elem *elem_peek ( AltkBuilder *builder );
 static Elem *elem_pop ( AltkBuilder *builder );
+static LObject *elem_instantiate ( Elem *elem );
 
 
 
@@ -138,6 +143,7 @@ typedef struct _AltkBuilderPrivate
 {
   GMarkupParseContext *context;
   Elem *elem;
+  GHashTable *idmap;
 }
   AltkBuilderPrivate;
 
@@ -187,6 +193,7 @@ AltkBuilder *altk_builder_new ( void )
   AltkBuilder *b = ALTK_BUILDER(l_object_new(ALTK_CLASS_BUILDER, NULL));
   priv = b->private = g_new0(AltkBuilderPrivate, 1);
   priv->context = g_markup_parse_context_new(&parser, 0, b, NULL);
+  priv->idmap = g_hash_table_new(g_str_hash, g_str_equal);
   return b;
 }
 
@@ -217,15 +224,18 @@ gboolean altk_builder_parse_text ( AltkBuilder *builder,
 
 
 
-/* [REMOVEME] */
-#include "altk/altkdialog.h"
-
 /* altk_builder_get_object:
  */
 LObject *altk_builder_get_object ( AltkBuilder *builder,
                                    const gchar *name )
 {
-  return L_OBJECT(altk_dialog_new(NULL));
+  AltkBuilderPrivate *priv = PRIVATE(builder);
+  Elem *elem;
+  if (!(elem = g_hash_table_lookup(priv->idmap, name))) {
+    CL_DEBUG("ERROR: id not found: '%s'", name);
+    return NULL;
+  }
+  return l_object_ref(elem_instantiate(elem));
 }
 
 
@@ -271,6 +281,69 @@ static Elem *elem_peek ( AltkBuilder *builder )
 
 
 
+/* elem_instantiate:
+ */
+static LObject *elem_instantiate ( Elem *elem )
+{
+  LObjectClass *cls;
+  ElemObject *obj;
+  GList *l;
+  ASSERT(elem->type == ELEM_OBJECT);
+  obj = (ElemObject *) elem;
+  if (obj->instance)
+    return obj->instance;
+  /* find class */
+  if (!(cls = l_object_class_from_name(obj->obj_type)))
+    CL_ERROR("object class not found: '%s'", obj->obj_type);
+  obj->instance = l_object_new(cls, NULL);
+  /* create children */
+  for (l = obj->children; l; l = l->next)
+    {
+      Elem *child_elem = l->data;
+      LObject *child;
+      ASSERT(child_elem->type == ELEM_CHILD);
+      child = elem_instantiate(child_elem->child.object);
+      /* [FIXME] find some generic child handling */
+      ASSERT(ALTK_IS_CONTAINER(obj->instance));
+      ASSERT(ALTK_IS_WIDGET(child));
+      altk_container_add(ALTK_CONTAINER(obj->instance), ALTK_WIDGET(child));
+    }
+  return obj->instance;
+}
+
+
+
+/* get_object_attrs:
+ */
+static void get_object_attrs ( AltkBuilder *builder,
+                               const gchar **names,
+                               const gchar **values )
+{
+  AltkBuilderPrivate *priv = PRIVATE(builder);
+  ElemObject *elem = (ElemObject *) elem_peek(builder);
+  gint i;
+  ASSERT(elem);
+  ASSERT(elem->type == ELEM_OBJECT);
+  for (i = 0; names[i]; i++)
+    {
+      if (!strcmp(names[i], "type")) {
+        ASSERT(!elem->obj_type);
+        elem->obj_type = g_strdup(values[i]);
+      } else if (!strcmp(names[i], "id")) {
+        ASSERT(!elem->id);
+        elem->id = g_strdup(values[i]);
+        if (g_hash_table_lookup(priv->idmap, elem->id))
+          CL_ERROR("duplicated id: '%s'", elem->id);
+        else
+          g_hash_table_insert(priv->idmap, elem->id, elem);
+      } else {
+        CL_DEBUG("unknwon 'object' attrs: '%s' = '%s'", names[i], values[i]);
+      }
+    }
+}
+
+
+
 /* _start_element:
  */
 static void _start_element ( GMarkupParseContext *ctxt,
@@ -294,11 +367,13 @@ static void _start_element ( GMarkupParseContext *ctxt,
           elem->root.objects =
             g_list_append(elem->root.objects,
                           elem_push(builder, ELEM_OBJECT, name));
+          get_object_attrs(builder, atnames, atvalues);
         }
       else if (elem->type == ELEM_CHILD)
         {
           ASSERT(!elem->child.object);
           elem->child.object = elem_push(builder, ELEM_OBJECT, name);
+          get_object_attrs(builder, atnames, atvalues);
         }
       else
         {
