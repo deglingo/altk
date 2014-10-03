@@ -104,8 +104,8 @@ static void _on_size_request ( AltkWidget *wid,
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc )
 {
-  CL_DEBUG("[TODO] dialog size allocate: %d, %d, %d, %d",
-           alloc->x, alloc->y, alloc->width, alloc->height);
+  /* CL_DEBUG("[TODO] dialog size allocate: %d, %d, %d, %d", */
+  /*          alloc->x, alloc->y, alloc->width, alloc->height); */
   /* [FIXME] chain to parent_class method */
   wid->x = alloc->x;
   wid->y = alloc->y;
@@ -135,7 +135,7 @@ static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
   AltkStyleContext *ctxt = altk_widget_get_style_context(wid);
-  CL_DEBUG("Dialog.expose_event()");
+  /* CL_DEBUG("Dialog.expose_event()"); */
   altk_style_context_draw_box(ctxt,
                               ALTK_DRAWABLE(event->expose.window),
                               0,

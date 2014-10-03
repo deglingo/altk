@@ -7,13 +7,16 @@ AM_LDFLAGS = @CLOG_LIBS@ @LOS_LIBS@ @AL5_LIBS@ $(top_builddir)/altk/libaltk.la
 noinst_PROGRAMS = \
 	ex-label \
 	ex-button \
-	ex-box
+	ex-box \
+	ex-builder
 
 ex_label_CPPFLAGS = -DCL_LOG_DOMAIN=\"ex-label\"
 ex_button_CPPFLAGS = -DCL_LOG_DOMAIN=\"ex-button\"
 ex_box_CPPFLAGS = -DCL_LOG_DOMAIN=\"ex-box\"
+ex_builder_CPPFLAGS = -DCL_LOG_DOMAIN=\"ex-builder\"
 
 # [fixme] find a way to not repeat this for every prog
 EXTRA_ex_label_DEPENDENCIES = $(top_builddir)/altk/libaltk.la
 EXTRA_ex_button_DEPENDENCIES = $(top_builddir)/altk/libaltk.la
 EXTRA_ex_box_DEPENDENCIES = $(top_builddir)/altk/libaltk.la
+EXTRA_ex_builder_DEPENDENCIES = $(top_builddir)/altk/libaltk.la

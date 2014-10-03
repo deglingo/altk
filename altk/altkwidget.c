@@ -202,8 +202,8 @@ void altk_widget_size_request ( AltkWidget *widget,
       widget->flags &= ~ALTK_WIDGET_FLAG_NEEDS_RESIZE;
     }
   *req = widget->size_request;
-  CL_DEBUG("size_request(%p) -> %d, %d",
-           widget, req->width, req->height);
+  /* CL_DEBUG("size_request(%p) -> %d, %d", */
+  /*          widget, req->width, req->height); */
 }
 
 
@@ -214,10 +214,10 @@ void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc )
 {
   ASSERT(ALTK_WIDGET_GET_CLASS(widget)->size_allocate);
-  CL_DEBUG("size_allocate(%p, %d, %d, %d, %d)",
-           widget, alloc->x, alloc->y, alloc->width, alloc->height);
+  /* CL_DEBUG("size_allocate(%p, %d, %d, %d, %d)", */
+  /*          widget, alloc->x, alloc->y, alloc->width, alloc->height); */
   ALTK_WIDGET_GET_CLASS(widget)->size_allocate(widget, alloc);
-  CL_DEBUG("size_allocate(%p) OK", widget);
+  /* CL_DEBUG("size_allocate(%p) OK", widget); */
 }
 
 
@@ -227,12 +227,12 @@ void altk_widget_size_allocate ( AltkWidget *widget,
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc )
 {
-  CL_DEBUG("_on_size_allocate(%p)", wid);
+  /* CL_DEBUG("_on_size_allocate(%p)", wid); */
   wid->x = alloc->x;
   wid->y = alloc->y;
   wid->width = alloc->width;
   wid->height = alloc->height;
-  CL_DEBUG("_on_size_allocate OK");
+  /* CL_DEBUG("_on_size_allocate OK"); */
 }
 
 
@@ -511,11 +511,11 @@ static void _negotiate_size ( AltkWidget *wid )
   AltkAllocation alloc;
   AltkDisplay *display = altk_widget_get_display(wid);
   altk_widget_size_request(wid, &req);
-  CL_DEBUG("NEGOTIATE SIZE: %s", l_object_to_string(wid));
+  /* CL_DEBUG("NEGOTIATE SIZE: %s", l_object_to_string(wid)); */
   if (display && altk_display_is_open(display)) {
     gint w, h;
     altk_display_get_size(display, &w, &h);
-    CL_DEBUG(" -> display open (%dx%d)", w, h);
+    /* CL_DEBUG(" -> display open (%dx%d)", w, h); */
     alloc.x = (w - req.width) / 2;
     alloc.y = (h - req.height) / 2;
   } else {
@@ -553,7 +553,7 @@ static gboolean _idle_resize ( gpointer data )
  */
 void altk_widget_queue_resize ( AltkWidget *widget )
 {
-  CL_DEBUG("widget_queue_resize(%p)", widget);
+  /* CL_DEBUG("widget_queue_resize(%p)", widget); */
   AltkWidget *w = widget;
   while (w)
     {

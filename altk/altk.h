@@ -17,6 +17,8 @@
 
 #include <altk/altkstyle.h>
 
+#include <altk/altkbuilder.h>
+
 #include <altk/altkwidget.h>
 
 #include <altk/altklabel.h>
