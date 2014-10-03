@@ -15,14 +15,20 @@ extern const char EX_BUILDER_DIALOG[];
 static AltkWidget *create_dialog ( AltkDisplay *display )
 {
   AltkBuilder *builder;
+  LObject *dlg;
   GError *error = NULL;
   builder = altk_builder_new();
   CL_DEBUG("parsing xml:\n%s", EX_BUILDER_DIALOG);
   if (!altk_builder_parse_text(builder, EX_BUILDER_DIALOG, &error))
     CL_ERROR("parse error");
   ASSERT(!error);
+  if (!(dlg = altk_builder_get_object(builder, "ex-builder-dialog")))
+    CL_ERROR("object not found");
+  ASSERT(ALTK_IS_WIDGET(dlg));
+  l_object_ref(dlg);
   l_object_unref(builder);
-  return altk_dialog_new(display);
+  altk_dialog_set_display(ALTK_DIALOG(dlg), display);
+  return ALTK_WIDGET(dlg);
 }
 
 

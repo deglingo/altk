@@ -24,3 +24,16 @@ gboolean altk_builder_parse_text ( AltkBuilder *builder,
 {
   return TRUE;
 }
+
+
+
+/* [REMOVEME] */
+#include "altk/altkdialog.h"
+
+/* altk_builder_get_object:
+ */
+LObject *altk_builder_get_object ( AltkBuilder *builder,
+                                   const gchar *name )
+{
+  return L_OBJECT(altk_dialog_new(NULL));
+}

@@ -50,10 +50,22 @@ AltkWidget *altk_dialog_new ( AltkDisplay *display )
   AltkWidget *dlg;
   dlg = ALTK_WIDGET(l_object_new(ALTK_CLASS_DIALOG, NULL));
   altk_widget_set_event_mask(dlg, ALTK_EVENT_MASK_EXPOSE);
-  /* [fixme] atach dialog <> display */
-  altk_display_attach_widget(display, dlg);
-  ALTK_DIALOG(dlg)->display = display;
+  if (display)
+    altk_dialog_set_display(ALTK_DIALOG(dlg), display);
   return dlg;
+}
+
+
+
+/* altk_dialog_set_display:
+ */
+void altk_dialog_set_display ( AltkDialog *dlg,
+                               struct _AltkDisplay *display )
+{
+  ASSERT(!dlg->display); /* [TODO] */
+  /* [fixme] atach dialog <> display */
+  ALTK_DIALOG(dlg)->display = display;
+  altk_display_attach_widget(display, ALTK_WIDGET(dlg));
 }
 
 
