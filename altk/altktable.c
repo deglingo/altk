@@ -107,3 +107,18 @@ static void _add ( AltkContainer *cont,
   bchild->widget = l_object_ref(child);
   ALTK_TABLE(cont)->children = g_list_append(ALTK_TABLE(cont)->children, bchild);
 }
+
+
+
+/* altk_table_attach:
+ */
+void altk_table_attach ( AltkTable *table,
+                         AltkWidget *child,
+                         gint top,
+                         gint left,
+                         gint bottom,
+                         gint right,
+                         AltkPackFlags flags )
+{
+  altk_container_add(ALTK_CONTAINER(table), child);
+}

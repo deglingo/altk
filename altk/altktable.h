@@ -30,6 +30,13 @@ struct _AltkTableClass
 
 
 AltkWidget *altk_table_new ( void );
+void altk_table_attach ( AltkTable *table,
+                         AltkWidget *child,
+                         gint top,
+                         gint left,
+                         gint bottom,
+                         gint right,
+                         AltkPackFlags flags );
 
 
 

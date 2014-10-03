@@ -20,7 +20,7 @@ static AltkWidget *create_dialog ( AltkDisplay *display )
   /* title */
   title = L_TRASH_OBJECT
     (altk_label_new("TABLE EXAMPLE"));
-  /* altk_table_attach(ALTK_TABLE(table), title, 0, 0, 4, 1, 0); */
+  altk_table_attach(ALTK_TABLE(table), title, 0, 0, 4, 1, 0);
   /* cleanup */
   l_trash_pop();
   return dlg;
