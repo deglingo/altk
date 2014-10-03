@@ -15,10 +15,11 @@ void _altk_wm_init ( void );
 
 
 
-/* altk_init:
+/* altk_init_once:
  */
-int altk_init ( void )
+static gpointer altk_init_once ( gpointer dummy )
 {
+  los_init();
   if (!al_init())
     CL_ERROR("could not initialize allegro");
   if (!al_init_primitives_addon())
@@ -33,5 +34,16 @@ int altk_init ( void )
   _altk_wm_init();
   altk_wm_register_al_source(al_get_mouse_event_source());
   altk_event_set_handler(altk_widget_event_handler, NULL);
+  return NULL;
+}
+
+
+
+/* altk_init:
+ */
+int altk_init ( void )
+{
+  GOnce once = G_ONCE_INIT;
+  g_once(&once, altk_init_once, NULL);
   return 0;
 }
