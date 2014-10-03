@@ -28,6 +28,9 @@ struct _AltkBuilderClass
 
 
 AltkBuilder *altk_builder_new ( void );
+gboolean altk_builder_parse_text ( AltkBuilder *builder,
+                                   const gchar *text,
+                                   GError **error );
 
 
 
