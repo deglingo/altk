@@ -33,6 +33,10 @@ namespace Altk
     void class_init ();
     void init ();
   };
+  class Table : Container {
+    void class_init();
+    void init ();
+  };
   class Button : Bin {
     void class_init ();
     void init ();

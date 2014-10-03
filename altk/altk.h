@@ -29,6 +29,8 @@
 
 #include <altk/altkbox.h>
 
+#include <altk/altktable.h>
+
 #include <altk/altkbutton.h>
 
 #include <altk/altkdialog.h>

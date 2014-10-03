@@ -49,6 +49,7 @@ libaltk_la_SOURCES = \
 	altkcontainer.c \
 	altkbin.c \
 	altkbox.c \
+	altktable.c \
 	altkbutton.c \
 	altkdialog.c
 
@@ -67,6 +68,7 @@ BUILT_SOURCES = \
 	altkcontainer-def.h altkcontainer.inl \
 	altkbin-def.h altkbin.inl \
 	altkbox-def.h altkbox.inl \
+	altktable-def.h altktable.inl \
 	altkbutton-def.h altkbutton.inl \
 	altkdialog-def.h altkdialog.inl
 
@@ -84,6 +86,7 @@ altklabel-def.h altklabel.inl \
 altkcontainer-def.h altkcontainer.inl \
 altkbin-def.h altkbin.inl \
 altkbox-def.h altkbox.inl \
+altktable-def.h altktable.inl \
 altkbutton-def.h altkbutton.inl \
 altkdialog-def.h altkdialog.inl \
 : altktypes.stamp-h
