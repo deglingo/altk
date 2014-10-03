@@ -20,3 +20,17 @@ EXTRA_ex_label_DEPENDENCIES = $(top_builddir)/altk/libaltk.la
 EXTRA_ex_button_DEPENDENCIES = $(top_builddir)/altk/libaltk.la
 EXTRA_ex_box_DEPENDENCIES = $(top_builddir)/altk/libaltk.la
 EXTRA_ex_builder_DEPENDENCIES = $(top_builddir)/altk/libaltk.la
+
+ex_builder_SOURCES = \
+	ex-builder.c \
+	ex-builder-dialog.c
+
+BUILT_SOURCES = \
+	ex-builder-dialog.h ex-builder-dialog.c
+
+ex-builder-dialog.h ex-builder-dialog.c \
+: ex-builder-dialog.stamp-h
+
+ex-builder-dialog.stamp-h: ex-builder-dialog.xml
+	$(top_builddir)/tools/altk-xml2c -o ex-builder-dialog -n EX_BUILDER_DIALOG $<
+	echo >$@

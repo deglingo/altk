@@ -6,12 +6,17 @@
 
 
 
+extern const char EX_BUILDER_DIALOG[];
+
+
+
 /* create_dialog:
  */
 static AltkWidget *create_dialog ( AltkDisplay *display )
 {
   AltkBuilder *builder;
   builder = altk_builder_new();
+  CL_DEBUG("parsing xml:\n%s", EX_BUILDER_DIALOG);
   l_object_unref(builder);
   return altk_dialog_new(display);
 }

@@ -19,6 +19,7 @@ PKG_CHECK_MODULES([AL5], [allegro-debug-5 allegro_main-debug-5 allegro_primitive
 
 AC_CONFIG_FILES([ \
   Makefile \
+  tools/Makefile \
   altk/Makefile \
   examples/Makefile \
 ])
