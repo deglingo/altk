@@ -12,6 +12,24 @@
 
 
 
+/* Properties:
+ */
+enum
+  {
+    PROP_0,
+    PROP_TEXT,
+    _PROP_COUNT,
+  };
+
+static LParamSpec *pspecs[_PROP_COUNT] = { NULL, };
+
+
+
+static LObject *_get_property ( LObject *object,
+                                LParamSpec *pspec );
+static void _set_property ( LObject *object,
+                            LParamSpec *pspec,
+                            LObject *value );
 static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req );
 static void _on_expose_event ( AltkWidget *wid,
@@ -23,8 +41,16 @@ static void _on_expose_event ( AltkWidget *wid,
  */
 static void altk_label_class_init ( LObjectClass *cls )
 {
+  cls->get_property = _get_property;
+  cls->set_property = _set_property;
   ((AltkWidgetClass *) cls)->size_request = _on_size_request;
   ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
+
+  pspecs[PROP_TEXT] =
+    l_param_spec_string("text",
+                        "");
+
+  l_object_class_install_properties(cls, _PROP_COUNT, pspecs);
 }
 
 
@@ -48,6 +74,43 @@ AltkWidget *altk_label_new ( const gchar *text )
   /* [FIXME] instance init */
   ALTK_LABEL(wid)->text = g_strdup(text);
   return wid;
+}
+
+
+
+/* _get_property:
+ */
+static LObject *_get_property ( LObject *object,
+                                LParamSpec *pspec )
+{
+  switch (pspec->param_id)
+    {
+    case PROP_TEXT:
+      return L_OBJECT(l_string_new(ALTK_LABEL(object)->text));
+    default:
+      ASSERT(0);
+      return NULL;
+    }
+}
+
+
+
+/* _set_property:
+ */
+static void _set_property ( LObject *object,
+                            LParamSpec *pspec,
+                            LObject *value )
+{
+  switch (pspec->param_id)
+    {
+    case PROP_TEXT:
+      ASSERT(L_IS_STRING(value)); /* [removeme] */
+      altk_label_set_text(ALTK_LABEL(object),
+                          L_STRING(value)->str);
+      break;
+    default:
+      ASSERT(0);
+    }
 }
 
 
