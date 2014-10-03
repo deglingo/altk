@@ -488,6 +488,8 @@ void altk_widget_queue_draw ( AltkWidget *widget )
 {
   AltkRectangle r;
   AltkRegion *wr;
+  if (!ALTK_WIDGET_REALIZED(widget))
+    return;
   if (ALTK_WIDGET_NOWINDOW(widget)) {
     r.x = widget->x;
     r.y = widget->y;
