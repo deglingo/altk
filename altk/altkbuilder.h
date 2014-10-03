@@ -15,7 +15,7 @@ struct _AltkBuilder
 {
   ALTK_BUILDER_INSTANCE_HEADER;
 
-  GMarkupParseContext *context;
+  gpointer private;
 };
 
 
@@ -32,6 +32,7 @@ struct _AltkBuilderClass
 AltkBuilder *altk_builder_new ( void );
 gboolean altk_builder_parse_text ( AltkBuilder *builder,
                                    const gchar *text,
+                                   gssize len,
                                    GError **error );
 LObject *altk_builder_get_object ( AltkBuilder *builder,
                                    const gchar *name );

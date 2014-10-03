@@ -18,8 +18,11 @@ static AltkWidget *create_dialog ( AltkDisplay *display )
   LObject *dlg;
   GError *error = NULL;
   builder = altk_builder_new();
-  CL_DEBUG("parsing xml:\n%s", EX_BUILDER_DIALOG);
-  if (!altk_builder_parse_text(builder, EX_BUILDER_DIALOG, &error))
+  /* CL_DEBUG("parsing xml:\n%s", EX_BUILDER_DIALOG); */
+  if (!altk_builder_parse_text(builder,
+                               EX_BUILDER_DIALOG,
+                               strlen(EX_BUILDER_DIALOG), /* [FIXME] */
+                               &error))
     CL_ERROR("parse error");
   ASSERT(!error);
   if (!(dlg = altk_builder_get_object(builder, "ex-builder-dialog")))

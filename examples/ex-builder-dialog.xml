@@ -1,2 +1,11 @@
 <object type="AltkDialog" id="ex-builder-dialog">
+  <child>
+    <object type="AltkLabel">
+      <property name="text">
+        <value type="string">
+          Hello!
+        </value>
+      </property>
+    </object>
+  </child>
 </object>
