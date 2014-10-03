@@ -24,6 +24,8 @@ static void write_c_file ( FILE *fin,
     {
       if (c == '\n')
         fprintf(fout, "\\n\"\n  \"");
+      else if (c == '"')
+        fprintf(fout, "\\\"");
       else if (c >= 32 && c <= 127)
         fprintf(fout, "%c", c);
       else

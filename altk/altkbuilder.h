@@ -14,6 +14,8 @@
 struct _AltkBuilder
 {
   ALTK_BUILDER_INSTANCE_HEADER;
+
+  GMarkupParseContext *context;
 };
 
 
