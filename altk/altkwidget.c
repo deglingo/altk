@@ -11,6 +11,27 @@
 
 
 
+
+
+
+/* Properties:
+ */
+enum
+  {
+    PROP_0,
+    PROP_NAME,
+    _PROP_COUNT,
+  };
+
+static LParamSpec *pspecs[_PROP_COUNT] = { NULL, };
+
+
+
+static LObject *_get_property ( LObject *object,
+                                LParamSpec *pspec );
+static void _set_property ( LObject *object,
+                            LParamSpec *pspec,
+                            LObject *value );
 static AltkDisplay *_on_get_display ( AltkWidget *widget );
 static void _on_map ( AltkWidget *widget );
 static void _on_realize ( AltkWidget *widget );
@@ -39,15 +60,70 @@ void altk_widget_event_handler ( AltkEvent *event,
 
 
 
+/* altk_widget_init:
+ */
+static void altk_widget_init ( LObject *obj )
+{
+  /* [fixme] prop default */
+  ALTK_WIDGET(obj)->name = g_strdup("");
+}
+
+
+
 /* altk_widget_class_init:
  */
 static void altk_widget_class_init ( LObjectClass *cls )
 {
+  cls->get_property = _get_property;
+  cls->set_property = _set_property;
   ((AltkWidgetClass *) cls)->get_display = _on_get_display;
   ((AltkWidgetClass *) cls)->map = _on_map;
   ((AltkWidgetClass *) cls)->realize = _on_realize;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
   ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
+
+  pspecs[PROP_NAME] =
+    l_param_spec_string("name",
+                        "");
+
+  l_object_class_install_properties(cls, _PROP_COUNT, pspecs);
+}
+
+
+
+/* _get_property:
+ */
+static LObject *_get_property ( LObject *object,
+                                LParamSpec *pspec )
+{
+  switch (pspec->param_id)
+    {
+    case PROP_NAME:
+      return L_OBJECT(l_string_new(ALTK_WIDGET(object)->name));
+    default:
+      ASSERT(0);
+      return NULL;
+    }
+}
+
+
+
+/* _set_property:
+ */
+static void _set_property ( LObject *object,
+                            LParamSpec *pspec,
+                            LObject *value )
+{
+  switch (pspec->param_id)
+    {
+    case PROP_NAME:
+      ASSERT(L_IS_STRING(value)); /* [removeme] */
+      altk_widget_set_name(ALTK_WIDGET(object),
+                           L_STRING(value)->str);
+      break;
+    default:
+      ASSERT(0);
+    }
 }
 
 
