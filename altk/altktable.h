@@ -15,7 +15,7 @@ struct _AltkTable
 {
   ALTK_TABLE_INSTANCE_HEADER;
 
-  GList *children;
+  gpointer private;
 };
 
 

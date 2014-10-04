@@ -53,8 +53,8 @@ int altk_init ( void )
 /* altk_size_distrib_init:
  */
 void altk_size_distrib_init ( AltkSizeDistrib *distrib,
-                              guint size,
-                              guint n_items )
+                              gint size,
+                              gint n_items )
 {
   distrib->size = size;
   distrib->n_items = n_items;
@@ -68,8 +68,8 @@ void altk_size_distrib_init ( AltkSizeDistrib *distrib,
  */
 guint altk_size_distrib_next ( AltkSizeDistrib *distrib )
 {
-  guint s;
-  guint r;
+  gint s;
+  gint r;
   if (distrib->current >= distrib->n_items)
     return 0;
   s = distrib->size + distrib->remainder;

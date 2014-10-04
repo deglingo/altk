@@ -58,10 +58,10 @@ typedef enum _AltkPackFlags
  */
 typedef struct _AltkSizeDistrib
 {
-  guint size;
-  guint n_items;
-  guint remainder;
-  guint current;
+  gint size;
+  gint n_items;
+  gint remainder;
+  gint current;
 }
   AltkSizeDistrib;
 
@@ -70,8 +70,8 @@ typedef struct _AltkSizeDistrib
 int altk_init ( void );
 
 void altk_size_distrib_init ( AltkSizeDistrib *distrib,
-                              guint size,
-                              guint n_items );
+                              gint size,
+                              gint n_items );
 guint altk_size_distrib_next ( AltkSizeDistrib *distrib );
 
 

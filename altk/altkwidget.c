@@ -123,7 +123,7 @@ void altk_widget_map ( AltkWidget *widget )
  */
 static void _on_map ( AltkWidget *widget )
 {
-  CL_DEBUG("widget_map(%p)", widget);
+  /* CL_DEBUG("widget_map(%p)", widget); */
   /* [FIXME] */
   gint s;
   widget->style = altk_style_new();
@@ -165,7 +165,7 @@ void altk_widget_realize ( AltkWidget *widget )
  */
 static void _on_realize ( AltkWidget *widget )
 {
-  CL_DEBUG("[TODO] realize(%p)", widget);
+  /* CL_DEBUG("[TODO] realize(%p)", widget); */
   if (ALTK_WIDGET_NOWINDOW(widget))
     {
       widget->window = widget->parent->window;
@@ -202,8 +202,9 @@ void altk_widget_size_request ( AltkWidget *widget,
       widget->flags &= ~ALTK_WIDGET_FLAG_NEEDS_RESIZE;
     }
   *req = widget->size_request;
-  /* CL_DEBUG("size_request(%p) -> %d, %d", */
-  /*          widget, req->width, req->height); */
+  CL_DEBUG("size_request(%s) -> %d, %d",
+           l_object_to_string(L_OBJECT(widget)),
+           req->width, req->height);
 }
 
 
@@ -214,8 +215,9 @@ void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc )
 {
   ASSERT(ALTK_WIDGET_GET_CLASS(widget)->size_allocate);
-  /* CL_DEBUG("size_allocate(%p, %d, %d, %d, %d)", */
-  /*          widget, alloc->x, alloc->y, alloc->width, alloc->height); */
+  CL_DEBUG("size_allocate(%s, %d, %d, %d, %d)",
+           l_object_to_string(L_OBJECT(widget)),
+           alloc->x, alloc->y, alloc->width, alloc->height);
   ALTK_WIDGET_GET_CLASS(widget)->size_allocate(widget, alloc);
   /* CL_DEBUG("size_allocate(%p) OK", widget); */
 }
@@ -300,7 +302,7 @@ void altk_widget_show ( AltkWidget *widget )
     return;
   widget->flags |= ALTK_WIDGET_FLAG_VISIBLE;
   /* [FIXME] */
-  CL_DEBUG("[TODO] widget_show(%p)", widget);
+  /* CL_DEBUG("[TODO] widget_show(%p)", widget); */
   altk_widget_queue_resize(widget);
 }
 
