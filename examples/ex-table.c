@@ -1,7 +1,7 @@
 /* ex_table.c -
  */
 
-#include <clog.h>
+#include "altk/private.h"
 #include "altk/altk.h"
 
 
