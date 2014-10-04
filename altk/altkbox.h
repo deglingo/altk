@@ -31,6 +31,8 @@ struct _AltkBoxClass
 
 
 AltkWidget *altk_box_new ( AltkOrientation orientation );
+void altk_box_set_orientation ( AltkBox *box,
+                                AltkOrientation orientation );
 void altk_box_pack_start ( AltkBox *box,
                            AltkWidget *child,
                            AltkPackFlags flags );

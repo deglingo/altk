@@ -8,6 +8,19 @@
 
 
 
+/* Properties:
+ */
+enum
+  {
+    PROP_0,
+    PROP_ORIENTATION,
+    _PROP_COUNT,
+  };
+
+static LParamSpec *pspecs[_PROP_COUNT] = { NULL, };
+
+
+
 /* Child:
  */
 typedef struct _Child
@@ -18,6 +31,11 @@ typedef struct _Child
 
 
 
+static LObject *_get_property ( LObject *object,
+                                LParamSpec *pspec );
+static void _set_property ( LObject *object,
+                            LParamSpec *pspec,
+                            LObject *value );
 static void _size_request ( AltkWidget *wid,
                             AltkRequisition *req );
 static void _size_allocate ( AltkWidget *wid,
@@ -35,6 +53,7 @@ static void _add ( AltkContainer *cont,
 static void altk_box_init ( LObject *obj )
 {
   ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_NOWINDOW;
+  /* [fixme] prop default */
   ALTK_BOX(obj)->orientation = ALTK_VERTICAL;
 }
 
@@ -44,10 +63,18 @@ static void altk_box_init ( LObject *obj )
  */
 static void altk_box_class_init ( LObjectClass *cls )
 {
+  cls->get_property = _get_property;
+  cls->set_property = _set_property;
   ALTK_WIDGET_CLASS(cls)->size_request = _size_request;
   ALTK_WIDGET_CLASS(cls)->size_allocate = _size_allocate;
   ALTK_WIDGET_CLASS(cls)->foreach = _foreach;
   ALTK_CONTAINER_CLASS(cls)->add = _add;
+
+  pspecs[PROP_ORIENTATION] =
+    l_param_spec_int("orientation",
+                     0);
+
+  l_object_class_install_properties(cls, _PROP_COUNT, pspecs);
 }
 
 
@@ -59,6 +86,54 @@ AltkWidget *altk_box_new ( AltkOrientation orientation )
   AltkBox *box = ALTK_BOX(l_object_new(ALTK_CLASS_BOX, NULL));
   box->orientation = orientation;
   return ALTK_WIDGET(box);
+}
+
+
+
+/* _get_property:
+ */
+static LObject *_get_property ( LObject *object,
+                                LParamSpec *pspec )
+{
+  switch (pspec->param_id)
+    {
+    case PROP_ORIENTATION:
+      return L_OBJECT(l_int_new(ALTK_BOX(object)->orientation));
+    default:
+      ASSERT(0);
+      return NULL;
+    }
+}
+
+
+
+/* _set_property:
+ */
+static void _set_property ( LObject *object,
+                            LParamSpec *pspec,
+                            LObject *value )
+{
+  switch (pspec->param_id)
+    {
+    case PROP_ORIENTATION:
+      ASSERT(L_IS_INT(value)); /* [removeme] */
+      altk_box_set_orientation(ALTK_BOX(object),
+                               L_INT_VALUE(value));
+      break;
+    default:
+      ASSERT(0);
+    }
+}
+
+
+
+/* altk_box_set_orientation:
+ */
+void altk_box_set_orientation ( AltkBox *box,
+                                AltkOrientation orientation )
+{
+  box->orientation = orientation;
+  altk_widget_queue_resize(ALTK_WIDGET(box));
 }
 
 
