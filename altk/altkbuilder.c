@@ -360,6 +360,12 @@ static LObject *elem_property_instantiate ( Elem *elem,
       elem->property.value = L_OBJECT
         (l_string_new(elem->property.text));
     }
+  else if (pspec->value_type == L_CLASS_INT)
+    {
+      /* [fixme] check overflow and extra text */
+      guint value = g_ascii_strtoll(elem->property.text, NULL, 10);
+      elem->property.value = L_OBJECT(l_int_new(value));
+    }
   else
     {
       CL_ERROR("[TODO] prop type: %s", l_object_class_name(pspec->value_type));
