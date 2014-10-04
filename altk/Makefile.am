@@ -24,6 +24,7 @@ includealtk_HEADERS = \
 	altkcontainer.h altkcontainer-def.h \
 	altkbin.h altkbin-def.h \
 	altkbox.h altkbox-def.h \
+	altktable.h altktable-def.h \
 	altkbutton.h altkbutton-def.h \
 	altkdialog.h altkdialog-def.h
 
