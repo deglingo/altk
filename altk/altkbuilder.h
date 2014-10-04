@@ -29,6 +29,10 @@ struct _AltkBuilderClass
 
 
 
+LObject *altk_builder_quick_parse ( const gchar *text,
+                                    gssize len,
+                                    const gchar *item_id,
+                                    GError **error );
 AltkBuilder *altk_builder_new ( void );
 gboolean altk_builder_parse_text ( AltkBuilder *builder,
                                    const gchar *text,

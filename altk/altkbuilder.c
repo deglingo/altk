@@ -171,6 +171,28 @@ static void _error ( GMarkupParseContext *ctxt,
 
 
 
+/* altk_builder_quick_parse:
+ */
+LObject *altk_builder_quick_parse ( const gchar *text,
+                                    gssize len,
+                                    const gchar *item_id,
+                                    GError **error )
+{
+  AltkBuilder *builder;
+  LObject *object = NULL;
+  l_trash_push();
+  builder = L_TRASH_OBJECT(altk_builder_new());
+  if (!altk_builder_parse_text(builder, text, len, error))
+    goto end;
+  if (!(object = altk_builder_get_object(builder, item_id)))
+    goto end;
+  end:
+    l_trash_pop();
+    return object;
+}
+
+
+
 /* altk_builder_new:
  */
 AltkBuilder *altk_builder_new ( void )
@@ -203,6 +225,8 @@ gboolean altk_builder_parse_text ( AltkBuilder *builder,
 {
   AltkBuilderPrivate *priv = PRIVATE(builder);
   /* Elem *root; */
+  if (len < 0)
+    len = strlen(text);
   /* [FIXME] free first */
   priv->elem = NULL;
   elem_push(builder, ELEM_ROOT, "");
