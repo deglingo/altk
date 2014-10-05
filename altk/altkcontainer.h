@@ -30,6 +30,8 @@ struct _AltkContainerClass
 
 
 
+#define ALTK_CONTAINER_ADD(cont, child) altk_container_add(ALTK_CONTAINER(cont), (child))
+
 void altk_container_add ( AltkContainer *cont,
                           AltkWidget *child );
 

@@ -44,6 +44,12 @@ void altk_style_context_draw_box ( AltkStyleContext *context,
                                    gint y,
                                    gint width,
                                    gint height );
+void altk_style_context_draw_frame ( AltkStyleContext *context,
+                                     AltkDrawable *drawable,
+                                     gint x,
+                                     gint y,
+                                     gint width,
+                                     gint height );
 
 
 

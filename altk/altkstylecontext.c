@@ -86,3 +86,23 @@ void altk_style_context_draw_box ( AltkStyleContext *context,
                                height);
 
 }
+
+
+
+/* altk_style_context_draw_frame:
+ */
+void altk_style_context_draw_frame ( AltkStyleContext *context,
+                                     AltkDrawable *drawable,
+                                     gint x,
+                                     gint y,
+                                     gint width,
+                                     gint height )
+{
+  altk_drawable_draw_rectangle(drawable,
+                               _select_gc(context),
+                               FALSE,
+                               x,
+                               y,
+                               width,
+                               height);
+}

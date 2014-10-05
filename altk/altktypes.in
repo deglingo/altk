@@ -38,6 +38,10 @@ namespace Altk
     void class_init();
     void init ();
   };
+  class Frame : Bin {
+    void class_init ();
+    void init ();
+  };
   class Button : Bin {
     void class_init ();
     void init ();

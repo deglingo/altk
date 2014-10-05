@@ -337,7 +337,7 @@ static void _on_draw_rectangle ( AltkDrawable *drawable,
   if (filled)
     al_draw_filled_rectangle(x1, y1, x2, y2, gc->fg);
   else
-    al_draw_rectangle(x1, y1, x2, y2, gc->fg, 1.0);
+    al_draw_rectangle(x1 + ALTK_WINDOW(drawable)->offset_x, y1 + ALTK_WINDOW(drawable)->offset_y, x2 + ALTK_WINDOW(drawable)->offset_x, y2 + ALTK_WINDOW(drawable)->offset_y, al_map_rgb(0, 0, 0) /* [fixme] gc->fg */, 1.0);
   al_restore_state(&state);
 }
 

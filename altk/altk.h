@@ -31,6 +31,8 @@
 
 #include <altk/altktable.h>
 
+#include <altk/altkframe.h>
+
 #include <altk/altkbutton.h>
 
 #include <altk/altkdialog.h>
