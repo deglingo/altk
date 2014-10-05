@@ -278,9 +278,9 @@ void altk_widget_size_request ( AltkWidget *widget,
       widget->flags &= ~ALTK_WIDGET_FLAG_NEEDS_RESIZE;
     }
   *req = widget->size_request;
-  CL_DEBUG("size_request(%s) -> %d, %d",
-           l_object_to_string(L_OBJECT(widget)),
-           req->width, req->height);
+  /* CL_DEBUG("size_request(%s) -> %d, %d", */
+  /*          l_object_to_string(L_OBJECT(widget)), */
+  /*          req->width, req->height); */
 }
 
 
@@ -291,9 +291,9 @@ void altk_widget_size_allocate ( AltkWidget *widget,
                                  AltkAllocation *alloc )
 {
   ASSERT(ALTK_WIDGET_GET_CLASS(widget)->size_allocate);
-  CL_DEBUG("size_allocate(%s, %d, %d, %d, %d)",
-           l_object_to_string(L_OBJECT(widget)),
-           alloc->x, alloc->y, alloc->width, alloc->height);
+  /* CL_DEBUG("size_allocate(%s, %d, %d, %d, %d)", */
+  /*          l_object_to_string(L_OBJECT(widget)), */
+  /*          alloc->x, alloc->y, alloc->width, alloc->height); */
   ALTK_WIDGET_GET_CLASS(widget)->size_allocate(widget, alloc);
   /* CL_DEBUG("size_allocate(%p) OK", widget); */
 }

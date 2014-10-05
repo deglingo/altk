@@ -205,8 +205,8 @@ static void _size_request ( AltkWidget *wid,
 static void _size_allocate ( AltkWidget *wid,
                              AltkAllocation *alloc )
 {
-  CL_DEBUG("[TODO] box size allocate: %d, %d, %d, %d",
-           alloc->x, alloc->y, alloc->width, alloc->height);
+  /* CL_DEBUG("[TODO] box size allocate: %d, %d, %d, %d", */
+  /*          alloc->x, alloc->y, alloc->width, alloc->height); */
   /* [FIXME] chain to parent_class method */
   wid->x = alloc->x;
   wid->y = alloc->y;
