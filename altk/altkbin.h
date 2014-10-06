@@ -29,4 +29,8 @@ struct _AltkBinClass
 
 
 
+#define ALTK_BIN_CHILD_VISIBLE(bin) (ALTK_BIN(bin)->child && ALTK_WIDGET_VISIBLE(ALTK_BIN(bin)->child))
+
+
+
 #endif

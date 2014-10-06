@@ -10,15 +10,22 @@ Resize/realize...
 Display.open()
 --------------
 
-  - map all visible widgets
-  - process all resize
-  - realize all visible widgets
+(callback handled by the top widget)
+
+map widget (recursive)
+IF widget is visible THEN
+  queue resize
+  realize widget (recursive)
+  queue draw
+FI
 
 
-Top-widget init
----------------
+TOP_WIDGET.set_display()
+------------------------
 
-attach the widget to display (AltkDisplay.topwidgets)
+IF display is open THEN
+  process display_open (above)
+ENDIF
 
 
 Widget.queue_resize()
@@ -34,8 +41,8 @@ BEGIN
     // [FIXME] stop here if NEEDS_RESIZE is already set ?
     set NEEDS_RESIZE flag for w
     IF w is a top-widget THEN
-      add w to the resize queue
-      IF w is realized THEN
+      IF w is mapped THEN
+        add w to the resize queue
         install the 'idle resize' event
       ENDIF
       BREAK
@@ -48,19 +55,23 @@ END
 Widget.show()
 -------------
 
-  - Set the VISIBLE flag
-  - Call altk_widget_queue_resize().
-IF parent is realized THEN
-  map widget
-  realize widget
-ENDIF
+  set the VISIBLE flag
+  queue resize
+  IF widget is mapped THEN
+    process resize ?
+    realize widget (recursive)
+    queue draw
+  ENDIF
 
 
 Widget._set_parent()
 --------------------
 
-queue_resize()
-IF parent is realized THEN
-  map widget
-  realize widget
+queue resize
+IF parent is mapped THEN
+  map widget (recursive)
+  IF parent is realized THEN
+    realize widget (recursive)
+    queue draw
+  ENDIF
 ENDIF

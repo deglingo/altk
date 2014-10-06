@@ -78,7 +78,7 @@ AltkWidget *altk_button_new_with_label ( const gchar *text )
  */
 static void _on_realize ( AltkWidget *wid )
 {
-  wid->window = wid->parent->window;
+  ALTK_WIDGET_CLASS(parent_class)->realize(wid);
   ALTK_BUTTON(wid)->event_window = altk_window_new(wid->parent->window,
                                                    wid->x,
                                                    wid->y,
@@ -114,21 +114,19 @@ static void _on_size_request ( AltkWidget *wid,
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc )
 {
-  CL_DEBUG("[TODO] button size allocate: %d, %d, %d, %d",
-           alloc->x, alloc->y, alloc->width, alloc->height);
-  /* [FIXME] chain to parent_class method */
-  wid->x = alloc->x;
-  wid->y = alloc->y;
-  wid->width = alloc->width;
-  wid->height = alloc->height;
-  /* */
-  altk_window_set_bounds(ALTK_BUTTON(wid)->event_window,
-                         alloc->x,
-                         alloc->y,
-                         alloc->width,
-                         alloc->height);
+  /* CL_DEBUG("[TODO] button size allocate: %d, %d, %d, %d", */
+  /*          alloc->x, alloc->y, alloc->width, alloc->height); */
+  ALTK_WIDGET_CLASS(parent_class)->size_allocate(wid, alloc);
+  if (ALTK_WIDGET_REALIZED(wid))
+    {
+      altk_window_set_bounds(ALTK_BUTTON(wid)->event_window,
+                             alloc->x,
+                             alloc->y,
+                             alloc->width,
+                             alloc->height);
+    }
   /* ---- */
-  if (ALTK_BIN(wid)->child) {
+  if (ALTK_BIN_CHILD_VISIBLE(wid)) {
     AltkAllocation child_alloc;
     gint disp;
     if (wid->state == ALTK_STATE_ACTIVE)
@@ -150,7 +148,7 @@ static void _on_size_allocate ( AltkWidget *wid,
 static void _on_mouse_enter_event ( AltkWidget *wid,
                                     AltkEvent *event )
 {
-  CL_DEBUG("button enter...");
+  /* CL_TRACE("%p", wid); */
   altk_widget_set_state(wid, ALTK_STATE_PRELIGHT);
 }
 
@@ -161,7 +159,7 @@ static void _on_mouse_enter_event ( AltkWidget *wid,
 static void _on_mouse_leave_event ( AltkWidget *wid,
                                     AltkEvent *event )
 {
-  CL_DEBUG("button leave...");
+  /* CL_TRACE("%p", wid); */
   altk_widget_set_state(wid, ALTK_STATE_NORMAL);
 }
 
@@ -172,9 +170,8 @@ static void _on_mouse_leave_event ( AltkWidget *wid,
 static void _on_mouse_button_down_event ( AltkWidget *wid,
                                           AltkEvent *event )
 {
-  CL_DEBUG("button down...");
+  /* CL_TRACE("%p", wid); */
   altk_widget_set_state(wid, ALTK_STATE_ACTIVE);
-  altk_widget_queue_resize(wid);
 }
 
 
@@ -184,9 +181,8 @@ static void _on_mouse_button_down_event ( AltkWidget *wid,
 static void _on_mouse_button_up_event ( AltkWidget *wid,
                                         AltkEvent *event )
 {
-  CL_DEBUG("button up...");
+  /* CL_TRACE("%p", wid); */
   altk_widget_set_state(wid, ALTK_STATE_PRELIGHT);
-  altk_widget_queue_resize(wid);
 }
 
 
@@ -196,8 +192,9 @@ static void _on_mouse_button_up_event ( AltkWidget *wid,
 static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
+  /* CL_TRACE("%s", L_OBJECT_REPR(wid)); */
   AltkStyleContext *ctxt = altk_widget_get_style_context(wid);
-  CL_DEBUG("Button.expose_event()");
+  /* CL_DEBUG("Button.expose_event()"); */
   altk_style_context_draw_box(ctxt,
                               ALTK_DRAWABLE(event->expose.window),
                               0,

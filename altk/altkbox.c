@@ -207,11 +207,7 @@ static void _size_allocate ( AltkWidget *wid,
 {
   /* CL_DEBUG("[TODO] box size allocate: %d, %d, %d, %d", */
   /*          alloc->x, alloc->y, alloc->width, alloc->height); */
-  /* [FIXME] chain to parent_class method */
-  wid->x = alloc->x;
-  wid->y = alloc->y;
-  wid->width = alloc->width;
-  wid->height = alloc->height;
+  ALTK_WIDGET_CLASS(parent_class)->size_allocate(wid, alloc);
   /* children */
   switch (ALTK_BOX(wid)->orientation)
     {

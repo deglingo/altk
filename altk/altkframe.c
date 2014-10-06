@@ -73,13 +73,8 @@ static void _on_size_allocate ( AltkWidget *wid,
 {
   /* CL_DEBUG("[TODO] frame size allocate: %d, %d, %d, %d", */
   /*          alloc->x, alloc->y, alloc->width, alloc->height); */
-  /* [FIXME] chain to parent_class method */
-  wid->x = alloc->x;
-  wid->y = alloc->y;
-  wid->width = alloc->width;
-  wid->height = alloc->height;
-  /* ---- */
-  if (ALTK_BIN(wid)->child) {
+  ALTK_WIDGET_CLASS(parent_class)->size_allocate(wid, alloc);
+  if (ALTK_BIN_CHILD_VISIBLE(wid)) {
     AltkAllocation child_alloc;
     child_alloc.x = alloc->x + 4;
     child_alloc.y = alloc->y + 4;
@@ -97,7 +92,7 @@ static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
   AltkStyleContext *ctxt = altk_widget_get_style_context(wid);
-  CL_DEBUG("Frame.expose_event()");
+  /* CL_DEBUG("Frame.expose_event()"); */
   altk_style_context_draw_frame(ctxt,
                                 ALTK_DRAWABLE(event->expose.window),
                                 wid->x + 1,

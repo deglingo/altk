@@ -229,12 +229,12 @@ static void _size_request ( AltkWidget *wid,
       AltkSizeDistrib distrib;
       if (!ALTK_WIDGET_VISIBLE(child->widget))
         continue;
-      CL_DEBUG("child request: %s", l_object_to_string(L_OBJECT(child->widget)));
+      /* CL_DEBUG("child request: %s", l_object_to_string(L_OBJECT(child->widget))); */
       altk_widget_size_request(child->widget, &child_req);
       /* columns layout */
       ncols = child->right - child->left;
       dsize = child_req.width - priv->hpad * (ncols - 1);
-      CL_DEBUG(" -> ncols=%d, dsize=%d", ncols, dsize);
+      /* CL_DEBUG(" -> ncols=%d, dsize=%d", ncols, dsize); */
       if (dsize > 0)
         {
           altk_size_distrib_init(&distrib, dsize, ncols);
@@ -243,13 +243,13 @@ static void _size_request ( AltkWidget *wid,
               LineLayout *ll = layout_col(layout, i);
               gint dist_size = altk_size_distrib_next(&distrib);
               ll->size_req = MAX(ll->size_req, dist_size);
-              CL_DEBUG(" -> col[%d].size_req = %d", i, ll->size_req);
+              /* CL_DEBUG(" -> col[%d].size_req = %d", i, ll->size_req); */
             }
         }
       /* rows layout */
       nrows = child->bottom - child->top;
       dsize = child_req.height - priv->vpad * (nrows - 1);
-      CL_DEBUG(" -> nrows=%d, dsize=%d", nrows, dsize);
+      /* CL_DEBUG(" -> nrows=%d, dsize=%d", nrows, dsize); */
       if (dsize > 0)
         {
           altk_size_distrib_init(&distrib, dsize, nrows);
@@ -258,7 +258,7 @@ static void _size_request ( AltkWidget *wid,
               LineLayout *ll = layout_row(layout, i);
               gint dist_size = altk_size_distrib_next(&distrib);
               ll->size_req = MAX(ll->size_req, dist_size);
-              CL_DEBUG(" -> row[%d].size_req = %d", i, ll->size_req);
+              /* CL_DEBUG(" -> row[%d].size_req = %d", i, ll->size_req); */
             }
         }
     }
@@ -289,11 +289,7 @@ static void _size_allocate ( AltkWidget *wid,
   Layout *layout = priv->layout;
   gint i, ofs;
   GList *l;
-  /* [FIXME] chain to parent_class method */
-  wid->x = alloc->x;
-  wid->y = alloc->y;
-  wid->width = alloc->width;
-  wid->height = alloc->height;
+  ALTK_WIDGET_CLASS(parent_class)->size_allocate(wid, alloc);
   /* prepare cols/rows */
   ofs = 0;
   for (i = layout->left; i < layout->right; i++)
@@ -316,6 +312,8 @@ static void _size_allocate ( AltkWidget *wid,
     {
       Child *child = l->data;
       AltkAllocation child_alloc;
+      if (!ALTK_WIDGET_VISIBLE(child->widget))
+        continue;
       child_alloc.x = layout_col(layout, child->left)->pos1;
       child_alloc.y = layout_row(layout, child->top)->pos1;
       child_alloc.width = layout_col(layout, child->right - 1)->pos2 - child_alloc.x;

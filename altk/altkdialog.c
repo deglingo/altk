@@ -63,12 +63,14 @@ void _on_display_open ( AltkDisplay *display,
                         AltkDialog *dlg )
 {
   ASSERT(display == dlg->display);
-  if (!ALTK_WIDGET_VISIBLE(dlg))
-    return;
   altk_widget_map(ALTK_WIDGET(dlg));
-  /* [FIXME] process resize immediately ? */
-  altk_widget_queue_resize(ALTK_WIDGET(dlg));
-  altk_widget_realize(ALTK_WIDGET(dlg));
+  if (ALTK_WIDGET_VISIBLE(dlg))
+    {
+      /* [FIXME] process resize immediately ? */
+      altk_widget_queue_resize(ALTK_WIDGET(dlg));
+      altk_widget_realize(ALTK_WIDGET(dlg));
+      altk_widget_queue_draw(ALTK_WIDGET(dlg));
+    }
 }
 
 
@@ -82,6 +84,9 @@ void altk_dialog_set_display ( AltkDialog *dlg,
   /* atach dialog <> display */
   ALTK_DIALOG(dlg)->display = display;
   l_signal_connect(L_OBJECT(display), "open", (LSignalHandler) _on_display_open, dlg, NULL);
+  /* process immediately if the display is already open */
+  if (altk_display_is_open(display))
+    _on_display_open(display, dlg);
 }
 
 
@@ -118,18 +123,9 @@ static void _on_size_allocate ( AltkWidget *wid,
 {
   /* CL_DEBUG("[TODO] dialog size allocate: %d, %d, %d, %d", */
   /*          alloc->x, alloc->y, alloc->width, alloc->height); */
-  /* [FIXME] chain to parent_class method */
-  wid->x = alloc->x;
-  wid->y = alloc->y;
-  wid->width = alloc->width;
-  wid->height = alloc->height;
-  /* resize the window */
-  if (ALTK_WIDGET_REALIZED(wid))
-    {
-      altk_window_set_bounds(wid->window, alloc->x, alloc->y, alloc->width, alloc->height);
-    }
+  ALTK_WIDGET_CLASS(parent_class)->size_allocate(wid, alloc);
   /* ---- */
-  if (ALTK_BIN(wid)->child) {
+  if (ALTK_BIN_CHILD_VISIBLE(wid)) {
     AltkAllocation child_alloc;
     child_alloc.x = 2;
     child_alloc.y = 2;

@@ -133,10 +133,22 @@ static void _set_property ( LObject *object,
 void _altk_widget_set_parent ( AltkWidget *widget,
                                AltkWidget *parent )
 {
+  ASSERT(parent);
   ASSERT(!widget->parent);
   widget->parent = parent;
-  /* [TODO] map, resize, queue_draw, realize... */
   altk_widget_queue_resize(widget);
+  if (ALTK_WIDGET_VISIBLE(widget))
+    {
+      if (ALTK_WIDGET_MAPPED(parent))
+        {
+          altk_widget_map(widget);
+          if (ALTK_WIDGET_REALIZED(parent))
+            {
+              altk_widget_realize(widget);
+              altk_widget_queue_draw(widget);
+            }
+        }
+    }
 }
 
 
@@ -254,6 +266,7 @@ static void _on_realize ( AltkWidget *widget )
       } else {
         parent_window = widget->parent->window;
       }
+      ASSERT(parent_window);
       widget->window = altk_window_new(parent_window,
                                        widget->x,
                                        widget->y,
@@ -306,10 +319,25 @@ static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc )
 {
   /* CL_DEBUG("_on_size_allocate(%p)", wid); */
+  if (wid->x == alloc->x && wid->y == alloc->y &&
+      wid->width == alloc->width && wid->height == alloc->height)
+    return;
   wid->x = alloc->x;
   wid->y = alloc->y;
   wid->width = alloc->width;
   wid->height = alloc->height;
+  if (ALTK_WIDGET_REALIZED(wid))
+    {
+      if (!ALTK_WIDGET_NOWINDOW(wid))
+        {
+          altk_window_set_bounds(wid->window,
+                                 wid->x,
+                                 wid->y,
+                                 wid->width,
+                                 wid->height);
+        }
+      altk_widget_queue_draw(wid); /* ?? */
+    }
   /* CL_DEBUG("_on_size_allocate OK"); */
 }
 
@@ -377,9 +405,13 @@ void altk_widget_show ( AltkWidget *widget )
   if (ALTK_WIDGET_VISIBLE(widget))
     return;
   widget->flags |= ALTK_WIDGET_FLAG_VISIBLE;
-  /* [FIXME] */
-  /* CL_DEBUG("[TODO] widget_show(%p)", widget); */
   altk_widget_queue_resize(widget);
+  if (ALTK_WIDGET_MAPPED(widget))
+    {
+      /* process resize ? */
+      altk_widget_realize(widget);
+      altk_widget_queue_draw(widget);
+    }
 }
 
 
@@ -436,6 +468,8 @@ static gboolean _expose_child ( AltkWidget *widget,
 static void _event_expose ( AltkWidget *widget,
                             AltkEvent *event )
 {
+  if (!ALTK_WIDGET_REALIZED(widget))
+    return;
   if (widget->event_mask & ALTK_EVENT_MASK_EXPOSE)
     {
       /* clip area to widget's visible part */
@@ -555,6 +589,7 @@ void altk_widget_set_state ( AltkWidget *widget,
     return;
   widget->state = state;
   altk_style_context_set_state(widget->style_context, state);
+  altk_widget_queue_resize(widget); /* [fixme] ?? */
   altk_widget_queue_draw(widget);
 }
 
@@ -576,6 +611,7 @@ void altk_widget_queue_draw ( AltkWidget *widget )
   }
   r.width = widget->width;
   r.height = widget->height;
+  /* [fixme] widget shape */
   wr = altk_region_rectangle(&r);
   altk_window_invalidate(widget->window, wr);
   altk_region_destroy(wr);
@@ -644,7 +680,7 @@ void altk_widget_queue_resize ( AltkWidget *widget )
       w->flags |= ALTK_WIDGET_FLAG_NEEDS_RESIZE;
       if (ALTK_WIDGET_TOP_WIDGET(w))
         {
-          if (altk_display_is_open(altk_widget_get_display(w)))
+          if (ALTK_WIDGET_MAPPED(w))
             {
               if (!g_slist_find(resize_queue, w))
                 resize_queue = g_slist_prepend(resize_queue, l_object_ref(w));
@@ -653,8 +689,8 @@ void altk_widget_queue_resize ( AltkWidget *widget )
                                                    (GSourceFunc) _idle_resize,
                                                    NULL,
                                                    NULL);
-              break;
             }
+          break;
         }
       w = w->parent;
     }
