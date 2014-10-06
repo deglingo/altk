@@ -16,6 +16,28 @@
 
 
 
+/* Signals:
+ */
+enum
+  {
+    SIG_OPEN,
+    SIG_COUNT,
+  };
+
+static LSignalID signals[SIG_COUNT] = { 0, };
+
+
+
+/* altk_display_class_init:
+ */
+static void altk_display_class_init ( LObjectClass *cls )
+{
+  signals[SIG_OPEN] = l_signal_new(cls,
+                                   "open");
+}
+
+
+
 /* altk_display_new:
  */
 AltkDisplay *altk_display_new ( void )
@@ -59,7 +81,8 @@ static void _create_al_display ( AltkDisplay *display )
  */
 void altk_display_open ( AltkDisplay *display )
 {
-  GList *l;
+  if (altk_display_is_open(display))
+    return;
   ASSERT(!display->al_display);
   /* create the ALLEGRO_DISPLAY */
   _create_al_display(display);
@@ -70,9 +93,8 @@ void altk_display_open ( AltkDisplay *display )
   altk_wm_register_al_source(al_get_display_event_source(display->al_display));
   /* create the root window */
   display->root_window = altk_window_new_root(display);
-  /* [FIXME] just a trick waiting for proper signal implementation */
-  for (l = display->top_widgets; l; l = l->next)
-    _altk_dialog_handle_open_display(ALTK_DIALOG(l->data));
+  /* signal */
+  l_signal_emit(L_OBJECT(display), signals[SIG_OPEN]);
 }
 
 
@@ -95,19 +117,6 @@ void altk_display_get_size ( AltkDisplay *display,
   ASSERT(display->al_display);
   *width = al_get_display_width(display->al_display);
   *height = al_get_display_height(display->al_display);
-}
-
-
-
-/* altk_display_attach_widget:
- *
- * [REMOVEME] when we have signals
- */
-void altk_display_attach_widget ( AltkDisplay *display,
-                                  struct _AltkWidget *widget )
-{
-  display->top_widgets = g_list_append(display->top_widgets,
-                                       l_object_ref(widget));
 }
 
 

@@ -2,7 +2,9 @@
 
 namespace Altk
 {
-  class Display;
+  class Display {
+    void class_init ();
+  };
   class Font;
   class GC;
   class Drawable;

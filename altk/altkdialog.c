@@ -57,31 +57,31 @@ AltkWidget *altk_dialog_new ( AltkDisplay *display )
 
 
 
-/* altk_dialog_set_display:
+/* _on_display_open:
  */
-void altk_dialog_set_display ( AltkDialog *dlg,
-                               struct _AltkDisplay *display )
+void _on_display_open ( AltkDisplay *display,
+                        AltkDialog *dlg )
 {
-  ASSERT(!dlg->display); /* [TODO] */
-  /* [fixme] atach dialog <> display */
-  ALTK_DIALOG(dlg)->display = display;
-  altk_display_attach_widget(display, ALTK_WIDGET(dlg));
-}
-
-
-
-/* _altk_dialog_handle_open_display:
- *
- * [REMOVEME] waiting for LSignal implementation
- */
-void _altk_dialog_handle_open_display ( AltkDialog *dlg )
-{
+  ASSERT(display == dlg->display);
   if (!ALTK_WIDGET_VISIBLE(dlg))
     return;
   altk_widget_map(ALTK_WIDGET(dlg));
   /* [FIXME] process resize immediately ? */
   altk_widget_queue_resize(ALTK_WIDGET(dlg));
   altk_widget_realize(ALTK_WIDGET(dlg));
+}
+
+
+
+/* altk_dialog_set_display:
+ */
+void altk_dialog_set_display ( AltkDialog *dlg,
+                               struct _AltkDisplay *display )
+{
+  ASSERT(!dlg->display); /* [TODO] */
+  /* atach dialog <> display */
+  ALTK_DIALOG(dlg)->display = display;
+  l_signal_connect(L_OBJECT(display), "open", (LSignalHandler) _on_display_open, dlg, NULL);
 }
 
 
