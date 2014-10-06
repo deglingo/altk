@@ -50,10 +50,17 @@ Widget.show()
 
   - Set the VISIBLE flag
   - Call altk_widget_queue_resize().
+IF parent is realized THEN
+  map widget
+  realize widget
+ENDIF
 
 
-Container.add()
----------------
+Widget._set_parent()
+--------------------
 
-Implementation must call altk_widget_queue_resize(child) - no need to
-check for visibility as this is done by the queue_resize method.
+queue_resize()
+IF parent is realized THEN
+  map widget
+  realize widget
+ENDIF
