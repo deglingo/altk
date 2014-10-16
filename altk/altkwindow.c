@@ -7,6 +7,7 @@
 #include "altk/altkevent.h"
 #include "altk/altkgc.h"
 #include "altk/altkfont.h"
+#include "altk/altkbitmap.h"
 #include "altk/altkwindow.inl"
 
 
@@ -16,6 +17,12 @@ static GSList *redraw_queue = NULL;
 static guint redraw_source_id = 0;
 
 
+
+static void _on_draw_bitmap_region ( AltkDrawable *drawable,
+                                     AltkBitmap *bitmap,
+                                     AltkRegion *region,
+                                     gint dest_x,
+                                     gint dest_y );
 
 static void _on_draw_rectangle ( AltkDrawable *drawable,
                                  AltkGC *gc,
@@ -100,6 +107,7 @@ void _altk_window_draw_update ( AltkWindow *window,
  */
 static void altk_window_class_init ( LObjectClass *cls )
 {
+  ((AltkDrawableClass *) cls)->draw_bitmap_region = _on_draw_bitmap_region;
   ((AltkDrawableClass *) cls)->draw_rectangle = _on_draw_rectangle;
   ((AltkDrawableClass *) cls)->draw_text = _on_draw_text;
 }
@@ -313,6 +321,35 @@ AltkRegion *altk_window_get_visible_area ( AltkWindow *window )
   r.width = window->width;
   r.height = window->height;
   return altk_region_rectangle(&r);
+}
+
+
+
+/* _on_draw_bitmap_region:
+ */
+static void _on_draw_bitmap_region ( AltkDrawable *drawable,
+                                     AltkBitmap *bitmap,
+                                     AltkRegion *region,
+                                     gint dest_x,
+                                     gint dest_y )
+{
+  gint r;
+  AltkRegionBox *box;
+  ALLEGRO_STATE state;
+  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(ALTK_WINDOW(drawable)->dblbuf);
+  for (r = 0, box = region->rects; r < region->n_rects; r++, box++)
+    {
+      al_draw_bitmap_region(bitmap->al_bitmap,
+                            box->x1,
+                            box->y1,
+                            box->x2 - box->x1,
+                            box->y2 - box->y1,
+                            box->x1 + ALTK_WINDOW(drawable)->offset_x,
+                            box->y1 + ALTK_WINDOW(drawable)->offset_y,
+                            0);
+    }
+  al_restore_state(&state);
 }
 
 
