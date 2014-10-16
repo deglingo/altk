@@ -40,6 +40,10 @@ AltkDrawable *altk_bitmap_new ( struct _AltkDisplay *display,
                                 gint height );
 AltkDrawable *altk_bitmap_new_from_al_bitmap ( ALLEGRO_BITMAP *bmp,
                                                gboolean destroy );
+/* [fixme] should be a drawable method ? */
+void altk_bitmap_get_size ( AltkBitmap *bitmap,
+                            gint *width,
+                            gint *height );
 
 
 

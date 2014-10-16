@@ -74,6 +74,18 @@ AltkDrawable *altk_bitmap_new_from_al_bitmap ( ALLEGRO_BITMAP *bmp,
 
 
 
+/* altk_bitmap_get_size:
+ */
+void altk_bitmap_get_size ( AltkBitmap *bitmap,
+                            gint *width,
+                            gint *height )
+{
+  *width = al_get_bitmap_width(bitmap->al_bitmap);
+  *height = al_get_bitmap_height(bitmap->al_bitmap);
+}
+
+
+
 /* _on_draw_text:
  */
 static void _on_draw_text ( AltkDrawable *drawable,
