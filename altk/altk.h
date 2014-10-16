@@ -15,6 +15,10 @@
 
 #include <altk/altkdisplay.h>
 
+#include <altk/altkdrawable.h>
+
+#include <altk/altkbitmap.h>
+
 #include <altk/altkstyle.h>
 
 #include <altk/altkbuilder.h>
