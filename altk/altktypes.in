@@ -2,53 +2,93 @@
 
 namespace Altk
 {
-  class Display {
+  class Display
+  {
     void class_init ();
   };
-  class Font;
-  class GC;
-  class Drawable;
-  class Window : Drawable {
+
+  class Font
+  {
+  };
+
+  class GC
+  {
+  };
+
+  class Drawable
+  {
+  };
+
+  class Window : Drawable
+  {
     void class_init ();
   };
-  class Bitmap : Drawable {
+
+  class Bitmap : Drawable
+  {
     void class_init ();
   };
-  class Style;
-  class StyleContext;
-  class Builder;
+
+  class Style
+  {
+  };
+
+  class StyleContext
+  {
+  };
+
+  class Builder
+  {
+  };
+
   class Widget
   {
     void class_init ();
     void init ();
   };
-  class Label : Widget {
+
+  class Label : Widget
+  {
     void class_init ();
     void init ();
   };
-  class Container : Widget {
+
+  class Container : Widget
+  {
     void class_init ();
   };
-  class Bin : Container {
+
+  class Bin : Container
+  {
     void class_init ();
   };
-  class Box : Container {
+
+  class Box : Container
+  {
     void class_init ();
     void init ();
   };
-  class Table : Container {
+
+  class Table : Container
+  {
     void class_init();
     void init ();
   };
-  class Frame : Bin {
+
+  class Frame : Bin
+  {
     void class_init ();
     void init ();
   };
-  class Button : Bin {
+
+  class Button : Bin
+  {
     void class_init ();
     void init ();
   };
-  class Dialog : Bin {
+
+  class Dialog : Bin
+  {
     void class_init ();
     void init ();
   };
