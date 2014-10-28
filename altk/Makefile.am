@@ -97,5 +97,5 @@ altkdialog-def.h altkdialog.inl \
 : altktypes.stamp-h
 
 altktypes.stamp-h: altktypes.in
-	cpp $< | $(LOS_GENTYPES)
+	cpp $< | $(LOS_GENTYPES) -s $(srcdir) -u 'altk/'
 	echo >$@
