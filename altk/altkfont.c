@@ -11,8 +11,11 @@
  */
 AltkFont *altk_font_new_builtin ( void )
 {
+  static ALLEGRO_FONT *al_font = NULL;
   AltkFont *font = ALTK_FONT(l_object_new(ALTK_CLASS_FONT, NULL));
-  font->al_font = al_create_builtin_font();
+  if (!al_font)
+    al_font = al_create_builtin_font();
+  font->al_font = al_font;
   return font;
 }
 
