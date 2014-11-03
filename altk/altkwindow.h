@@ -53,8 +53,7 @@ struct _AltkWindow
   AltkEventMask event_mask;
   /* area of the window which needs redraw */
   AltkRegion *update_area;
-  /* the double-buffer */
-  ALLEGRO_BITMAP *dblbuf;
+  /* drawing offset */
   gint offset_x;
   gint offset_y;
   /* some data for the user, totally ignored by the window itself */
