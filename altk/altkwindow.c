@@ -401,17 +401,18 @@ static void _on_draw_rectangle ( AltkDrawable *drawable,
                                  gint width,
                                  gint height )
 {
-  float x1 = ((float) x) + 0.5;
-  float y1 = ((float) y) + 0.5;
-  float x2 = ((float) (x + width)) - 0.5;
-  float y2 = ((float) (y + height)) - 0.5;
+  /* [fixme] pixel exact coordinates */
+  float x1 = ((float) x + ALTK_WINDOW(drawable)->offset_x);
+  float y1 = ((float) y + ALTK_WINDOW(drawable)->offset_y);
+  float x2 = ((float) (x + width + ALTK_WINDOW(drawable)->offset_x));
+  float y2 = ((float) (y + height + ALTK_WINDOW(drawable)->offset_y));
   ALLEGRO_STATE state;
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_bitmap(PRIVROOT(drawable)->dblbuf);
   if (filled)
     al_draw_filled_rectangle(x1, y1, x2, y2, altk_gc_get_fg(gc));
   else
-    al_draw_rectangle(x1 + ALTK_WINDOW(drawable)->offset_x, y1 + ALTK_WINDOW(drawable)->offset_y, x2 + ALTK_WINDOW(drawable)->offset_x, y2 + ALTK_WINDOW(drawable)->offset_y, al_map_rgb(0, 0, 0) /* [fixme] gc->fg */, 1.0);
+    al_draw_rectangle(x1, y1, x2, y2, al_map_rgb(0, 0, 0) /* [fixme] gc->fg */, 1.0);
   al_restore_state(&state);
 }
 
