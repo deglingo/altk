@@ -68,6 +68,15 @@ void altk_style_context_set_state ( AltkStyleContext *context,
 
 
 
+/* altk_style_context_get_font:
+ */
+AltkFont *altk_style_context_get_font ( AltkStyleContext *context )
+{
+  return altk_gc_get_font(_select_gc(context));
+}
+
+
+
 /* altk_style_context_draw_box:
  */
 void altk_style_context_draw_box ( AltkStyleContext *context,
@@ -105,4 +114,21 @@ void altk_style_context_draw_frame ( AltkStyleContext *context,
                                y,
                                width,
                                height);
+}
+
+
+
+/* altk_style_context_draw_text:
+ */
+void altk_style_context_draw_text ( AltkStyleContext *context,
+                                    AltkDrawable *drawable,
+                                    gint x,
+                                    gint y,
+                                    const gchar *text )
+{
+  altk_drawable_draw_text(drawable,
+                          _select_gc(context),
+                          x,
+                          y,
+                          text);
 }

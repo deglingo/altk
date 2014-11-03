@@ -50,6 +50,12 @@ void altk_style_context_draw_frame ( AltkStyleContext *context,
                                      gint y,
                                      gint width,
                                      gint height );
+void altk_style_context_draw_text ( AltkStyleContext *context,
+                                    AltkDrawable *drawable,
+                                    gint x,
+                                    gint y,
+                                    const gchar *text );
+AltkFont *altk_style_context_get_font ( AltkStyleContext *context );
 
 
 

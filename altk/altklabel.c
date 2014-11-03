@@ -134,7 +134,7 @@ static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req )
 {
   gint bx, by, bw, bh;
-  altk_font_get_text_size(altk_gc_get_font(wid->gc[ALTK_STATE_NORMAL]),
+  altk_font_get_text_size(altk_style_context_get_font(wid->style_context),
                           ALTK_LABEL(wid)->text,
                           &bx, &by, &bw, &bh);
   req->width = bw;
@@ -148,10 +148,9 @@ static void _on_size_request ( AltkWidget *wid,
 static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
-  altk_style_draw_text(wid->style,
-                       ALTK_DRAWABLE(event->expose.window),
-                       wid->gc[wid->state],
-                       wid->x,
-                       wid->y,
-                       ALTK_LABEL(wid)->text);
+  altk_style_context_draw_text(wid->style_context,
+                               ALTK_DRAWABLE(event->expose.window),
+                               wid->x,
+                               wid->y,
+                               ALTK_LABEL(wid)->text);
 }

@@ -14,7 +14,6 @@
 
 struct _AltkDisplay;
 struct _AltkStyle;
-struct _AltkGC;
 struct _AltkWindow;
 
 typedef struct _AltkRequisition AltkRequisition;
@@ -92,8 +91,6 @@ struct _AltkWidget
   /* a style to draw the various part of the widget */
   struct _AltkStyle *style;
   AltkStyleContext *style_context;
-  /* graphic contexts */
-  struct _AltkGC *gc[ALTK_STATE_COUNT];
   /* events mask */
   AltkEventMask event_mask;
   /* current state of the widget */
