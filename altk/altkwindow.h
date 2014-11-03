@@ -31,6 +31,8 @@ typedef enum _AltkWindowFlags
 struct _AltkWindow
 {
   ALTK_WINDOW_INSTANCE_HEADER;
+  /* private datas */
+  gpointer private;
   /* window flags */
   AltkWindowFlags flags;
   /* the display to which this window is attached */

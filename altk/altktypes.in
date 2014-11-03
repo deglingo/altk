@@ -22,6 +22,7 @@ namespace Altk
   class Window : Drawable
   {
     void class_init ();
+    void init ();
   };
 
   class Bitmap : Drawable

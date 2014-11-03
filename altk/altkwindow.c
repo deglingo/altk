@@ -12,6 +12,18 @@
 
 
 
+/* Private:
+ */
+typedef struct _Private
+{
+  int dummy;
+}
+  Private;
+
+#define PRIVATE(win) ((Private *)(ALTK_WINDOW(win)->private))
+
+
+
 /* globals */
 static GSList *redraw_queue = NULL;
 static guint redraw_source_id = 0;
@@ -110,6 +122,15 @@ static void altk_window_class_init ( LObjectClass *cls )
   ((AltkDrawableClass *) cls)->draw_bitmap_region = _on_draw_bitmap_region;
   ((AltkDrawableClass *) cls)->draw_rectangle = _on_draw_rectangle;
   ((AltkDrawableClass *) cls)->draw_text = _on_draw_text;
+}
+
+
+
+/* altk_window_init:
+ */
+static void altk_window_init ( LObject *obj )
+{
+  ALTK_WINDOW(obj)->private = g_new0(Private, 1);
 }
 
 
