@@ -5,6 +5,7 @@
 #define _ALTKGC_H_
 
 #include "altk/altkbase.h"
+#include "altk/altkfont.h"
 #include "altk/altkgc-def.h"
 
 
@@ -18,9 +19,7 @@ struct _AltkFont;
 struct _AltkGC
 {
   ALTK_GC_INSTANCE_HEADER;
-  ALLEGRO_COLOR fg;
-  ALLEGRO_COLOR bg;
-  struct _AltkFont *font;
+  gpointer private;
 };
 
 
@@ -39,6 +38,8 @@ void altk_gc_set_fg_h32 ( AltkGC *gc,
                           guint32 color );
 void altk_gc_set_bg_h32 ( AltkGC *gc,
                           guint32 color );
+ALLEGRO_COLOR altk_gc_get_fg ( AltkGC *gc );
+AltkFont *altk_gc_get_font ( AltkGC *gc );
 
 
 

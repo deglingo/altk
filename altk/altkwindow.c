@@ -408,7 +408,7 @@ static void _on_draw_rectangle ( AltkDrawable *drawable,
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_bitmap(ALTK_WINDOW(drawable)->dblbuf);
   if (filled)
-    al_draw_filled_rectangle(x1, y1, x2, y2, gc->fg);
+    al_draw_filled_rectangle(x1, y1, x2, y2, altk_gc_get_fg(gc));
   else
     al_draw_rectangle(x1 + ALTK_WINDOW(drawable)->offset_x, y1 + ALTK_WINDOW(drawable)->offset_y, x2 + ALTK_WINDOW(drawable)->offset_x, y2 + ALTK_WINDOW(drawable)->offset_y, al_map_rgb(0, 0, 0) /* [fixme] gc->fg */, 1.0);
   al_restore_state(&state);
@@ -428,7 +428,7 @@ static void _on_draw_text ( AltkDrawable *drawable,
   ALLEGRO_STATE state;
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_bitmap(ALTK_WINDOW(drawable)->dblbuf);
-  al_draw_text(gc->font->al_font, 
+  al_draw_text(altk_gc_get_font(gc)->al_font, 
                col,
                x + ALTK_WINDOW(drawable)->offset_x,
                y + ALTK_WINDOW(drawable)->offset_y,

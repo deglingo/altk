@@ -8,12 +8,36 @@
 
 
 
+/* Private:
+ */
+typedef struct _Private
+{
+  ALLEGRO_COLOR fg;
+  ALLEGRO_COLOR bg;
+  struct _AltkFont *font;
+}
+  Private;
+
+#define PRIVATE(gc) ((Private *)(ALTK_GC(gc)->private))
+
+
+
+/* altk_gc_init:
+ */
+static void altk_gc_init ( LObject *obj )
+{
+  ALTK_GC(obj)->private = g_new0(Private, 1);
+}
+
+
+
 /* altk_gc_new:
  */
 AltkGC *altk_gc_new ( void )
 {
-  AltkGC *gc = ALTK_GC(l_object_new(ALTK_CLASS_GC, NULL));
-  gc->font = altk_font_new_builtin();
+  AltkGC *gc = ALTK_GC_NEW(NULL);
+  Private *priv = gc->private;
+  priv->font = altk_font_new_builtin();
   return gc;
 }
 
@@ -36,7 +60,7 @@ static ALLEGRO_COLOR _map_h32 ( guint32 c )
 void altk_gc_set_fg_h32 ( AltkGC *gc,
                           guint32 color )
 {
-  gc->fg = _map_h32(color);
+  PRIVATE(gc)->fg = _map_h32(color);
 }
 
 
@@ -46,5 +70,23 @@ void altk_gc_set_fg_h32 ( AltkGC *gc,
 void altk_gc_set_bg_h32 ( AltkGC *gc,
                           guint32 color )
 {
-  gc->bg = _map_h32(color);
+  PRIVATE(gc)->bg = _map_h32(color);
+}
+
+
+
+/* altk_gc_get_fg:
+ */
+ALLEGRO_COLOR altk_gc_get_fg ( AltkGC *gc )
+{
+  return PRIVATE(gc)->fg;
+}
+
+
+
+/* altk_gc_get_font:
+ */
+AltkFont *altk_gc_get_font ( AltkGC *gc )
+{
+  return PRIVATE(gc)->font;
 }

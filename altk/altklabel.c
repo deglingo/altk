@@ -134,7 +134,7 @@ static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req )
 {
   gint bx, by, bw, bh;
-  altk_font_get_text_size(wid->gc[ALTK_STATE_NORMAL]->font,
+  altk_font_get_text_size(altk_gc_get_font(wid->gc[ALTK_STATE_NORMAL]),
                           ALTK_LABEL(wid)->text,
                           &bx, &by, &bw, &bh);
   req->width = bw;

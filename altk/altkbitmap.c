@@ -99,7 +99,7 @@ static void _on_draw_text ( AltkDrawable *drawable,
   CL_DEBUG("draw_text(%d, %d, \"%s\")", x, y, text);
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_bitmap(ALTK_BITMAP(drawable)->al_bitmap);
-  al_draw_text(gc->font->al_font, color, x, y, ALLEGRO_ALIGN_LEFT, text);
+  al_draw_text(altk_gc_get_font(gc)->al_font, color, x, y, ALLEGRO_ALIGN_LEFT, text);
   al_restore_state(&state);
 }
 

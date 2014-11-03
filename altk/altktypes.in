@@ -13,6 +13,7 @@ namespace Altk
 
   class GC
   {
+    void init ();
   };
 
   class Drawable
