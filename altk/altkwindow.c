@@ -12,15 +12,27 @@
 
 
 
+/* PrivateRoot:
+ */
+typedef struct _PrivateRoot
+{
+  AltkDisplay *display;
+}
+  PrivateRoot;
+
+
+
 /* Private:
  */
 typedef struct _Private
 {
-  int dummy;
+  AltkWindow *root;
+  PrivateRoot *privroot;
 }
   Private;
 
 #define PRIVATE(win) ((Private *)(ALTK_WINDOW(win)->private))
+#define PRIVROOT(win) (PRIVATE(win)->privroot)
 
 
 
@@ -61,7 +73,7 @@ void _altk_window_draw_update ( AltkWindow *window,
 {
   ALLEGRO_BITMAP *save;
   ALLEGRO_STATE state;
-  AltkDisplay *display = window->display;
+  AltkDisplay *display = PRIVROOT(window)->display;
   ALLEGRO_COLOR col;
   gint display_width, display_height;
   col = al_map_rgba((hcol >> 16) & 0xff,
@@ -76,7 +88,7 @@ void _altk_window_draw_update ( AltkWindow *window,
                  ALLEGRO_STATE_NEW_BITMAP_PARAMETERS |
                  ALLEGRO_STATE_TARGET_BITMAP);
   /* create some backup buffer */
-  al_set_target_backbuffer(window->display->al_display);
+  al_set_target_backbuffer(PRIVROOT(window)->display->al_display);
   al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY);
   al_set_new_bitmap_flags(ALLEGRO_VIDEO_BITMAP);
   if (!(save = al_create_bitmap(display_width,
@@ -105,7 +117,7 @@ void _altk_window_draw_update ( AltkWindow *window,
   /* sleep */
   g_usleep(ALTK_DEBUG_UPDATE_DELAY);
   /* restore the backbuffer */
-  al_set_target_backbuffer(window->display->al_display);
+  al_set_target_backbuffer(PRIVROOT(window)->display->al_display);
   al_draw_bitmap(save, 0, 0, 0);
   /* cleanup */
   al_destroy_bitmap(save);
@@ -140,8 +152,12 @@ static void altk_window_init ( LObject *obj )
 AltkWindow *altk_window_new_root ( struct _AltkDisplay *display )
 {
   AltkWindow *win;
-  win = ALTK_WINDOW(l_object_new(ALTK_CLASS_WINDOW, NULL));
-  win->display = display;
+  Private *priv;
+  win = ALTK_WINDOW_NEW(NULL);
+  priv = win->private;
+  priv->root = win;
+  priv->privroot = g_new0(PrivateRoot, 1);
+  priv->privroot->display = display;
   win->flags = ALTK_WINDOW_FLAG_ROOT;
   /* set size */
   altk_display_get_size(display, &win->width, &win->height);
@@ -162,10 +178,13 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
                               AltkWindowFlags flags )
 {
   AltkWindow *win;
+  Private *priv;
   ASSERT(parent);
-  win = ALTK_WINDOW(l_object_new(ALTK_CLASS_WINDOW, NULL));
+  win = ALTK_WINDOW_NEW(NULL);
+  priv = win->private;
+  priv->root = PRIVATE(parent)->root;
+  priv->privroot = PRIVATE(parent)->privroot;
   win->flags = flags;
-  win->display = parent->display;
   /* attach to parent [FIXME] ref ? */
   win->parent = parent;
   win->next = parent->children;
@@ -257,7 +276,7 @@ static void _process_redraw ( AltkWindow *window )
   /* [FIXME] should only be called once for all redraws, but how to
      know which display(s) is/are concerned ? We probably a
      per-display redraw_queue */
-  altk_display_flip(window->display);
+  altk_display_flip(PRIVROOT(window)->display);
   /* [FIXME] clear update_area */
   altk_region_destroy(window->update_area);
   window->update_area = altk_region_new();
@@ -443,7 +462,7 @@ static void _grow_double_buffer ( AltkWindow *window,
   if (!window->dblbuf) {
     ALLEGRO_STATE state;
     al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
-    al_set_target_backbuffer(window->display->al_display);
+    al_set_target_backbuffer(PRIVROOT(window)->display->al_display);
     window->dblbuf = al_create_bitmap(width, height);
     al_restore_state(&state);
   }
@@ -495,7 +514,7 @@ void altk_window_end_draw ( AltkWindow *window,
   altk_region_get_clipbox(area, &clip);
   /* blit dblbuf -> backbuf */
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_bitmap(altk_display_get_backbuf(window->display));
+  al_set_target_bitmap(altk_display_get_backbuf(PRIVROOT(window)->display));
   for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
     {
       al_draw_bitmap_region(window->dblbuf,
@@ -509,7 +528,7 @@ void altk_window_end_draw ( AltkWindow *window,
     }
   al_restore_state(&state);
   altk_region_offset(area, window->root_x, window->root_y);
-  altk_display_invalidate_region(window->display, area);
+  altk_display_invalidate_region(PRIVROOT(window)->display, area);
   altk_region_offset(area, -window->root_x, -window->root_y);
 }
 

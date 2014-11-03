@@ -35,8 +35,6 @@ struct _AltkWindow
   gpointer private;
   /* window flags */
   AltkWindowFlags flags;
-  /* the display to which this window is attached */
-  struct _AltkDisplay *display;
   /* parent and children (where first child is above) */
   struct _AltkWindow *parent;
   struct _AltkWindow *children;
