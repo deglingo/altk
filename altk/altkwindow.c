@@ -477,12 +477,14 @@ void altk_window_begin_draw ( AltkWindow *window,
   AltkRegionBox *box;
   ALLEGRO_COLOR bg = al_map_rgba(0, 0, 0, 0);
   ALLEGRO_STATE state;
+  gint cx, cy, cw, ch;
   altk_region_get_clipbox(area, &clip);
   /* give an appropriate size to the double buffer */
   _grow_double_buffer(window, clip.width, clip.height);
   /* clear area */
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_bitmap(PRIVROOT(window)->dblbuf);
+  al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
   for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
     {
       al_set_clipping_rectangle(box->x1 - clip.x,
@@ -491,6 +493,7 @@ void altk_window_begin_draw ( AltkWindow *window,
                                 box->y2 - box->y1);
       al_clear_to_color(bg);
     }
+  al_set_clipping_rectangle(cx, cy, cw, ch);
   al_restore_state(&state);
   /* adjust drawing offset */
   window->offset_x = -clip.x;
