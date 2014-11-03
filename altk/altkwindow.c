@@ -17,6 +17,8 @@
 typedef struct _PrivateRoot
 {
   AltkDisplay *display;
+  GSList *redraw_queue;
+  guint redraw_source_id;
 }
   PrivateRoot;
 
@@ -33,12 +35,6 @@ typedef struct _Private
 
 #define PRIVATE(win) ((Private *)(ALTK_WINDOW(win)->private))
 #define PRIVROOT(win) (PRIVATE(win)->privroot)
-
-
-
-/* globals */
-static GSList *redraw_queue = NULL;
-static guint redraw_source_id = 0;
 
 
 
@@ -273,17 +269,13 @@ static void _process_redraw ( AltkWindow *window )
   event.expose.area = window->update_area;
   ALTK_WINDOW_DRAW_UPDATE(window, event.expose.area, 0xffff00);
   altk_event_process(&event);
-  /* [FIXME] should only be called once for all redraws, but how to
-     know which display(s) is/are concerned ? We probably a
-     per-display redraw_queue */
-  altk_display_flip(PRIVROOT(window)->display);
   /* [FIXME] clear update_area */
   altk_region_destroy(window->update_area);
   window->update_area = altk_region_new();
   /* remove from redraw_queue */
-  if ((q = g_slist_find(redraw_queue, window))) {
-    /* [TODO] l_object_unref(window) */
-    redraw_queue = g_slist_delete_link(redraw_queue, q);
+  if ((q = g_slist_find(PRIVROOT(window)->redraw_queue, window))) {
+    PRIVROOT(window)->redraw_queue = g_slist_delete_link(PRIVROOT(window)->redraw_queue, q);
+    l_object_unref(window);
   }
 }
 
@@ -291,11 +283,13 @@ static void _process_redraw ( AltkWindow *window )
 
 /* _process_all_redraw:
  */
-static void _process_all_redraw ( void )
+static void _process_all_redraw ( AltkWindow *root )
 {
   /* [FIXME] forbid invalidate() while processing */
-  while (redraw_queue)
-    _process_redraw(ALTK_WINDOW(redraw_queue->data));
+  while (PRIVROOT(root)->redraw_queue)
+    _process_redraw(PRIVROOT(root)->redraw_queue->data);
+  /* flip display */
+  altk_display_flip(PRIVROOT(root)->display);
 }
 
 
@@ -304,9 +298,10 @@ static void _process_all_redraw ( void )
  */
 static gboolean _idle_redraw ( gpointer data )
 {
-  _process_all_redraw();
+  AltkWindow *win = ALTK_WINDOW(data);
+  _process_all_redraw(win);
   /* remove the source */
-  redraw_source_id = 0;
+  PRIVROOT(win)->redraw_source_id = 0;
   return G_SOURCE_REMOVE;
 }
 
@@ -338,14 +333,15 @@ void altk_window_invalidate ( AltkWindow *window,
   if (!altk_region_empty(window->update_area))
     {
       /* add window to redraw_queue */
-      if (!g_slist_find(redraw_queue, window))
-        redraw_queue = g_slist_prepend(redraw_queue, l_object_ref(window));
+      if (!g_slist_find(PRIVROOT(window)->redraw_queue, window))
+        PRIVROOT(window)->redraw_queue = g_slist_prepend
+          (PRIVROOT(window)->redraw_queue, l_object_ref(window));
       /* install the expose event source */
-      if (redraw_source_id == 0)
-        redraw_source_id = g_idle_add_full(ALTK_PRIORITY_EXPOSE,
-                                           (GSourceFunc) _idle_redraw,
-                                           NULL,
-                                           NULL);
+      if (PRIVROOT(window)->redraw_source_id == 0)
+        PRIVROOT(window)->redraw_source_id = g_idle_add_full(ALTK_PRIORITY_EXPOSE,
+                                                             (GSourceFunc) _idle_redraw,
+                                                             PRIVATE(window)->root, /* [fixme] ref ? */
+                                                             NULL);
     }
 }
 
