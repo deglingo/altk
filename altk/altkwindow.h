@@ -4,7 +4,7 @@
 #ifndef _ALTKWINDOW_H_
 #define _ALTKWINDOW_H_
 
-#include "altk/altkdrawable.h"
+#include "altk/altkbase.h"
 #include "altk/altkregion.h"
 #include "altk/altkevent.h"
 #include "altk/altkwindow-def.h"

@@ -40,27 +40,6 @@ typedef struct _Private
 
 
 
-static void _on_draw_bitmap_region ( AltkDrawable *drawable,
-                                     AltkBitmap *bitmap,
-                                     AltkRegion *region,
-                                     gint dest_x,
-                                     gint dest_y );
-
-static void _on_draw_rectangle ( AltkDrawable *drawable,
-                                 AltkGC *gc,
-                                 gboolean filled,
-                                 gint x,
-                                 gint y,
-                                 gint width,
-                                 gint height );
-static void _on_draw_text ( AltkDrawable *drawable,
-                            AltkGC *gc,
-                            gint x,
-                            gint y,
-                            const gchar *text );
-
-
-
 /* _altk_window_draw_update:
  *
  * debug
@@ -129,9 +108,6 @@ void _altk_window_draw_update ( AltkWindow *window,
  */
 static void altk_window_class_init ( LObjectClass *cls )
 {
-  ((AltkDrawableClass *) cls)->draw_bitmap_region = _on_draw_bitmap_region;
-  ((AltkDrawableClass *) cls)->draw_rectangle = _on_draw_rectangle;
-  ((AltkDrawableClass *) cls)->draw_text = _on_draw_text;
 }
 
 
@@ -362,88 +338,6 @@ AltkRegion *altk_window_get_visible_area ( AltkWindow *window )
   r.width = window->width;
   r.height = window->height;
   return altk_region_rectangle(&r);
-}
-
-
-
-/* _on_draw_bitmap_region:
- */
-static void _on_draw_bitmap_region ( AltkDrawable *drawable,
-                                     AltkBitmap *bitmap,
-                                     AltkRegion *region,
-                                     gint dest_x,
-                                     gint dest_y )
-{
-  CL_ERROR("[REMOVEME]");
-  /* gint r; */
-  /* AltkRegionBox *box; */
-  /* ALLEGRO_STATE state; */
-  /* al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP); */
-  /* al_set_target_bitmap(PRIVROOT(drawable)->dblbuf); */
-  /* for (r = 0, box = region->rects; r < region->n_rects; r++, box++) */
-  /*   { */
-  /*     al_draw_bitmap_region(bitmap->al_bitmap, */
-  /*                           box->x1, */
-  /*                           box->y1, */
-  /*                           box->x2 - box->x1, */
-  /*                           box->y2 - box->y1, */
-  /*                           box->x1 + ALTK_WINDOW(drawable)->offset_x, */
-  /*                           box->y1 + ALTK_WINDOW(drawable)->offset_y, */
-  /*                           0); */
-  /*   } */
-  /* al_restore_state(&state); */
-}
-
-
-
-/* _on_draw_rectangle:
- */
-static void _on_draw_rectangle ( AltkDrawable *drawable,
-                                 AltkGC *gc,
-                                 gboolean filled,
-                                 gint x,
-                                 gint y,
-                                 gint width,
-                                 gint height )
-{
-  CL_ERROR("[REMOVEME]");
-  /* /\* [fixme] pixel exact coordinates *\/ */
-  /* float x1 = ((float) x + ALTK_WINDOW(drawable)->offset_x); */
-  /* float y1 = ((float) y + ALTK_WINDOW(drawable)->offset_y); */
-  /* float x2 = ((float) (x + width + ALTK_WINDOW(drawable)->offset_x)); */
-  /* float y2 = ((float) (y + height + ALTK_WINDOW(drawable)->offset_y)); */
-  /* ALLEGRO_STATE state; */
-  /* al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP); */
-  /* al_set_target_bitmap(PRIVROOT(drawable)->dblbuf); */
-  /* if (filled) */
-  /*   al_draw_filled_rectangle(x1, y1, x2, y2, altk_gc_get_fg(gc)); */
-  /* else */
-  /*   al_draw_rectangle(x1, y1, x2, y2, al_map_rgb(0, 0, 0) /\* [fixme] gc->fg *\/, 1.0); */
-  /* al_restore_state(&state); */
-}
-
-
-
-/* _on_draw_text:
- */
-static void _on_draw_text ( AltkDrawable *drawable,
-                            AltkGC *gc,
-                            gint x,
-                            gint y,
-                            const gchar *text )
-{
-  CL_ERROR("[REMOVEME]");
-  /* ALLEGRO_COLOR col = al_map_rgb(255, 255, 0); /\* [FIXME] *\/ */
-  /* ALLEGRO_STATE state; */
-  /* al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP); */
-  /* al_set_target_bitmap(PRIVROOT(drawable)->dblbuf); */
-  /* al_draw_text(altk_gc_get_font(gc)->al_font,  */
-  /*              col, */
-  /*              x + ALTK_WINDOW(drawable)->offset_x, */
-  /*              y + ALTK_WINDOW(drawable)->offset_y, */
-  /*              ALLEGRO_ALIGN_LEFT, */
-  /*              text); */
-  /* al_restore_state(&state); */
 }
 
 

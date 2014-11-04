@@ -20,7 +20,7 @@ namespace Altk
   {
   };
 
-  class Window : Drawable
+  class Window
   {
     void class_init ();
     void init ();
