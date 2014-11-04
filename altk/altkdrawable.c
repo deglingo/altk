@@ -19,6 +19,28 @@ void altk_drawable_set_offset ( AltkDrawable *drawable,
 
 
 
+/* altk_drawable_get_target:
+ */
+gpointer altk_drawable_get_target ( AltkDrawable *drawable )
+{
+  ASSERT(ALTK_DRAWABLE_GET_CLASS(drawable)->get_target);
+  return ALTK_DRAWABLE_GET_CLASS(drawable)->get_target(drawable);
+}
+
+
+
+/* altk_drawable_get_size:
+ */
+void altk_drawable_get_size ( AltkDrawable *drawable,
+                              gint *width,
+                              gint *height )
+{
+  ASSERT(ALTK_DRAWABLE_GET_CLASS(drawable)->get_size);
+  return ALTK_DRAWABLE_GET_CLASS(drawable)->get_size(drawable, width, height);
+}
+
+
+
 /* altk_drawable_draw_rectangle:
  */
 void altk_drawable_draw_rectangle ( AltkDrawable *drawable,

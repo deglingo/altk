@@ -11,6 +11,11 @@
 
 
 
+static gpointer get_target ( AltkDrawable *drawable );
+static void get_size ( AltkDrawable *drawable,
+                       gint *width,
+                       gint *height );
+
 static void _on_draw_text ( AltkDrawable *drawable,
                             AltkGC *gc,
                             gint x,
@@ -28,6 +33,8 @@ static void _on_draw_bitmap_region ( AltkDrawable *drawable,
  */
 static void altk_bitmap_class_init ( LObjectClass *cls )
 {
+  ALTK_DRAWABLE_CLASS(cls)->get_target = get_target;
+  ALTK_DRAWABLE_CLASS(cls)->get_size = get_size;
   ((AltkDrawableClass *) cls)->draw_text = _on_draw_text;
   ((AltkDrawableClass *) cls)->draw_bitmap_region = _on_draw_bitmap_region;
 }
@@ -74,14 +81,23 @@ AltkDrawable *altk_bitmap_new_from_al_bitmap ( ALLEGRO_BITMAP *bmp,
 
 
 
-/* altk_bitmap_get_size:
+/* get_target:
  */
-void altk_bitmap_get_size ( AltkBitmap *bitmap,
-                            gint *width,
-                            gint *height )
+static gpointer get_target ( AltkDrawable *drawable )
 {
-  *width = al_get_bitmap_width(bitmap->al_bitmap);
-  *height = al_get_bitmap_height(bitmap->al_bitmap);
+  return ALTK_BITMAP(drawable)->al_bitmap;
+}
+
+
+
+/* get_size:
+ */
+static void get_size ( AltkDrawable *drawable,
+                       gint *width,
+                       gint *height )
+{
+  *width = al_get_bitmap_width(ALTK_BITMAP(drawable)->al_bitmap);
+  *height = al_get_bitmap_height(ALTK_BITMAP(drawable)->al_bitmap);
 }
 
 

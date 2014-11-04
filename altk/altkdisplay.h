@@ -7,6 +7,7 @@
 #include "altk/altkbase.h"
 #include "altk/altkregion.h"
 #include "altk/altkdrawable.h"
+#include "altk/altkbitmap.h"
 #include "altk/altkdisplay-def.h"
 
 
@@ -52,6 +53,16 @@ void altk_display_flip ( AltkDisplay *display );
 ALLEGRO_BITMAP *altk_display_get_backbuf ( AltkDisplay *display );
 void altk_display_invalidate_region ( AltkDisplay *display,
                                       AltkRegion *area );
+void altk_display_invalidate_area ( AltkDisplay *display,
+                                    gint x,
+                                    gint y,
+                                    gint width,
+                                    gint height );
+void altk_display_draw_bitmap_region ( AltkDisplay *display,
+                                       AltkBitmap *bitmap,
+                                       AltkRegion *region,
+                                       gint offset_x,
+                                       gint offset_y );
 
 
 

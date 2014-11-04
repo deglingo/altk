@@ -149,7 +149,7 @@ static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
   altk_style_context_draw_text(wid->style_context,
-                               ALTK_DRAWABLE(event->expose.window),
+                               event->expose.gc,
                                wid->x,
                                wid->y,
                                ALTK_LABEL(wid)->text);

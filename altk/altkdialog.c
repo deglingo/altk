@@ -145,7 +145,7 @@ static void _on_expose_event ( AltkWidget *wid,
   AltkStyleContext *ctxt = altk_widget_get_style_context(wid);
   /* CL_DEBUG("Dialog.expose_event()"); */
   altk_style_context_draw_box(ctxt,
-                              ALTK_DRAWABLE(event->expose.window),
+                              event->expose.gc,
                               0,
                               0,
                               wid->width,

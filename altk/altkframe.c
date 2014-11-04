@@ -94,7 +94,7 @@ static void _on_expose_event ( AltkWidget *wid,
   AltkStyleContext *ctxt = altk_widget_get_style_context(wid);
   /* CL_DEBUG("Frame.expose_event()"); */
   altk_style_context_draw_frame(ctxt,
-                                ALTK_DRAWABLE(event->expose.window),
+                                event->expose.gc,
                                 wid->x + 1,
                                 wid->y + 1,
                                 wid->width - 2,
