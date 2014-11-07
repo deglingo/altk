@@ -11,6 +11,18 @@
 
 
 
+/* Signals:
+ */
+enum
+  {
+    SIG_CLICKED,
+    SIG_COUNT,
+  };
+
+static LSignalID signals[SIG_COUNT] = { 0, };
+
+
+
 static void _on_realize ( AltkWidget *wid );
 static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req );
@@ -41,6 +53,8 @@ static void altk_button_class_init ( LObjectClass *cls )
   ((AltkWidgetClass *) cls)->mouse_button_down_event = _on_mouse_button_down_event;
   ((AltkWidgetClass *) cls)->mouse_button_up_event = _on_mouse_button_up_event;
   ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
+
+  signals[SIG_CLICKED] = l_signal_new(cls, "clicked");
 }
 
 
@@ -183,6 +197,7 @@ static void _on_mouse_button_up_event ( AltkWidget *wid,
 {
   /* CL_TRACE("%p", wid); */
   altk_widget_set_state(wid, ALTK_STATE_PRELIGHT);
+  l_signal_emit(L_OBJECT(wid), signals[SIG_CLICKED], 0);
 }
 
 
