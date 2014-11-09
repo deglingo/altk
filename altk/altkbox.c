@@ -26,6 +26,7 @@ static LParamSpec *pspecs[_PROP_COUNT] = { NULL, };
 typedef struct _Child
 {
   AltkWidget *widget;
+  AltkRequisition size_request;
 }
   Child;
 
@@ -37,6 +38,11 @@ typedef struct _Private
 {
   AltkOrientation orientation;
   GList *children;
+  gint border_size;
+  gint padding;
+  /* layout */
+  gint nchildren;
+  gint children_req;
 }
   Private;
 
@@ -69,6 +75,8 @@ static void altk_box_init ( LObject *obj )
   ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_NOWINDOW;
   /* [fixme] prop default */
   PRIVATE(obj)->orientation = ALTK_VERTICAL;
+  PRIVATE(obj)->border_size = 4;
+  PRIVATE(obj)->padding = 4;
 }
 
 
@@ -152,25 +160,57 @@ void altk_box_set_orientation ( AltkBox *box,
 
 
 
-#define SIZE_REQUEST(X, Y, WIDTH, HEIGHT, wid, req) do {        \
-    GList *l;                                                   \
-    guint n_visible = 0;                                        \
-    req->WIDTH = 4;                                             \
-    req->HEIGHT = 4;                                            \
-    for (l = priv->children; l; l = l->next)                    \
-      {                                                         \
-        Child *child = l->data;                                 \
-        AltkRequisition child_req;                              \
-        if (!ALTK_WIDGET_VISIBLE(child->widget))                \
-          continue;                                             \
-        n_visible++;                                            \
-        altk_widget_size_request(child->widget, &child_req);    \
-        req->WIDTH = MAX(req->WIDTH, child_req.WIDTH + 4);      \
-        req->HEIGHT += child_req.HEIGHT;                        \
-      }                                                         \
-    if (n_visible > 0)                                          \
-      req->HEIGHT += (2 * (n_visible - 1));                     \
-  } while (0)
+static void _size_request_v ( AltkWidget *wid,
+                              AltkRequisition *req )
+{
+  Private *priv = PRIVATE(wid);
+  GList *l;
+  req->width = 0;
+  req->height = 0;
+  priv->nchildren = 0;
+  for (l = priv->children; l; l = l->next)
+    {
+      Child *child = l->data;
+      if (!ALTK_WIDGET_VISIBLE(child->widget))
+        continue;
+      priv->nchildren++;
+      altk_widget_size_request(child->widget, &child->size_request);
+      req->width = MAX(req->width, child->size_request.width);
+      req->height += child->size_request.height;
+    }
+  priv->children_req = req->height;
+  req->width += 2 * priv->border_size;
+  req->height += 2 * priv->border_size;
+  if (priv->nchildren)
+    req->height += priv->padding * (priv->nchildren - 1);
+}
+
+
+
+static void _size_request_h ( AltkWidget *wid,
+                              AltkRequisition *req )
+{
+  Private *priv = PRIVATE(wid);
+  GList *l;
+  req->width = 0;
+  req->height = 0;
+  priv->nchildren = 0;
+  for (l = priv->children; l; l = l->next)
+    {
+      Child *child = l->data;
+      if (!ALTK_WIDGET_VISIBLE(child->widget))
+        continue;
+      priv->nchildren++;
+      altk_widget_size_request(child->widget, &child->size_request);
+      req->width += child->size_request.width;
+      req->height = MAX(req->height, child->size_request.height);
+    }
+  priv->children_req = req->width;
+  req->width += 2 * priv->border_size;
+  req->height += 2 * priv->border_size;
+  if (priv->nchildren)
+    req->width += priv->padding * (priv->nchildren - 1);
+}
 
 
 
@@ -203,10 +243,10 @@ static void _size_request ( AltkWidget *wid,
   switch (priv->orientation)
     {
     case ALTK_VERTICAL:
-      SIZE_REQUEST(x, y, width, height, wid, req);
+      _size_request_v(wid, req);
       break;
     case ALTK_HORIZONTAL:
-      SIZE_REQUEST(y, x, height, width, wid, req);
+      _size_request_h(wid, req);
       break;
     default:
       ASSERT(0);
