@@ -214,23 +214,45 @@ static void _size_request_h ( AltkWidget *wid,
 
 
 
-#define SIZE_ALLOCATE(X, Y, WIDTH, HEIGHT, wid, alloc) do {         \
-    GList *l;                                                       \
-    guint ofs = 2;                                                  \
-    for (l = priv->children; l; l = l->next)                        \
-      {                                                             \
-        Child *child = l->data;                                     \
-        AltkAllocation child_alloc;                                 \
-        if (!ALTK_WIDGET_VISIBLE(child->widget))                    \
-          continue;                                                 \
-        child_alloc.X = alloc->X + 2;                               \
-        child_alloc.Y = alloc->Y + ofs;                             \
-        child_alloc.WIDTH = alloc->WIDTH - 4;                       \
-        child_alloc.HEIGHT = child->widget->size_request.HEIGHT;    \
-        ofs += (2 + child->widget->size_request.HEIGHT);            \
-        altk_widget_size_allocate(child->widget, &child_alloc);     \
-      }                                                             \
-  } while (0)
+static void _size_allocate_v ( AltkWidget *wid,
+                               AltkAllocation *alloc )
+{
+  Private *priv = PRIVATE(wid);
+  GList *l;
+  gint offset = priv->border_size;
+  for (l = priv->children; l; l = l->next)
+    {
+      Child *child = l->data;
+      AltkAllocation child_alloc;
+      child_alloc.x = alloc->x + priv->border_size;
+      child_alloc.y = alloc->y + offset;
+      child_alloc.width = alloc->width - 2 * priv->border_size;
+      child_alloc.height = child->size_request.height;
+      offset += child->size_request.height + priv->padding;
+      altk_widget_size_allocate(child->widget, &child_alloc);
+    }
+}
+
+
+
+static void _size_allocate_h ( AltkWidget *wid,
+                               AltkAllocation *alloc )
+{
+  Private *priv = PRIVATE(wid);
+  GList *l;
+  gint offset = priv->border_size;
+  for (l = priv->children; l; l = l->next)
+    {
+      Child *child = l->data;
+      AltkAllocation child_alloc;
+      child_alloc.x = alloc->x + offset;
+      child_alloc.y = alloc->y + priv->border_size;
+      child_alloc.width = child->size_request.width;
+      child_alloc.height = alloc->height - 2 * priv->border_size;
+      offset += child->size_request.width + priv->padding;
+      altk_widget_size_allocate(child->widget, &child_alloc);
+    }
+}
 
 
 
@@ -268,10 +290,10 @@ static void _size_allocate ( AltkWidget *wid,
   switch (priv->orientation)
     {
     case ALTK_VERTICAL:
-      SIZE_ALLOCATE(x, y, width, height, wid, alloc);
+      _size_allocate_v(wid, alloc);
       break;
     case ALTK_HORIZONTAL:
-      SIZE_ALLOCATE(y, x, height, width, wid, alloc);
+      _size_allocate_h(wid, alloc);
       break;
     default:
       ASSERT(0);
