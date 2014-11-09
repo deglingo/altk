@@ -11,16 +11,10 @@
 
 
 
-static void _on_draw_text ( AltkDrawable *drawable,
-                            AltkGC *gc,
-                            gint x,
-                            gint y,
-                            const gchar *text );
-static void _on_draw_bitmap_region ( AltkDrawable *drawable,
-                                     AltkBitmap *bitmap,
-                                     AltkRegion *region,
-                                     gint dest_x,
-                                     gint dest_y );
+static gpointer get_target ( AltkDrawable *drawable );
+static void get_size ( AltkDrawable *drawable,
+                       gint *width,
+                       gint *height );
 
 
 
@@ -28,8 +22,8 @@ static void _on_draw_bitmap_region ( AltkDrawable *drawable,
  */
 static void altk_bitmap_class_init ( LObjectClass *cls )
 {
-  ((AltkDrawableClass *) cls)->draw_text = _on_draw_text;
-  ((AltkDrawableClass *) cls)->draw_bitmap_region = _on_draw_bitmap_region;
+  ALTK_DRAWABLE_CLASS(cls)->get_target = get_target;
+  ALTK_DRAWABLE_CLASS(cls)->get_size = get_size;
 }
 
 
@@ -74,62 +68,21 @@ AltkDrawable *altk_bitmap_new_from_al_bitmap ( ALLEGRO_BITMAP *bmp,
 
 
 
-/* altk_bitmap_get_size:
+/* get_target:
  */
-void altk_bitmap_get_size ( AltkBitmap *bitmap,
-                            gint *width,
-                            gint *height )
+static gpointer get_target ( AltkDrawable *drawable )
 {
-  *width = al_get_bitmap_width(bitmap->al_bitmap);
-  *height = al_get_bitmap_height(bitmap->al_bitmap);
+  return ALTK_BITMAP(drawable)->al_bitmap;
 }
 
 
 
-/* _on_draw_text:
+/* get_size:
  */
-static void _on_draw_text ( AltkDrawable *drawable,
-                            AltkGC *gc,
-                            gint x,
-                            gint y,
-                            const gchar *text )
+static void get_size ( AltkDrawable *drawable,
+                       gint *width,
+                       gint *height )
 {
-  ALLEGRO_COLOR color = al_map_rgb(255, 255, 0);
-  ALLEGRO_STATE state;
-  CL_DEBUG("draw_text(%d, %d, \"%s\")", x, y, text);
-  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_bitmap(ALTK_BITMAP(drawable)->al_bitmap);
-  al_draw_text(altk_gc_get_font(gc)->al_font, color, x, y, ALLEGRO_ALIGN_LEFT, text);
-  al_restore_state(&state);
-}
-
-
-
-/* _on_draw_bitmap_region:
- */
-static void _on_draw_bitmap_region ( AltkDrawable *drawable,
-                                     AltkBitmap *bitmap,
-                                     AltkRegion *region,
-                                     gint dest_x,
-                                     gint dest_y )
-{
-  gint r;
-  AltkRegionBox *box;
-  ALLEGRO_STATE state;
-  CL_DEBUG("draw_bitmap_region(%p, %p, %p, %d, %d)",
-           drawable, bitmap, region, dest_x, dest_y);
-  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_bitmap(ALTK_BITMAP(drawable)->al_bitmap);
-  for (r = 0, box = region->rects; r < region->n_rects; r++, box++)
-    {
-      al_draw_bitmap_region(bitmap->al_bitmap,
-                            box->x1,
-                            box->y1,
-                            box->x2 - box->x1,
-                            box->y2 - box->y1,
-                            box->x1 + dest_x,
-                            box->y1 + dest_y,
-                            0);
-    }
-  al_restore_state(&state);
+  *width = al_get_bitmap_width(ALTK_BITMAP(drawable)->al_bitmap);
+  *height = al_get_bitmap_height(ALTK_BITMAP(drawable)->al_bitmap);
 }

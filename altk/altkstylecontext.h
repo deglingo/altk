@@ -8,6 +8,7 @@
 #include "altk/altkstyle.h"
 #include "altk/altkdrawable.h"
 #include "altk/altkgc.h"
+#include "altk/altkfont.h"
 #include "altk/altkstylecontext-def.h"
 
 
@@ -20,8 +21,7 @@ struct _AltkStyleContext
 
   AltkStyle *style;
   AltkState state;
-  AltkGC *gc_normal;
-  AltkGC *gc_active;
+  AltkFont *font; /* [fixme] */
 };
 
 
@@ -39,19 +39,19 @@ AltkStyleContext *altk_style_context_new ( AltkStyle *style );
 void altk_style_context_set_state ( AltkStyleContext *context,
                                     AltkState state );
 void altk_style_context_draw_box ( AltkStyleContext *context,
-                                   AltkDrawable *drawable,
+                                   AltkGC *gc,
                                    gint x,
                                    gint y,
                                    gint width,
                                    gint height );
 void altk_style_context_draw_frame ( AltkStyleContext *context,
-                                     AltkDrawable *drawable,
+                                     AltkGC *gc,
                                      gint x,
                                      gint y,
                                      gint width,
                                      gint height );
 void altk_style_context_draw_text ( AltkStyleContext *context,
-                                    AltkDrawable *drawable,
+                                    AltkGC *gc,
                                     gint x,
                                     gint y,
                                     const gchar *text );

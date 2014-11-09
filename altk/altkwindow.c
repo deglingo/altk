@@ -19,7 +19,8 @@ typedef struct _PrivateRoot
   AltkDisplay *display;
   GSList *redraw_queue;
   guint redraw_source_id;
-  ALLEGRO_BITMAP *dblbuf;
+  AltkDrawable *dblbuf;
+  AltkGC *gc;
 }
   PrivateRoot;
 
@@ -36,27 +37,6 @@ typedef struct _Private
 
 #define PRIVATE(win) ((Private *)(ALTK_WINDOW(win)->private))
 #define PRIVROOT(win) (PRIVATE(win)->privroot)
-
-
-
-static void _on_draw_bitmap_region ( AltkDrawable *drawable,
-                                     AltkBitmap *bitmap,
-                                     AltkRegion *region,
-                                     gint dest_x,
-                                     gint dest_y );
-
-static void _on_draw_rectangle ( AltkDrawable *drawable,
-                                 AltkGC *gc,
-                                 gboolean filled,
-                                 gint x,
-                                 gint y,
-                                 gint width,
-                                 gint height );
-static void _on_draw_text ( AltkDrawable *drawable,
-                            AltkGC *gc,
-                            gint x,
-                            gint y,
-                            const gchar *text );
 
 
 
@@ -128,9 +108,6 @@ void _altk_window_draw_update ( AltkWindow *window,
  */
 static void altk_window_class_init ( LObjectClass *cls )
 {
-  ((AltkDrawableClass *) cls)->draw_bitmap_region = _on_draw_bitmap_region;
-  ((AltkDrawableClass *) cls)->draw_rectangle = _on_draw_rectangle;
-  ((AltkDrawableClass *) cls)->draw_text = _on_draw_text;
 }
 
 
@@ -155,6 +132,7 @@ AltkWindow *altk_window_new_root ( struct _AltkDisplay *display )
   priv->root = win;
   priv->privroot = g_new0(PrivateRoot, 1);
   priv->privroot->display = display;
+  priv->privroot->gc = altk_gc_new(NULL);
   win->flags = ALTK_WINDOW_FLAG_ROOT;
   /* set size */
   altk_display_get_size(display, &win->width, &win->height);
@@ -268,11 +246,13 @@ static void _process_redraw ( AltkWindow *window )
   event.expose.window = window;
   /* [TODO] clip area to visible area */
   event.expose.area = window->update_area;
+  window->update_area = altk_region_new();
+  event.expose.gc = PRIVROOT(window)->gc;
+  /* [FIXME] prepare gc */
   ALTK_WINDOW_DRAW_UPDATE(window, event.expose.area, 0xffff00);
   altk_event_process(&event);
   /* [FIXME] clear update_area */
-  altk_region_destroy(window->update_area);
-  window->update_area = altk_region_new();
+  altk_region_destroy(event.expose.area);
   /* remove from redraw_queue */
   if ((q = g_slist_find(PRIVROOT(window)->redraw_queue, window))) {
     PRIVROOT(window)->redraw_queue = g_slist_delete_link(PRIVROOT(window)->redraw_queue, q);
@@ -362,85 +342,6 @@ AltkRegion *altk_window_get_visible_area ( AltkWindow *window )
 
 
 
-/* _on_draw_bitmap_region:
- */
-static void _on_draw_bitmap_region ( AltkDrawable *drawable,
-                                     AltkBitmap *bitmap,
-                                     AltkRegion *region,
-                                     gint dest_x,
-                                     gint dest_y )
-{
-  gint r;
-  AltkRegionBox *box;
-  ALLEGRO_STATE state;
-  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_bitmap(PRIVROOT(drawable)->dblbuf);
-  for (r = 0, box = region->rects; r < region->n_rects; r++, box++)
-    {
-      al_draw_bitmap_region(bitmap->al_bitmap,
-                            box->x1,
-                            box->y1,
-                            box->x2 - box->x1,
-                            box->y2 - box->y1,
-                            box->x1 + ALTK_WINDOW(drawable)->offset_x,
-                            box->y1 + ALTK_WINDOW(drawable)->offset_y,
-                            0);
-    }
-  al_restore_state(&state);
-}
-
-
-
-/* _on_draw_rectangle:
- */
-static void _on_draw_rectangle ( AltkDrawable *drawable,
-                                 AltkGC *gc,
-                                 gboolean filled,
-                                 gint x,
-                                 gint y,
-                                 gint width,
-                                 gint height )
-{
-  /* [fixme] pixel exact coordinates */
-  float x1 = ((float) x + ALTK_WINDOW(drawable)->offset_x);
-  float y1 = ((float) y + ALTK_WINDOW(drawable)->offset_y);
-  float x2 = ((float) (x + width + ALTK_WINDOW(drawable)->offset_x));
-  float y2 = ((float) (y + height + ALTK_WINDOW(drawable)->offset_y));
-  ALLEGRO_STATE state;
-  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_bitmap(PRIVROOT(drawable)->dblbuf);
-  if (filled)
-    al_draw_filled_rectangle(x1, y1, x2, y2, altk_gc_get_fg(gc));
-  else
-    al_draw_rectangle(x1, y1, x2, y2, al_map_rgb(0, 0, 0) /* [fixme] gc->fg */, 1.0);
-  al_restore_state(&state);
-}
-
-
-
-/* _on_draw_text:
- */
-static void _on_draw_text ( AltkDrawable *drawable,
-                            AltkGC *gc,
-                            gint x,
-                            gint y,
-                            const gchar *text )
-{
-  ALLEGRO_COLOR col = al_map_rgb(255, 255, 0); /* [FIXME] */
-  ALLEGRO_STATE state;
-  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_bitmap(PRIVROOT(drawable)->dblbuf);
-  al_draw_text(altk_gc_get_font(gc)->al_font, 
-               col,
-               x + ALTK_WINDOW(drawable)->offset_x,
-               y + ALTK_WINDOW(drawable)->offset_y,
-               ALLEGRO_ALIGN_LEFT,
-               text);
-  al_restore_state(&state);
-}
-
-
-
 /* _grow_double_buffer:
  */
 static void _grow_double_buffer ( AltkWindow *window,
@@ -448,21 +349,18 @@ static void _grow_double_buffer ( AltkWindow *window,
                                   gint height )
 {
   if (PRIVROOT(window)->dblbuf) {
-    gint dw = al_get_bitmap_width(PRIVROOT(window)->dblbuf);
-    gint dh = al_get_bitmap_height(PRIVROOT(window)->dblbuf);
+    gint dw, dh;
+    altk_drawable_get_size(PRIVROOT(window)->dblbuf, &dw, &dh);
     if (width > dw || height > dh) {
-      al_destroy_bitmap(PRIVROOT(window)->dblbuf);
-      PRIVROOT(window)->dblbuf = NULL;
+      L_OBJECT_CLEAR(PRIVROOT(window)->dblbuf);
       width = MAX(width, dw);
       height = MAX(height, dh);
     }
   }
   if (!PRIVROOT(window)->dblbuf) {
-    ALLEGRO_STATE state;
-    al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
-    al_set_target_backbuffer(PRIVROOT(window)->display->al_display);
-    PRIVROOT(window)->dblbuf = al_create_bitmap(width, height);
-    al_restore_state(&state);
+    PRIVROOT(window)->dblbuf = altk_bitmap_new(PRIVROOT(window)->display,
+                                               width, height);
+    altk_gc_set_surface(PRIVROOT(window)->gc, PRIVROOT(window)->dblbuf);
   }
 }
 
@@ -474,31 +372,14 @@ void altk_window_begin_draw ( AltkWindow *window,
                               AltkRegion *area )
 {
   AltkRectangle clip;
-  gint r;
-  AltkRegionBox *box;
-  ALLEGRO_COLOR bg = al_map_rgba(0, 0, 0, 0);
-  ALLEGRO_STATE state;
-  gint cx, cy, cw, ch;
   altk_region_get_clipbox(area, &clip);
   /* give an appropriate size to the double buffer */
-  _grow_double_buffer(window, clip.width, clip.height);
+  _grow_double_buffer(window, clip.x + clip.width, clip.y + clip.height);
   /* clear area */
-  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_bitmap(PRIVROOT(window)->dblbuf);
-  al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
-  for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
-    {
-      al_set_clipping_rectangle(box->x1 - clip.x,
-                                box->y1 - clip.y,
-                                box->x2 - box->x1,
-                                box->y2 - box->y1);
-      al_clear_to_color(bg);
-    }
-  al_set_clipping_rectangle(cx, cy, cw, ch);
-  al_restore_state(&state);
-  /* adjust drawing offset */
-  window->offset_x = -clip.x;
-  window->offset_y = -clip.y;
+  /* [FIXME] save/restore color */
+  altk_gc_set_color_hargb(PRIVROOT(window)->gc, 0x0);
+  altk_gc_clear_region(PRIVROOT(window)->gc, area);
+  /* altk_gc_set_clip_rect(PRIVROOT(window)->gc, &clip); */
 }
 
 
@@ -508,29 +389,14 @@ void altk_window_begin_draw ( AltkWindow *window,
 void altk_window_end_draw ( AltkWindow *window,
                             AltkRegion *area )
 {
-  AltkRectangle clip;
-  gint r;
-  AltkRegionBox *box;
-  ALLEGRO_STATE state;
-  altk_region_get_clipbox(area, &clip);
   /* blit dblbuf -> backbuf */
-  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
-  al_set_target_bitmap(altk_display_get_backbuf(PRIVROOT(window)->display));
-  for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
-    {
-      al_draw_bitmap_region(PRIVROOT(window)->dblbuf,
-                            box->x1 - clip.x,
-                            box->y1 - clip.y,
-                            box->x2 - box->x1,
-                            box->y2 - box->y1,
-                            window->root_x + box->x1,
-                            window->root_y + box->y1,
-                            0);
-    }
-  al_restore_state(&state);
-  altk_region_offset(area, window->root_x, window->root_y);
-  altk_display_invalidate_region(PRIVROOT(window)->display, area);
-  altk_region_offset(area, -window->root_x, -window->root_y);
+  altk_display_draw_bitmap_region
+    (PRIVROOT(window)->display,
+     ALTK_BITMAP(PRIVROOT(window)->dblbuf),
+     area,
+     window->root_x,
+     window->root_y);
+  /* [FIXME] restore gc state */
 }
 
 

@@ -9,11 +9,6 @@
 
 
 
-struct _AltkDrawable;
-struct _AltkGC;
-
-
-
 /* AltkStyle:
  */
 struct _AltkStyle
@@ -33,21 +28,6 @@ struct _AltkStyleClass
 
 
 AltkStyle *altk_style_new ( void );
-
-void altk_style_draw_box ( AltkStyle *style,
-                           struct _AltkDrawable *drawable,
-                           struct _AltkGC *gc,
-                           gint box_type,
-                           gint x,
-                           gint y,
-                           gint width,
-                           gint height );
-void altk_style_draw_text ( AltkStyle *style,
-                            struct _AltkDrawable *dest,
-                            struct _AltkGC *gc,
-                            gint x,
-                            gint y,
-                            const gchar *text );
 
 
 

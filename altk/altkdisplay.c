@@ -181,7 +181,68 @@ void altk_display_invalidate_region ( AltkDisplay *display,
   rect.x = rect.y = 0;
   rect.width = al_get_display_width(display->al_display);
   rect.height = al_get_display_height(display->al_display);
+  /* [FIXME] use a static region */
   clip = altk_region_rectangle(&rect);
   altk_region_intersect(display->update_area, clip);
   altk_region_destroy(clip);
+}
+
+
+
+/* altk_display_invalidate_area:
+ */
+void altk_display_invalidate_area ( AltkDisplay *display,
+                                    gint x,
+                                    gint y,
+                                    gint width,
+                                    gint height )
+{
+  /* [FIXME] use a static region */
+  AltkRegion *region;
+  AltkRectangle rect;
+  rect.x = x;
+  rect.y = y;
+  rect.width = width;
+  rect.height = height;
+  region = altk_region_rectangle(&rect);
+  altk_display_invalidate_region(display, region);
+  altk_region_destroy(region);
+}
+
+
+
+/* altk_display_draw_bitmap_region:
+ */
+void altk_display_draw_bitmap_region ( AltkDisplay *display,
+                                       AltkBitmap *bitmap,
+                                       AltkRegion *region,
+                                       gint offset_x,
+                                       gint offset_y )
+{
+  gint r;
+  AltkRegionBox *box;
+  ALLEGRO_STATE state;
+  ALLEGRO_BITMAP *source;
+  source = altk_drawable_get_target(ALTK_DRAWABLE(bitmap));
+  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(display->backbuf);
+  for (r = 0, box = region->rects; r < region->n_rects; r++, box++)
+    {
+      gint width = box->x2 - box->x1;
+      gint height = box->y2 - box->y1;
+      al_draw_bitmap_region(source,
+                            box->x1,
+                            box->y1,
+                            width,
+                            height,
+                            box->x1 + offset_x,
+                            box->y1 + offset_y,
+                            0);
+      altk_display_invalidate_area(display,
+                                   box->x1 + offset_x,
+                                   box->y1 + offset_y,
+                                   width,
+                                   height);
+    }
+  al_restore_state(&state);
 }

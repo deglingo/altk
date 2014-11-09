@@ -5,6 +5,7 @@
 #define _ALTKEVENT_H_
 
 #include "altk/altkbase.h"
+#include "altk/altkgc.h"
 #include "altk/altkregion.h" /* [fixme] */
 
 
@@ -69,6 +70,7 @@ struct _AltkEventExpose
 {
   _ALTK_EVENT_HEADER;
   AltkRegion *area;
+  AltkGC *gc;
 };
 
 
