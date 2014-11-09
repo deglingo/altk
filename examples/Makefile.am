@@ -13,6 +13,8 @@ noinst_PROGRAMS = \
 	ex-table \
 	ex-builder
 
+noinst_SCRIPTS = memcheck
+
 ex_test_CPPFLAGS = -DCL_LOG_DOMAIN=\"ex-test\"
 ex_label_CPPFLAGS = -DCL_LOG_DOMAIN=\"ex-label\"
 ex_frame_CPPFLAGS = -DCL_LOG_DOMAIN=\"ex-frame\"

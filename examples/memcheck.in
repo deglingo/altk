@@ -1,0 +1,22 @@
+#!@SHELL@
+# -*- shell-script -*-
+
+set -x
+
+valgrind \
+    --tool=memcheck \
+    --quiet \
+    --leak-check=yes \
+    --show-possibly-lost=yes \
+    --leak-resolution=high \
+    --show-reachable=yes \
+    --undef-value-errors=yes \
+    --fullpath-after= \
+    --num-callers=50 \
+    --show-below-main=yes \
+    --read-var-info=yes \
+    --gen-suppressions=all \
+    --suppressions=@top_srcdir@/examples/allegro.supp \
+    "${@}"
+
+#    --track-fds=yes \

@@ -1,0 +1,6 @@
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Value4
+   fun:shader_texture_solid_any_draw_shade_white
+   ...
+}

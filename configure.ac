@@ -24,4 +24,5 @@ AC_CONFIG_FILES([ \
   examples/Makefile \
 ])
 AC_CONFIG_FILES([altk.pc])
+AC_CONFIG_FILES([examples/memcheck], [chmod +x examples/memcheck])
 AC_OUTPUT
