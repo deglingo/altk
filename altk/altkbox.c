@@ -26,6 +26,8 @@ static LParamSpec *pspecs[_PROP_COUNT] = { NULL, };
 typedef struct _Child
 {
   AltkWidget *widget;
+  AltkPackFlags pack_flags;
+  /* */
   AltkRequisition size_request;
 }
   Child;
@@ -42,6 +44,7 @@ typedef struct _Private
   gint padding;
   /* layout */
   gint nchildren;
+  gint nexpands;
   gint children_req;
 }
   Private;
@@ -64,6 +67,21 @@ static void _foreach ( AltkWidget *widget,
                        gpointer data );
 static void _add ( AltkContainer *cont,
                    AltkWidget *child );
+
+
+
+static Child *get_child ( AltkBox *box,
+                          AltkWidget *child )
+{
+  GList *l;
+  for (l = PRIVATE(box)->children; l; l = l->next)
+    {
+      Child *c = l->data;
+      if (c->widget == child)
+        return c;
+    }
+  return NULL;
+}
 
 
 
@@ -168,12 +186,15 @@ static void _size_request_v ( AltkWidget *wid,
   req->width = 0;
   req->height = 0;
   priv->nchildren = 0;
+  priv->nexpands = 0;
   for (l = priv->children; l; l = l->next)
     {
       Child *child = l->data;
       if (!ALTK_WIDGET_VISIBLE(child->widget))
         continue;
       priv->nchildren++;
+      if (child->pack_flags & ALTK_PACK_VEXPAND)
+        priv->nexpands++;
       altk_widget_size_request(child->widget, &child->size_request);
       req->width = MAX(req->width, child->size_request.width);
       req->height += child->size_request.height;
@@ -195,12 +216,15 @@ static void _size_request_h ( AltkWidget *wid,
   req->width = 0;
   req->height = 0;
   priv->nchildren = 0;
+  priv->nexpands = 0;
   for (l = priv->children; l; l = l->next)
     {
       Child *child = l->data;
       if (!ALTK_WIDGET_VISIBLE(child->widget))
         continue;
       priv->nchildren++;
+      if (child->pack_flags & ALTK_PACK_HEXPAND)
+        priv->nexpands++;
       altk_widget_size_request(child->widget, &child->size_request);
       req->width += child->size_request.width;
       req->height = MAX(req->height, child->size_request.height);
@@ -214,22 +238,84 @@ static void _size_request_h ( AltkWidget *wid,
 
 
 
+static void _alloc_child ( AltkWidget *box,
+                           Child *child,
+                           gint x,
+                           gint y,
+                           gint width,
+                           gint height )
+{
+  AltkAllocation alloc;
+  if (width > child->size_request.width && !(child->pack_flags & ALTK_PACK_HFILL))
+    {
+      alloc.width = child->size_request.width;
+      if (child->pack_flags & ALTK_PACK_ANCHOR_LEFT)
+        alloc.x = x;
+      else if (child->pack_flags & ALTK_PACK_ANCHOR_RIGHT)
+        alloc.x = x + (width - child->size_request.width);
+      else
+        alloc.x = x + (width - child->size_request.width) / 2;
+    }
+  else
+    {
+      alloc.x = x;
+      alloc.width = width;
+    }
+  if (height > child->size_request.height && !(child->pack_flags & ALTK_PACK_VFILL))
+    {
+      alloc.height = child->size_request.height;
+      if (child->pack_flags & ALTK_PACK_ANCHOR_TOP)
+        alloc.y = y;
+      else if (child->pack_flags & ALTK_PACK_ANCHOR_BOTTOM)
+        alloc.y = y + (height - child->size_request.height);
+      else
+        alloc.y = y + (height - child->size_request.height) / 2;
+    }
+  else
+    {
+      alloc.y = y;
+      alloc.height = height;
+    }
+  altk_widget_size_allocate(child->widget, &alloc);
+}
+
+
+
 static void _size_allocate_v ( AltkWidget *wid,
                                AltkAllocation *alloc )
 {
   Private *priv = PRIVATE(wid);
   GList *l;
   gint offset = priv->border_size;
+  gboolean grow=FALSE, shrink=FALSE;
+  AltkSizeDistrib distrib;
+  if (alloc->height > wid->size_request.height) {
+    grow = TRUE;
+    if (priv->nexpands > 0)
+      altk_size_distrib_init(&distrib, alloc->height - wid->size_request.height, priv->nexpands);
+  } else if (alloc->height < wid->size_request.height) {
+    shrink = TRUE;
+    altk_size_distrib_init(&distrib, wid->size_request.height - alloc->height, priv->nchildren);
+  }
   for (l = priv->children; l; l = l->next)
     {
       Child *child = l->data;
-      AltkAllocation child_alloc;
-      child_alloc.x = alloc->x + priv->border_size;
-      child_alloc.y = alloc->y + offset;
-      child_alloc.width = alloc->width - 2 * priv->border_size;
-      child_alloc.height = child->size_request.height;
-      offset += child->size_request.height + priv->padding;
-      altk_widget_size_allocate(child->widget, &child_alloc);
+      gint x, y, width, height;
+      if (!ALTK_WIDGET_VISIBLE(child->widget))
+        continue;
+      x = alloc->x + priv->border_size;
+      y = alloc->y + offset;
+      width = alloc->width - 2 * priv->border_size;
+      height = child->size_request.height;
+      if (grow && (child->pack_flags & ALTK_PACK_VEXPAND)) {
+        height += altk_size_distrib_next(&distrib);
+      } else if (shrink) {
+        height -= altk_size_distrib_next(&distrib);
+      }
+      if (width <= 0 || height <= 0)
+        width = height = 0;
+      offset += height + priv->padding;
+      _alloc_child(wid, child, x, y, width, height);
     }
 }
 
@@ -241,16 +327,35 @@ static void _size_allocate_h ( AltkWidget *wid,
   Private *priv = PRIVATE(wid);
   GList *l;
   gint offset = priv->border_size;
+  gboolean grow=FALSE, shrink=FALSE;
+  AltkSizeDistrib distrib;
+  if (alloc->width > wid->size_request.width) {
+    grow = TRUE;
+    if (priv->nexpands > 0)
+      altk_size_distrib_init(&distrib, alloc->width - wid->size_request.width, priv->nexpands);
+  } else if (alloc->width < wid->size_request.width) {
+    shrink = TRUE;
+    altk_size_distrib_init(&distrib, wid->size_request.width - alloc->width, priv->nchildren);
+  }
   for (l = priv->children; l; l = l->next)
     {
       Child *child = l->data;
-      AltkAllocation child_alloc;
-      child_alloc.x = alloc->x + offset;
-      child_alloc.y = alloc->y + priv->border_size;
-      child_alloc.width = child->size_request.width;
-      child_alloc.height = alloc->height - 2 * priv->border_size;
-      offset += child->size_request.width + priv->padding;
-      altk_widget_size_allocate(child->widget, &child_alloc);
+      gint x, y, width, height;
+      if (!ALTK_WIDGET_VISIBLE(child->widget))
+        continue;
+      x = alloc->x + offset;
+      y = alloc->y + priv->border_size;
+      width = child->size_request.width;
+      height = alloc->height - 2 * priv->border_size;
+      if (grow && (child->pack_flags & ALTK_PACK_HEXPAND)) {
+        width += altk_size_distrib_next(&distrib);
+      } else if (shrink) {
+        width -= altk_size_distrib_next(&distrib);
+      }
+      if (width <= 0 || height <= 0)
+        width = height = 0;
+      offset += width + priv->padding;
+      _alloc_child(wid, child, x, y, width, height);
     }
 }
 
@@ -337,5 +442,9 @@ void altk_box_pack_start ( AltkBox *box,
                            AltkWidget *child,
                            AltkPackFlags flags )
 {
+  Child *c;
   altk_container_add(ALTK_CONTAINER(box), child);
+  c = get_child(box, child);
+  ASSERT(c);
+  c->pack_flags = flags;
 }
