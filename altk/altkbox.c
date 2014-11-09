@@ -31,6 +31,19 @@ typedef struct _Child
 
 
 
+/* Private:
+ */
+typedef struct _Private
+{
+  AltkOrientation orientation;
+  GList *children;
+}
+  Private;
+
+#define PRIVATE(box) ((Private *)(ALTK_BOX(box)->private))
+
+
+
 static LObject *_get_property ( LObject *object,
                                 LParamSpec *pspec );
 static void _set_property ( LObject *object,
@@ -52,9 +65,10 @@ static void _add ( AltkContainer *cont,
  */
 static void altk_box_init ( LObject *obj )
 {
+  ALTK_BOX(obj)->private = g_new0(Private, 1);
   ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_NOWINDOW;
   /* [fixme] prop default */
-  ALTK_BOX(obj)->orientation = ALTK_VERTICAL;
+  PRIVATE(obj)->orientation = ALTK_VERTICAL;
 }
 
 
@@ -84,7 +98,7 @@ static void altk_box_class_init ( LObjectClass *cls )
 AltkWidget *altk_box_new ( AltkOrientation orientation )
 {
   AltkBox *box = ALTK_BOX(l_object_new(ALTK_CLASS_BOX, NULL));
-  box->orientation = orientation;
+  PRIVATE(box)->orientation = orientation;
   return ALTK_WIDGET(box);
 }
 
@@ -98,7 +112,7 @@ static LObject *_get_property ( LObject *object,
   switch (pspec->param_id)
     {
     case PROP_ORIENTATION:
-      return L_OBJECT(l_int_new(ALTK_BOX(object)->orientation));
+      return L_OBJECT(l_int_new(PRIVATE(object)->orientation));
     default:
       ASSERT(0);
       return NULL;
@@ -132,7 +146,7 @@ static void _set_property ( LObject *object,
 void altk_box_set_orientation ( AltkBox *box,
                                 AltkOrientation orientation )
 {
-  box->orientation = orientation;
+  PRIVATE(box)->orientation = orientation;
   altk_widget_queue_resize(ALTK_WIDGET(box));
 }
 
@@ -143,7 +157,7 @@ void altk_box_set_orientation ( AltkBox *box,
     guint n_visible = 0;                                        \
     req->WIDTH = 4;                                             \
     req->HEIGHT = 4;                                            \
-    for (l = ALTK_BOX(wid)->children; l; l = l->next)           \
+    for (l = priv->children; l; l = l->next)                    \
       {                                                         \
         Child *child = l->data;                                 \
         AltkRequisition child_req;                              \
@@ -163,7 +177,7 @@ void altk_box_set_orientation ( AltkBox *box,
 #define SIZE_ALLOCATE(X, Y, WIDTH, HEIGHT, wid, alloc) do {         \
     GList *l;                                                       \
     guint ofs = 2;                                                  \
-    for (l = ALTK_BOX(wid)->children; l; l = l->next)               \
+    for (l = priv->children; l; l = l->next)                        \
       {                                                             \
         Child *child = l->data;                                     \
         AltkAllocation child_alloc;                                 \
@@ -185,7 +199,8 @@ void altk_box_set_orientation ( AltkBox *box,
 static void _size_request ( AltkWidget *wid,
                             AltkRequisition *req )
 {
-  switch (ALTK_BOX(wid)->orientation)
+  Private *priv = PRIVATE(wid);
+  switch (priv->orientation)
     {
     case ALTK_VERTICAL:
       SIZE_REQUEST(x, y, width, height, wid, req);
@@ -207,9 +222,10 @@ static void _size_allocate ( AltkWidget *wid,
 {
   /* CL_DEBUG("[TODO] box size allocate: %d, %d, %d, %d", */
   /*          alloc->x, alloc->y, alloc->width, alloc->height); */
+  Private *priv = PRIVATE(wid);
   ALTK_WIDGET_CLASS(parent_class)->size_allocate(wid, alloc);
   /* children */
-  switch (ALTK_BOX(wid)->orientation)
+  switch (priv->orientation)
     {
     case ALTK_VERTICAL:
       SIZE_ALLOCATE(x, y, width, height, wid, alloc);
@@ -231,7 +247,7 @@ static void _foreach ( AltkWidget *widget,
                        gpointer data )
 {
   GList *l;
-  for (l = ALTK_BOX(widget)->children; l; l = l->next)
+  for (l = PRIVATE(widget)->children; l; l = l->next)
     {
       if (func(((Child *) (l->data))->widget, data) == ALTK_FOREACH_STOP)
         return;
@@ -248,7 +264,7 @@ static void _add ( AltkContainer *cont,
   Child *bchild = g_new0(Child, 1);
   _altk_widget_set_parent(child, ALTK_WIDGET(cont));
   bchild->widget = l_object_ref(child);
-  ALTK_BOX(cont)->children = g_list_append(ALTK_BOX(cont)->children, bchild);
+  PRIVATE(cont)->children = g_list_append(PRIVATE(cont)->children, bchild);
 }
 
 

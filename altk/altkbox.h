@@ -14,9 +14,7 @@
 struct _AltkBox
 {
   ALTK_BOX_INSTANCE_HEADER;
-
-  AltkOrientation orientation;
-  GList *children;
+  gpointer private;
 };
 
 
