@@ -128,6 +128,20 @@ void altk_label_set_text ( AltkLabel *label,
 
 
 
+/* altk_label_set_min_chars:
+ */
+void altk_label_set_min_chars ( AltkLabel *label,
+                                gint min_chars )
+{
+  if (min_chars != label->min_chars)
+    {
+      label->min_chars = min_chars;
+      altk_widget_queue_resize(ALTK_WIDGET(label));
+    }
+}
+
+
+
 /* _on_size_request:
  */
 static void _on_size_request ( AltkWidget *wid,
@@ -137,7 +151,15 @@ static void _on_size_request ( AltkWidget *wid,
   altk_font_get_text_size(altk_style_context_get_font(wid->style_context),
                           ALTK_LABEL(wid)->text,
                           &bx, &by, &bw, &bh);
-  req->width = bw;
+  if (ALTK_LABEL(wid)->min_chars > 0)
+    {
+      gint minw = ALTK_LABEL(wid)->min_chars * altk_style_context_get_font(wid->style_context)->char_width;
+      req->width = MAX(bw, minw);
+    }
+  else
+    {
+      req->width = bw;
+    }
   req->height = bh;
 }
 

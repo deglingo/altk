@@ -16,6 +16,7 @@ struct _AltkFont
   ALTK_FONT_INSTANCE_HEADER;
   /* the underlying allegro font */
   ALLEGRO_FONT *al_font;
+  gint char_width;
 };
 
 

@@ -16,6 +16,7 @@ struct _AltkLabel
   ALTK_LABEL_INSTANCE_HEADER;
 
   gchar *text;
+  gint min_chars;
 };
 
 
@@ -32,6 +33,8 @@ struct _AltkLabelClass
 AltkWidget *altk_label_new ( const gchar *text );
 void altk_label_set_text ( AltkLabel *label,
                            const gchar *text );
+void altk_label_set_min_chars ( AltkLabel *label,
+                                gint min_chars );
 
 
 
