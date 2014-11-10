@@ -20,6 +20,22 @@ typedef struct _AlSource
 
 
 
+/* TopWidgetInfo:
+ */
+typedef struct _TopWidgetInfo
+{
+  AltkWidget *widget;
+  AltkSizeHints size_hints;
+}
+  TopWidgetInfo;
+
+
+
+TopWidgetInfo *top_widget_info_new ( AltkWidget *widget );
+void top_widget_info_free ( TopWidgetInfo *info );
+
+
+
 /* AltkWM:
  */
 typedef struct _AltkWM
@@ -34,6 +50,8 @@ typedef struct _AltkWM
   AltkWindow *entered_window;
   gint mouse_x;
   gint mouse_y;
+  /* top widget infos */
+  GHashTable *top_widgets;
 }
   AltkWM;
 
@@ -73,6 +91,12 @@ void _altk_wm_init ( void )
   wm->al_source = (AlSource *) g_source_new(&al_funcs, sizeof(AlSource));
   wm->al_source->queue = al_create_event_queue();
   g_source_attach((GSource *) wm->al_source, NULL);
+  /* top widgets map */
+  wm->top_widgets = g_hash_table_new_full
+    (NULL,
+     NULL,
+     (GDestroyNotify) l_object_unref,
+     (GDestroyNotify) top_widget_info_free);
 }
 
 
@@ -254,4 +278,65 @@ static gboolean _al_source_dispatch ( GSource *src,
  */
 static void _al_source_finalize ( GSource *src )
 {
+}
+
+
+
+/* top_widget_info_new:
+ */
+TopWidgetInfo *top_widget_info_new ( AltkWidget *widget )
+{
+  TopWidgetInfo *info = g_new0(TopWidgetInfo, 1);
+  info->widget = widget;
+  return info;
+}
+
+
+
+/* top_widget_info_free:
+ */
+void top_widget_info_free ( TopWidgetInfo *info )
+{
+  g_free(info);
+}
+
+
+
+/* altk_wm_register_top_widget:
+ */
+void altk_wm_register_top_widget ( AltkWidget *widget )
+{
+  TopWidgetInfo *info;
+  ASSERT(ALTK_WIDGET_TOP_WIDGET(widget));
+  ASSERT(!g_hash_table_lookup(wm->top_widgets, widget));
+  info = top_widget_info_new(widget);
+  g_hash_table_insert(wm->top_widgets,
+                      l_object_ref(widget),
+                      info);
+                      
+}
+
+
+
+/* altk_wm_set_top_widget_size_hints:
+ */
+void altk_wm_set_top_widget_size_hints ( AltkWidget *widget,
+                                         AltkSizeHints hints )
+{
+  TopWidgetInfo *info;
+  info = g_hash_table_lookup(wm->top_widgets, widget);
+  ASSERT(info);
+  info->size_hints = hints;
+}
+
+
+
+/* altk_wm_get_top_widget_size_hints:
+ */
+AltkSizeHints altk_wm_get_top_widget_size_hints ( AltkWidget *widget )
+{
+  TopWidgetInfo *info;
+  info = g_hash_table_lookup(wm->top_widgets, widget);
+  ASSERT(info);
+  return info->size_hints;
 }

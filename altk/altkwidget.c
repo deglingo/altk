@@ -7,6 +7,7 @@
 #include "altk/altkgc.h"
 #include "altk/altkdisplay.h"
 #include "altk/altkwindow.h"
+#include "altk/altkwm.h"
 #include "altk/altkwidget.inl"
 
 
@@ -620,21 +621,32 @@ static void _negotiate_size ( AltkWidget *wid )
 {
   AltkRequisition req = { 0, 0 };
   AltkAllocation alloc;
+  ASSERT(ALTK_WIDGET_TOP_WIDGET(wid));
   AltkDisplay *display = altk_widget_get_display(wid);
   altk_widget_size_request(wid, &req);
   /* CL_DEBUG("NEGOTIATE SIZE: %s", l_object_to_string(wid)); */
   if (display && altk_display_is_open(display)) {
     gint w, h;
+    AltkSizeHints hints;
+    hints = altk_wm_get_top_widget_size_hints(wid);
     altk_display_get_size(display, &w, &h);
     /* CL_DEBUG(" -> display open (%dx%d)", w, h); */
-    alloc.x = (w - req.width) / 2;
-    alloc.y = (h - req.height) / 2;
+    if (hints & ALTK_SIZE_HINT_MAXIMIZED) {
+      alloc.x = alloc.y = 0;
+      alloc.width = w;
+      alloc.height = h;
+    } else {
+      alloc.x = (w - req.width) / 2;
+      alloc.y = (h - req.height) / 2;
+      alloc.width = req.width;
+      alloc.height = req.height;
+    }
   } else {
     alloc.x = 0;
     alloc.y = 0;
+    alloc.width = req.width;
+    alloc.height = req.height;
   }
-  alloc.width = req.width;
-  alloc.height = req.height;
   altk_widget_size_allocate(wid, &alloc);
 }
 

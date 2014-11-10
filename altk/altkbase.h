@@ -70,6 +70,16 @@ typedef enum _AltkPackFlags
 
 
 
+/* AltkSizeHints:
+ */
+typedef enum _AltkSizeHints
+  {
+    ALTK_SIZE_HINT_MAXIMIZED = 1 << 0,
+  }
+  AltkSizeHints;
+
+
+
 /* AltkSizeDistrib:
  */
 typedef struct _AltkSizeDistrib

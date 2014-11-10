@@ -40,6 +40,7 @@ static void altk_dialog_init ( LObject *obj )
 {
   ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_TOP_WIDGET;
   altk_widget_set_event_mask(ALTK_WIDGET(obj), ALTK_EVENT_MASK_EXPOSE);
+  altk_wm_register_top_widget(ALTK_WIDGET(obj));
 }
 
 
@@ -96,6 +97,16 @@ void altk_dialog_set_display ( AltkDialog *dlg,
 static AltkDisplay *_on_get_display ( AltkWidget *widget )
 {
   return ALTK_DIALOG(widget)->display;
+}
+
+
+
+/* altk_dialog_set_size_hints:
+ */
+void altk_dialog_set_size_hints ( AltkDialog *dlg,
+                                  AltkSizeHints hints )
+{
+  altk_wm_set_top_widget_size_hints(ALTK_WIDGET(dlg), hints);
 }
 
 

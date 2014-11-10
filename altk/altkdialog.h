@@ -35,6 +35,8 @@ struct _AltkDialogClass
 AltkWidget *altk_dialog_new ( struct _AltkDisplay *display );
 void altk_dialog_set_display ( AltkDialog *dlg,
                                struct _AltkDisplay *display );
+void altk_dialog_set_size_hints ( AltkDialog *dlg,
+                                  AltkSizeHints hints );
 
 
 
