@@ -142,6 +142,16 @@ void altk_label_set_min_chars ( AltkLabel *label,
 
 
 
+/* altk_label_set_alignment:
+ */
+void altk_label_set_alignment ( AltkLabel *label,
+                                AltkPackFlags alignment )
+{
+  label->alignment = alignment;
+}
+
+
+
 /* _on_size_request:
  */
 static void _on_size_request ( AltkWidget *wid,
@@ -170,9 +180,20 @@ static void _on_size_request ( AltkWidget *wid,
 static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
+  gint x;
+  gint bx, by, bw, bh;
+  altk_font_get_text_size(altk_style_context_get_font(wid->style_context),
+                          ALTK_LABEL(wid)->text,
+                          &bx, &by, &bw, &bh);
+  if (ALTK_LABEL(wid)->alignment & ALTK_PACK_ANCHOR_LEFT)
+    x = wid->x;
+  else if (ALTK_LABEL(wid)->alignment & ALTK_PACK_ANCHOR_RIGHT)
+    x = wid->x + (wid->width - bw);
+  else
+    x = wid->x + (wid->width - bw) / 2;
   altk_style_context_draw_text(wid->style_context,
                                event->expose.gc,
-                               wid->x,
+                               x,
                                wid->y,
                                ALTK_LABEL(wid)->text);
 }

@@ -17,6 +17,7 @@ struct _AltkLabel
 
   gchar *text;
   gint min_chars;
+  AltkPackFlags alignment;
 };
 
 
@@ -35,6 +36,8 @@ void altk_label_set_text ( AltkLabel *label,
                            const gchar *text );
 void altk_label_set_min_chars ( AltkLabel *label,
                                 gint min_chars );
+void altk_label_set_alignment ( AltkLabel *label,
+                                AltkPackFlags alignment );
 
 
 
