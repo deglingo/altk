@@ -83,6 +83,18 @@ void altk_gc_set_offset ( AltkGC *gc,
 
 
 
+/* altk_gc_adjust_offset:
+ */
+void altk_gc_adjust_offset ( AltkGC *gc,
+                             gint offset_x,
+                             gint offset_y )
+{
+  PRIVATE(gc)->offset_x += offset_x;
+  PRIVATE(gc)->offset_y += offset_y;
+}
+
+
+
 /* _map_h32:
  */
 static ALLEGRO_COLOR _map_h32 ( guint32 c )
@@ -185,8 +197,8 @@ void altk_gc_draw_text ( AltkGC *gc,
   al_set_target_bitmap(priv->target);
   al_draw_text(priv->font->al_font,
                priv->color,
-               x,
-               y,
+               x + priv->offset_x,
+               y + priv->offset_y,
                ALLEGRO_ALIGN_LEFT,
                text);
   al_restore_state(&state);

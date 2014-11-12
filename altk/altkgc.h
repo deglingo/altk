@@ -42,6 +42,9 @@ void altk_gc_set_surface ( AltkGC *gc,
 void altk_gc_set_offset ( AltkGC *gc,
                           gint offset_x,
                           gint offset_y );
+void altk_gc_adjust_offset ( AltkGC *gc,
+                             gint offset_x,
+                             gint offset_y );
 void altk_gc_set_color_hrgb ( AltkGC *gc,
                               guint32 color );
 void altk_gc_set_color_hargb ( AltkGC *gc,

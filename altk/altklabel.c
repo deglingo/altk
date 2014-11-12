@@ -186,14 +186,14 @@ static void _on_expose_event ( AltkWidget *wid,
                           ALTK_LABEL(wid)->text,
                           &bx, &by, &bw, &bh);
   if (ALTK_LABEL(wid)->alignment & ALTK_PACK_ANCHOR_LEFT)
-    x = wid->x;
+    x = 0;
   else if (ALTK_LABEL(wid)->alignment & ALTK_PACK_ANCHOR_RIGHT)
-    x = wid->x + (wid->width - bw);
+    x = wid->width - bw;
   else
-    x = wid->x + (wid->width - bw) / 2;
+    x = (wid->width - bw) / 2;
   altk_style_context_draw_text(wid->style_context,
                                event->expose.gc,
                                x,
-                               wid->y,
+                               0,
                                ALTK_LABEL(wid)->text);
 }

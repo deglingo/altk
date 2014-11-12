@@ -476,8 +476,13 @@ static void _event_expose ( AltkWidget *widget,
       ALTK_WINDOW_DRAW_UPDATE(event->expose.window, event->expose.area, 0x0000ff);
       /* process the event */
       altk_window_begin_draw(event->expose.window, event->expose.area);
+      if (ALTK_WIDGET_NOWINDOW(widget))
+        altk_gc_adjust_offset(event->expose.gc, widget->x, widget->y);
       ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
       altk_window_end_draw(event->expose.window, event->expose.area);
+      /* [fixme] push/pop gc ? */
+      if (ALTK_WIDGET_NOWINDOW(widget))
+        altk_gc_adjust_offset(event->expose.gc, -widget->x, -widget->y);
       /* restore event */
       altk_region_destroy(event->expose.area);
       event->expose.area = old_area;
