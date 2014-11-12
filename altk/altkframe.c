@@ -95,8 +95,8 @@ static void _on_expose_event ( AltkWidget *wid,
   /* CL_DEBUG("Frame.expose_event()"); */
   altk_style_context_draw_frame(ctxt,
                                 event->expose.gc,
-                                1,
-                                1,
-                                wid->width - 2,
-                                wid->height - 2);
+                                0,
+                                0,
+                                wid->width,
+                                wid->height);
 }

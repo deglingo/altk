@@ -169,10 +169,10 @@ void altk_gc_draw_rectangle ( AltkGC *gc,
   Private *priv = PRIVATE(gc);
   ALLEGRO_STATE state;
   /* [fixme] pixel exact coordinates */
-  float x1 = (float) (x + priv->offset_x);
-  float y1 = (float) (y + priv->offset_y);
-  float x2 = (float) (x + width + priv->offset_x);
-  float y2 = (float) (y + height + priv->offset_y);
+  float x1 = ((float) (x + priv->offset_x)) + 0.5;
+  float y1 = ((float) (y + priv->offset_y)) + 0.5;
+  float x2 = ((float) (x + width + priv->offset_x)) - 0.5;
+  float y2 = ((float) (y + height + priv->offset_y)) - 0.5;
   al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_bitmap(priv->target);
   if (filled)
