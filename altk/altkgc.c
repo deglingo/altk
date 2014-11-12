@@ -76,7 +76,6 @@ void altk_gc_set_offset ( AltkGC *gc,
                           gint offset_x,
                           gint offset_y )
 {
-  CL_ERROR("[FIXME]");
   PRIVATE(gc)->offset_x = offset_x;
   PRIVATE(gc)->offset_y = offset_y;
 }
@@ -145,8 +144,8 @@ void altk_gc_clear_region ( AltkGC *gc,
   al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
   for (r = 0, box = region->rects; r < region->n_rects; r++, box++)
     {
-      al_set_clipping_rectangle(box->x1,
-                                box->y1,
+      al_set_clipping_rectangle(box->x1 + priv->offset_x,
+                                box->y1 + priv->offset_y,
                                 box->x2 - box->x1,
                                 box->y2 - box->y1);
       al_clear_to_color(priv->color);

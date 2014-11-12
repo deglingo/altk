@@ -216,8 +216,10 @@ void altk_display_invalidate_area ( AltkDisplay *display,
 void altk_display_draw_bitmap_region ( AltkDisplay *display,
                                        AltkBitmap *bitmap,
                                        AltkRegion *region,
-                                       gint offset_x,
-                                       gint offset_y )
+                                       gint src_x,
+                                       gint src_y,
+                                       gint dest_x,
+                                       gint dest_y )
 {
   gint r;
   AltkRegionBox *box;
@@ -228,19 +230,21 @@ void altk_display_draw_bitmap_region ( AltkDisplay *display,
   al_set_target_bitmap(display->backbuf);
   for (r = 0, box = region->rects; r < region->n_rects; r++, box++)
     {
+      gint dx = box->x1 + dest_x;
+      gint dy = box->y1 + dest_y;
       gint width = box->x2 - box->x1;
       gint height = box->y2 - box->y1;
       al_draw_bitmap_region(source,
-                            box->x1,
-                            box->y1,
+                            box->x1 + src_x,
+                            box->y1 + src_y,
                             width,
                             height,
-                            box->x1 + offset_x,
-                            box->y1 + offset_y,
+                            dx,
+                            dy,
                             0);
       altk_display_invalidate_area(display,
-                                   box->x1 + offset_x,
-                                   box->y1 + offset_y,
+                                   dx,
+                                   dy,
                                    width,
                                    height);
     }

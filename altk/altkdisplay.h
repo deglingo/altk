@@ -61,8 +61,10 @@ void altk_display_invalidate_area ( AltkDisplay *display,
 void altk_display_draw_bitmap_region ( AltkDisplay *display,
                                        AltkBitmap *bitmap,
                                        AltkRegion *region,
-                                       gint offset_x,
-                                       gint offset_y );
+                                       gint src_x,
+                                       gint src_y,
+                                       gint dest_x,
+                                       gint dest_y );
 
 
 
