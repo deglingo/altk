@@ -4,6 +4,7 @@
 #include "altk/private.h"
 #include "altk/altkgc.h"
 #include "altk/altkfont.h"
+#include "altk/altkbitmap.h"
 #include "altk/altkgc.inl"
 
 
@@ -151,6 +152,37 @@ void altk_gc_clear_region ( AltkGC *gc,
       al_clear_to_color(priv->color);
     }
   al_set_clipping_rectangle(cx, cy, cw, ch);
+  al_restore_state(&state);
+}
+
+
+
+/* altk_gc_draw_bitmap_region:
+ */
+void altk_gc_draw_bitmap_region ( AltkGC *gc,
+                                  AltkBitmap *bitmap,
+                                  AltkRegion *region,
+                                  gint dx,
+                                  gint dy )
+{
+  Private *priv = PRIVATE(gc);
+  ALLEGRO_STATE state;
+  gint r;
+  AltkRegionBox *box;
+  /* [fixme] pixel exact coordinates */
+  al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP);
+  al_set_target_bitmap(priv->target);
+  for (r = 0, box = region->rects; r < region->n_rects; r++, box++)
+    {
+      al_draw_bitmap_region(bitmap->al_bitmap,
+                            box->x1,
+                            box->y1,
+                            box->x2 - box->x1,
+                            box->y2 - box->y1,
+                            box->x1 + dx,
+                            box->y1 + dy,
+                            0);
+    }
   al_restore_state(&state);
 }
 

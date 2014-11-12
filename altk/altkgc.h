@@ -13,6 +13,7 @@
 
 
 struct _AltkFont;
+struct _AltkBitmap;
 
 
 
@@ -52,6 +53,11 @@ void altk_gc_set_color_hargb ( AltkGC *gc,
 
 void altk_gc_clear_region ( AltkGC *gc,
                             AltkRegion *region );
+void altk_gc_draw_bitmap_region ( AltkGC *gc,
+                                  struct _AltkBitmap *bitmap,
+                                  AltkRegion *region,
+                                  gint dx,
+                                  gint dy );
 void altk_gc_draw_rectangle ( AltkGC *gc,
                               gboolean filled,
                               gint x,
