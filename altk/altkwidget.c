@@ -469,17 +469,19 @@ static void _event_expose ( AltkWidget *widget,
   if (widget->event_mask & ALTK_EVENT_MASK_EXPOSE)
     {
       /* clip area to widget's visible part */
+      AltkDrawingContext context;
       AltkRegion *old_area = event->expose.area;
       event->expose.area = altk_region_copy(old_area);
+      context.area = event->expose.area;
       altk_widget_intersect_visible_area(widget, event->expose.area);
       /* debug */
       ALTK_WINDOW_DRAW_UPDATE(event->expose.window, event->expose.area, 0x0000ff);
       /* process the event */
-      altk_window_begin_draw(event->expose.window, event->expose.area);
+      altk_window_begin_draw(event->expose.window, &context);
       if (ALTK_WIDGET_NOWINDOW(widget))
         altk_gc_adjust_offset(event->expose.gc, widget->x, widget->y);
       ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
-      altk_window_end_draw(event->expose.window, event->expose.area);
+      altk_window_end_draw(event->expose.window, &context);
       /* [fixme] push/pop gc ? */
       if (ALTK_WIDGET_NOWINDOW(widget))
         altk_gc_adjust_offset(event->expose.gc, -widget->x, -widget->y);

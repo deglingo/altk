@@ -369,16 +369,16 @@ static void _grow_double_buffer ( AltkWindow *window,
 /* altk_window_begin_draw:
  */
 void altk_window_begin_draw ( AltkWindow *window,
-                              AltkRegion *area )
+                              AltkDrawingContext *context )
 {
   AltkRectangle clip;
-  altk_region_get_clipbox(area, &clip);
+  altk_region_get_clipbox(context->area, &clip);
   /* give an appropriate size to the double buffer */
   _grow_double_buffer(window, clip.x + clip.width, clip.y + clip.height);
   /* clear area */
   /* [FIXME] save/restore color */
   altk_gc_set_color_hargb(PRIVROOT(window)->gc, 0x0);
-  altk_gc_clear_region(PRIVROOT(window)->gc, area);
+  altk_gc_clear_region(PRIVROOT(window)->gc, context->area);
   /* altk_gc_set_clip_rect(PRIVROOT(window)->gc, &clip); */
 }
 
@@ -387,13 +387,13 @@ void altk_window_begin_draw ( AltkWindow *window,
 /* altk_window_end_draw:
  */
 void altk_window_end_draw ( AltkWindow *window,
-                            AltkRegion *area )
+                            AltkDrawingContext *context )
 {
   /* blit dblbuf -> backbuf */
   altk_display_draw_bitmap_region
     (PRIVROOT(window)->display,
      ALTK_BITMAP(PRIVROOT(window)->dblbuf),
-     area,
+     context->area,
      window->root_x,
      window->root_y);
   /* [FIXME] restore gc state */

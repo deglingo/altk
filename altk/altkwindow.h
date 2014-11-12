@@ -26,6 +26,16 @@ typedef enum _AltkWindowFlags
 
 
 
+/* AltkDrawingContext:
+ */
+typedef struct _AltkDrawingContext
+{
+  AltkRegion *area;
+}
+  AltkDrawingContext;
+
+
+
 /* AltkWindow:
  */
 struct _AltkWindow
@@ -106,9 +116,9 @@ void altk_window_invalidate ( AltkWindow *window,
                               AltkRegion *area );
 AltkRegion *altk_window_get_visible_area ( AltkWindow *window );
 void altk_window_begin_draw ( AltkWindow *window,
-                              AltkRegion *area );
+                              AltkDrawingContext *context );
 void altk_window_end_draw ( AltkWindow *window,
-                            AltkRegion *area );
+                            AltkDrawingContext *context );
 AltkWindow *altk_window_get_child_at ( AltkWindow *window,
                                        gint x,
                                        gint y );
