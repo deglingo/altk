@@ -377,7 +377,9 @@ void altk_window_begin_draw ( AltkWindow *window,
   _grow_double_buffer(window, clip.width, clip.height);
   /* clear area */
   /* [FIXME] save/restore color */
-  altk_gc_set_offset(PRIVROOT(window)->gc, -clip.x, -clip.y);
+  altk_gc_set_offset(PRIVROOT(window)->gc,
+                     (-clip.x),
+                     (-clip.y));
   altk_gc_set_color_hargb(PRIVROOT(window)->gc, 0x0);
   altk_gc_clear_region(PRIVROOT(window)->gc, context->area);
   /* altk_gc_set_clip_rect(PRIVROOT(window)->gc, &clip); */
@@ -397,10 +399,10 @@ void altk_window_end_draw ( AltkWindow *window,
     (PRIVROOT(window)->display,
      ALTK_BITMAP(PRIVROOT(window)->dblbuf),
      context->area,
-     -clip.x,
-     -clip.y,
-     window->root_x,
-     window->root_y);
+     (-clip.x),
+     (-clip.y),
+     window->root_x - context->offset_x,
+     window->root_y - context->offset_y);
   /* [FIXME] restore gc state */
 }
 

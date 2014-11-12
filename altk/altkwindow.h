@@ -31,6 +31,8 @@ typedef enum _AltkWindowFlags
 typedef struct _AltkDrawingContext
 {
   AltkRegion *area;
+  gint offset_x;
+  gint offset_y;
 }
   AltkDrawingContext;
 

@@ -471,20 +471,23 @@ static void _event_expose ( AltkWidget *widget,
       /* clip area to widget's visible part */
       AltkDrawingContext context;
       AltkRegion *old_area = event->expose.area;
+      /* [FIXME] altk_region_copy_offset() would help here */
       event->expose.area = altk_region_copy(old_area);
       context.area = event->expose.area;
+      if (ALTK_WIDGET_NOWINDOW(widget)) {
+        altk_region_offset(event->expose.area, -widget->x, -widget->y);
+        context.offset_x = -widget->x;
+        context.offset_y = -widget->y;
+      } else {
+        context.offset_x = context.offset_y = 0;
+      }
       altk_widget_intersect_visible_area(widget, event->expose.area);
       /* debug */
       ALTK_WINDOW_DRAW_UPDATE(event->expose.window, event->expose.area, 0x0000ff);
       /* process the event */
       altk_window_begin_draw(event->expose.window, &context);
-      if (ALTK_WIDGET_NOWINDOW(widget))
-        altk_gc_adjust_offset(event->expose.gc, widget->x, widget->y);
       ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);
       altk_window_end_draw(event->expose.window, &context);
-      /* [fixme] push/pop gc ? */
-      if (ALTK_WIDGET_NOWINDOW(widget))
-        altk_gc_adjust_offset(event->expose.gc, -widget->x, -widget->y);
       /* restore event */
       altk_region_destroy(event->expose.area);
       event->expose.area = old_area;
@@ -735,12 +738,7 @@ void altk_widget_intersect_visible_area ( AltkWidget *widget,
 {
   AltkRectangle r;
   AltkRegion *wr;
-  if (ALTK_WIDGET_NOWINDOW(widget)) {
-    r.x = widget->x;
-    r.y = widget->y;
-  } else {
-    r.x = r.y = 0;
-  }
+  r.x = r.y = 0;
   r.width = widget->width;
   r.height = widget->height;
   wr = altk_region_rectangle(&r);
