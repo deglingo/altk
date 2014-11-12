@@ -175,7 +175,7 @@ void altk_gc_draw_rectangle ( AltkGC *gc,
     {
       gint cx, cy, cw, ch;
       al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
-      al_set_clipping_rectangle(x, y, width, height);
+      al_set_clipping_rectangle(x + priv->offset_x, y + priv->offset_y, width, height);
       al_clear_to_color(priv->color);
       al_set_clipping_rectangle(cx, cy, cw, ch);
     }

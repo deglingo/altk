@@ -50,7 +50,11 @@ void altk_style_context_draw_box ( AltkStyleContext *context,
                                    gint width,
                                    gint height )
 {
-  altk_gc_set_color_hrgb(gc, 0xc0c0c0); /* [fixme] */
+  /* [fixme] */
+  if (context->state == ALTK_STATE_NORMAL)
+    altk_gc_set_color_hrgb(gc, 0xc0c0c0);
+  else
+    altk_gc_set_color_hrgb(gc, 0xe0e0e0);
   altk_gc_draw_rectangle(gc, TRUE, x, y, width, height);
 }
 
