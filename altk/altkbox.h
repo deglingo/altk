@@ -28,6 +28,8 @@ struct _AltkBoxClass
 
 
 
+#define ALTK_BOX_ADD(box, child, flags) altk_box_pack_start(ALTK_BOX(box), (child), (flags))
+
 AltkWidget *altk_box_new ( AltkOrientation orientation );
 void altk_box_set_orientation ( AltkBox *box,
                                 AltkOrientation orientation );
