@@ -191,7 +191,7 @@ static gboolean _map_recursive ( AltkWidget *widget,
     {
       ALTK_WIDGET_GET_CLASS(widget)->map(widget);
       widget->flags |= ALTK_WIDGET_FLAG_MAPPED;
-      altk_widget_foreach(widget, _map_recursive, NULL);
+      altk_widget_forall(widget, _map_recursive, NULL);
     }
   return ALTK_FOREACH_CONT;
 }
@@ -228,9 +228,12 @@ static gboolean _realize_child ( AltkWidget *widget,
   ASSERT(ALTK_WIDGET_TOP_WIDGET(widget) ||
          (widget->parent && ALTK_WIDGET_REALIZED(widget->parent)));
   ASSERT(altk_display_is_open(altk_widget_get_display(widget)));
-  ALTK_WIDGET_GET_CLASS(widget)->realize(widget);
-  widget->flags |= ALTK_WIDGET_FLAG_REALIZED; /* [removeme] ?? */
-  altk_widget_foreach(widget, (AltkForeachFunc) _realize_child, NULL);
+  if (ALTK_WIDGET_VISIBLE(widget))
+    {
+      ALTK_WIDGET_GET_CLASS(widget)->realize(widget);
+      widget->flags |= ALTK_WIDGET_FLAG_REALIZED; /* [removeme] ?? */
+      altk_widget_forall(widget, (AltkForeachFunc) _realize_child, NULL);
+    }
   return ALTK_FOREACH_CONT;
 }
 
@@ -371,7 +374,7 @@ static gboolean _widget_find ( AltkWidget *widget,
       data->found = widget;
       return ALTK_FOREACH_STOP;
     }
-  altk_widget_foreach(widget, _widget_find, data);
+  altk_widget_forall(widget, _widget_find, data);
   if (data->found)
     return ALTK_FOREACH_STOP;
   else
@@ -418,7 +421,7 @@ static gboolean _show_all ( AltkWidget *widget,
                             gpointer data )
 {
   /* show children first */
-  altk_widget_foreach(widget, (AltkForeachFunc) _show_all, NULL);
+  altk_widget_forall(widget, (AltkForeachFunc) _show_all, NULL);
   altk_widget_show(widget);
   return ALTK_FOREACH_CONT;
 }
