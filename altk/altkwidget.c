@@ -554,7 +554,7 @@ static void _event_expose ( AltkWidget *widget,
       }
       altk_widget_intersect_visible_area(widget, event->expose.area);
       /* debug */
-      ALTK_WINDOW_DRAW_UPDATE(event->expose.window, event->expose.area, 0x0000ff);
+      ALTK_WINDOW_DRAW_UPDATE(event->expose.window, event->expose.area, -context.offset_x, -context.offset_y, 0x0000ff);
       /* process the event */
       altk_window_begin_draw(event->expose.window, &context);
       ALTK_WIDGET_GET_CLASS(widget)->expose_event(widget, event);

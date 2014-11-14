@@ -140,7 +140,7 @@ void altk_display_flip ( AltkDisplay *display )
   area = display->update_area;
   display->update_area = altk_region_new();
   ALLEGRO_STATE state;
-  ALTK_WINDOW_DRAW_UPDATE(display->root_window, area, 0x00ff00);
+  ALTK_WINDOW_DRAW_UPDATE(display->root_window, area, 0, 0, 0x00ff00);
   al_store_state(&state, ALLEGRO_STATE_DISPLAY | ALLEGRO_STATE_TARGET_BITMAP);
   al_set_target_backbuffer(display->al_display);
   for (r = 0, box = area->rects; r < area->n_rects; r++, box++)

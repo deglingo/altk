@@ -46,6 +46,8 @@ typedef struct _Private
  */
 void _altk_window_draw_update ( AltkWindow *window,
                                 AltkRegion *area,
+                                gint ofsx,
+                                gint ofsy,
                                 guint32 hcol )
 {
   ALLEGRO_BITMAP *save;
@@ -79,16 +81,17 @@ void _altk_window_draw_update ( AltkWindow *window,
   {
     gint r;
     AltkRegionBox *box;
+    gint cx, cy, cw, ch;
+    al_get_clipping_rectangle(&cx, &cy, &cw, &ch);
     for (r = 0, box = area->rects; r < area->n_rects; r++, box++)
       {
-        float x1 = ((float) (box->x1 + window->root_x)) + 0.5;
-        float y1 = ((float) (box->y1 + window->root_y)) + 0.5;
-        float x2 = ((float) (box->x2 + window->root_x)) - 0.5;
-        float y2 = ((float) (box->y2 + window->root_y)) - 0.5;
-        al_draw_rectangle(x1, y1, x2, y2, col, 1.0);
-        al_draw_line(x1, y1, x2, y2, col, 1.0);
-        al_draw_line(x1, y2, x2, y1, col, 1.0);
+        al_set_clipping_rectangle(box->x1 + window->root_x + ofsx,
+                                  box->y1 + window->root_y + ofsy,
+                                  box->x2 - box->x1,
+                                  box->y2 - box->y1);
+        al_clear_to_color(col);
       }
+    al_set_clipping_rectangle(cx, cy, cw, ch);
   }
   al_flip_display();
   /* sleep */
@@ -249,7 +252,7 @@ static void _process_redraw ( AltkWindow *window )
   window->update_area = altk_region_new();
   event.expose.gc = PRIVROOT(window)->gc;
   /* [FIXME] prepare gc */
-  ALTK_WINDOW_DRAW_UPDATE(window, event.expose.area, 0xffff00);
+  ALTK_WINDOW_DRAW_UPDATE(window, event.expose.area, 0, 0, 0xff0000);
   altk_event_process(&event);
   /* [FIXME] clear update_area */
   altk_region_destroy(event.expose.area);

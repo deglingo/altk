@@ -88,14 +88,16 @@ struct _AltkWindowClass
 #define ALTK_DEBUG_UPDATE_DELAY 100000 /* µs */
 
 #ifdef ALTK_DEBUG_UPDATES
-#  define ALTK_WINDOW_DRAW_UPDATE(win, area, hcol) \
-  _altk_window_draw_update((win), (area), (hcol))
+#  define ALTK_WINDOW_DRAW_UPDATE(win, area, ofsx, ofsy, hcol)   \
+  _altk_window_draw_update((win), (area), (ofsx), (ofsy), (hcol))
 #else
-#  define ALTK_WINDOW_DRAW_UPDATE(win, area, hcol)
+#  define ALTK_WINDOW_DRAW_UPDATE(win, area, ofsx, ofsy, hcol)
 #endif
 
 void _altk_window_draw_update ( AltkWindow *window,
                                 AltkRegion *area,
+                                gint ofsx,
+                                gint ofsy,
                                 guint32 hcol );
 
 
