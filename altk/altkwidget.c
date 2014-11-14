@@ -36,6 +36,7 @@ static void _set_property ( LObject *object,
 static AltkDisplay *_on_get_display ( AltkWidget *widget );
 static void _on_map ( AltkWidget *widget );
 static void _on_realize ( AltkWidget *widget );
+static void _on_unrealize ( AltkWidget *widget );
 static void _on_size_allocate ( AltkWidget *wid,
                                 AltkAllocation *alloc );
 static void _on_expose_event ( AltkWidget *wid,
@@ -81,6 +82,7 @@ static void altk_widget_class_init ( LObjectClass *cls )
   ((AltkWidgetClass *) cls)->get_display = _on_get_display;
   ((AltkWidgetClass *) cls)->map = _on_map;
   ((AltkWidgetClass *) cls)->realize = _on_realize;
+  ((AltkWidgetClass *) cls)->unrealize = _on_unrealize;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
   ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
 
@@ -249,6 +251,27 @@ void altk_widget_realize ( AltkWidget *widget )
 
 
 
+static gboolean _unrealize_child ( AltkWidget *widget,
+                                   gpointer data )
+{
+  if (!ALTK_WIDGET_REALIZED(widget))
+    return ALTK_FOREACH_CONT;
+  altk_widget_forall(widget, _unrealize_child, NULL);
+  ALTK_WIDGET_GET_CLASS(widget)->unrealize(widget);
+  return ALTK_FOREACH_CONT;
+}
+
+
+
+/* altk_widget_unrealize:
+ */
+void altk_widget_unrealize ( AltkWidget *widget )
+{
+  _unrealize_child(widget, NULL);
+}
+
+
+
 /* _on_realize:
  */
 static void _on_realize ( AltkWidget *widget )
@@ -275,6 +298,18 @@ static void _on_realize ( AltkWidget *widget )
                                        0);
       widget->window->user_data = widget;
     }
+}
+
+
+
+/* _on_unrealize:
+ */
+static void _on_unrealize ( AltkWidget *widget )
+{
+  if (!ALTK_WIDGET_NOWINDOW(widget))
+    CL_ERROR("[TODO]");
+  widget->window = NULL;
+  widget->flags &= ~ALTK_WIDGET_FLAG_REALIZED;
 }
 
 
@@ -412,6 +447,22 @@ void altk_widget_show ( AltkWidget *widget )
       altk_widget_realize(widget);
       altk_widget_queue_draw(widget);
     }
+}
+
+
+
+/* altk_widget_hide:
+ */
+void altk_widget_hide ( AltkWidget *widget )
+{
+  if (!ALTK_WIDGET_VISIBLE(widget))
+    return;
+  /* [fixme] unrealize ? */
+  widget->flags &= ~ALTK_WIDGET_FLAG_VISIBLE;
+  if (ALTK_WIDGET_REALIZED(widget))
+    altk_widget_unrealize(widget);
+  if (widget->parent)
+    altk_widget_queue_resize(widget->parent);
 }
 
 

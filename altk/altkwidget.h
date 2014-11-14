@@ -115,6 +115,8 @@ struct _AltkWidgetClass
 
   void (* realize) ( AltkWidget *widget );
 
+  void (* unrealize) ( AltkWidget *widget );
+
   void (* size_request) ( AltkWidget *widget,
                           AltkRequisition *req );
 
@@ -158,6 +160,7 @@ void _altk_widget_set_parent ( AltkWidget *widget,
                                AltkWidget *parent );
 void altk_widget_map ( AltkWidget *widget );
 void altk_widget_realize ( AltkWidget *widget );
+void altk_widget_unrealize ( AltkWidget *widget );
 void altk_widget_event ( AltkWidget *widget,
                          AltkEvent *event );
 void altk_widget_size_request ( AltkWidget *widget,
@@ -169,6 +172,7 @@ void altk_widget_set_name ( AltkWidget *widget,
 AltkWidget *altk_widget_find ( AltkWidget *widget,
                                const gchar *name );
 void altk_widget_show ( AltkWidget *widget );
+void altk_widget_hide ( AltkWidget *widget );
 void altk_widget_show_all ( AltkWidget *widget );
 void altk_widget_set_enable_show_all ( AltkWidget *widget,
                                        gboolean enable );
