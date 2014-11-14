@@ -67,6 +67,7 @@ static void altk_widget_init ( LObject *obj )
 {
   /* [fixme] prop default */
   ALTK_WIDGET(obj)->name = g_strdup("");
+  ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_ENABLE_SHOW_ALL;
 }
 
 
@@ -420,9 +421,12 @@ void altk_widget_show ( AltkWidget *widget )
 static gboolean _show_all ( AltkWidget *widget,
                             gpointer data )
 {
-  /* show children first */
-  altk_widget_forall(widget, (AltkForeachFunc) _show_all, NULL);
-  altk_widget_show(widget);
+  if (ALTK_WIDGET_ENABLE_SHOW_ALL(widget))
+    {
+      /* show children first */
+      altk_widget_forall(widget, (AltkForeachFunc) _show_all, NULL);
+      altk_widget_show(widget);
+    }
   return ALTK_FOREACH_CONT;
 }
 
@@ -433,6 +437,19 @@ static gboolean _show_all ( AltkWidget *widget,
 void altk_widget_show_all ( AltkWidget *widget )
 {
   _show_all(widget, NULL);
+}
+
+
+
+/* altk_widget_set_enable_show_all:
+ */
+void altk_widget_set_enable_show_all ( AltkWidget *widget,
+                                       gboolean enable )
+{
+  if (enable)
+    widget->flags |= ALTK_WIDGET_FLAG_ENABLE_SHOW_ALL;
+  else
+    widget->flags &= ~ALTK_WIDGET_FLAG_ENABLE_SHOW_ALL;
 }
 
 

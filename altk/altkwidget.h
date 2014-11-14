@@ -59,6 +59,7 @@ typedef enum
     ALTK_WIDGET_FLAG_REALIZED = 1 << 3,
     ALTK_WIDGET_FLAG_MAPPED = 1 << 4,
     ALTK_WIDGET_FLAG_NOWINDOW = 1 << 5,
+    ALTK_WIDGET_FLAG_ENABLE_SHOW_ALL = 1 << 6,
   }
   AltkWidgetFlags;
 
@@ -67,6 +68,7 @@ typedef enum
 #define ALTK_WIDGET_REALIZED(w)   (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_REALIZED)
 #define ALTK_WIDGET_MAPPED(w)     (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_MAPPED)
 #define ALTK_WIDGET_NOWINDOW(w)   (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_NOWINDOW)
+#define ALTK_WIDGET_ENABLE_SHOW_ALL(w) (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_ENABLE_SHOW_ALL)
 
 
 
@@ -168,6 +170,8 @@ AltkWidget *altk_widget_find ( AltkWidget *widget,
                                const gchar *name );
 void altk_widget_show ( AltkWidget *widget );
 void altk_widget_show_all ( AltkWidget *widget );
+void altk_widget_set_enable_show_all ( AltkWidget *widget,
+                                       gboolean enable );
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget );
 void altk_widget_foreach ( AltkWidget *widget,
                            AltkForeachFunc func,
