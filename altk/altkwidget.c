@@ -190,12 +190,12 @@ static gboolean _map_recursive ( AltkWidget *widget,
          (widget->parent && ALTK_WIDGET_MAPPED(widget->parent)));
   ASSERT(altk_display_is_open(altk_widget_get_display(widget)));
 
-  if (ALTK_WIDGET_VISIBLE(widget))
-    {
+  /* if (ALTK_WIDGET_VISIBLE(widget)) */
+  /*   { */
       ALTK_WIDGET_GET_CLASS(widget)->map(widget);
       widget->flags |= ALTK_WIDGET_FLAG_MAPPED;
       altk_widget_forall(widget, _map_recursive, NULL);
-    }
+    /* } */
   return ALTK_FOREACH_CONT;
 }
 
