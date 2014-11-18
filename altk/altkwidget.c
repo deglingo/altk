@@ -472,10 +472,10 @@ void altk_widget_hide ( AltkWidget *widget )
 static gboolean _show_all ( AltkWidget *widget,
                             gpointer data )
 {
+  /* show children first */
+  altk_widget_forall(widget, (AltkForeachFunc) _show_all, NULL);
   if (ALTK_WIDGET_ENABLE_SHOW_ALL(widget))
     {
-      /* show children first */
-      altk_widget_forall(widget, (AltkForeachFunc) _show_all, NULL);
       altk_widget_show(widget);
     }
   return ALTK_FOREACH_CONT;
