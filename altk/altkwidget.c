@@ -140,17 +140,17 @@ void _altk_widget_set_parent ( AltkWidget *widget,
   ASSERT(parent);
   ASSERT(!widget->parent);
   widget->parent = parent;
-  altk_widget_queue_resize(widget);
+  if (ALTK_WIDGET_MAPPED(parent))
+    {
+      altk_widget_map(widget);
+    }
   if (ALTK_WIDGET_VISIBLE(widget))
     {
-      if (ALTK_WIDGET_MAPPED(parent))
+      altk_widget_queue_resize(widget);
+      if (ALTK_WIDGET_REALIZED(parent))
         {
-          altk_widget_map(widget);
-          if (ALTK_WIDGET_REALIZED(parent))
-            {
-              altk_widget_realize(widget);
-              altk_widget_queue_draw(widget);
-            }
+          altk_widget_realize(widget);
+          altk_widget_queue_draw(widget);
         }
     }
 }
@@ -441,9 +441,16 @@ void altk_widget_show ( AltkWidget *widget )
     return;
   widget->flags |= ALTK_WIDGET_FLAG_VISIBLE;
   altk_widget_queue_resize(widget);
-  if (ALTK_WIDGET_MAPPED(widget))
+  if (ALTK_WIDGET_TOP_WIDGET(widget))
     {
-      /* process resize ? */
+      if (ALTK_WIDGET_MAPPED(widget))
+        {
+          altk_widget_realize(widget);
+          altk_widget_queue_draw(widget);
+        }
+    }
+  else if (widget->parent && ALTK_WIDGET_REALIZED(widget->parent))
+    {
       altk_widget_realize(widget);
       altk_widget_queue_draw(widget);
     }
