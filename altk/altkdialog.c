@@ -85,7 +85,7 @@ void altk_dialog_set_display ( AltkDialog *dlg,
   ASSERT(!dlg->display); /* [TODO] */
   /* atach dialog <> display */
   ALTK_DIALOG(dlg)->display = display;
-  l_signal_connect(L_OBJECT(display), "open", 0, (LSignalHandler) _on_display_open, dlg, NULL);
+  l_signal_connect(L_OBJECT(display), "open", (LSignalHandler) _on_display_open, dlg, NULL);
   /* process immediately if the display is already open */
   if (altk_display_is_open(display))
     _on_display_open(display, dlg);

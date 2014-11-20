@@ -11,9 +11,6 @@
 void _on_foreach ( AltkWidget *widget,
                    AltkForeachFunc func,
                    gpointer data );
-void _on_forall ( AltkWidget *widget,
-                  AltkForeachFunc func,
-                  gpointer data );
 
 
 
@@ -22,7 +19,6 @@ void _on_forall ( AltkWidget *widget,
 static void altk_container_class_init ( LObjectClass *cls )
 {
   ((AltkWidgetClass *) cls)->foreach = _on_foreach;
-  ((AltkWidgetClass *) cls)->forall = _on_forall;
 }
 
 
@@ -44,15 +40,4 @@ void _on_foreach ( AltkWidget *widget,
                    gpointer data )
 {
   CL_ERROR("AltkContainer.foreach() not implemented");
-}
-
-
-
-/* _on_forall:
- */
-void _on_forall ( AltkWidget *widget,
-                  AltkForeachFunc func,
-                  gpointer data )
-{
-  altk_widget_foreach(widget, func, data);
 }

@@ -640,6 +640,9 @@ void altk_widget_forall ( AltkWidget *widget,
 {
   if (ALTK_WIDGET_GET_CLASS(widget)->forall) {
     ALTK_WIDGET_GET_CLASS(widget)->forall(widget, func, data);
+  } else if (ALTK_WIDGET_GET_CLASS(widget)->foreach) {
+    /* fallback on foreach if forall not implemented */
+    ALTK_WIDGET_GET_CLASS(widget)->foreach(widget, func, data);
   }
 }
 
