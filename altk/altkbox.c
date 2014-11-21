@@ -62,9 +62,6 @@ static void _size_request ( AltkWidget *wid,
                             AltkRequisition *req );
 static void _size_allocate ( AltkWidget *wid,
                              AltkAllocation *alloc );
-static void _foreach ( AltkWidget *widget,
-                       AltkForeachFunc func,
-                       gpointer data );
 static void _add ( AltkContainer *cont,
                    AltkWidget *child );
 
@@ -107,7 +104,6 @@ static void altk_box_class_init ( LObjectClass *cls )
   cls->set_property = _set_property;
   ALTK_WIDGET_CLASS(cls)->size_request = _size_request;
   ALTK_WIDGET_CLASS(cls)->size_allocate = _size_allocate;
-  ALTK_WIDGET_CLASS(cls)->foreach = _foreach;
   ALTK_CONTAINER_CLASS(cls)->add = _add;
 
   pspecs[PROP_ORIENTATION] =
@@ -402,22 +398,6 @@ static void _size_allocate ( AltkWidget *wid,
       break;
     default:
       ASSERT(0);
-    }
-}
-
-
-
-/* _foreach:
- */
-static void _foreach ( AltkWidget *widget,
-                       AltkForeachFunc func,
-                       gpointer data )
-{
-  GList *l;
-  for (l = PRIVATE(widget)->children; l; l = l->next)
-    {
-      if (func(((Child *) (l->data))->widget, data) == ALTK_FOREACH_STOP)
-        return;
     }
 }
 

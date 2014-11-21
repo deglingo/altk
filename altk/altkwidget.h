@@ -19,12 +19,6 @@ struct _AltkWindow;
 typedef struct _AltkRequisition AltkRequisition;
 typedef struct _AltkAllocation AltkAllocation;
 
-typedef gboolean (* AltkForeachFunc) ( AltkWidget *widget,
-                                       gpointer data );
-
-#define ALTK_FOREACH_CONT (TRUE)
-#define ALTK_FOREACH_STOP (FALSE)
-
 
 
 /* AltkRequisition:
@@ -79,6 +73,9 @@ struct _AltkWidget
   ALTK_WIDGET_INSTANCE_HEADER;
   /* the parent widget */
   AltkWidget *parent;
+  /* children list */
+  AltkWidget *children;
+  AltkWidget *next;
   /* user name */
   gchar *name;
   /* flags */
@@ -122,15 +119,6 @@ struct _AltkWidgetClass
 
   void (* size_allocate ) ( AltkWidget *widget,
                             AltkAllocation *alloc );
-
-  /* [FIXME] should be in AltkContainer only ? */
-  void (* foreach) ( AltkWidget *widget,
-                     AltkForeachFunc func,
-                     gpointer data );
-
-  void (* forall) ( AltkWidget *widget,
-                    AltkForeachFunc func,
-                    gpointer data );
 
   /* events */
   void (* expose_event) ( AltkWidget *widget,
@@ -177,12 +165,6 @@ void altk_widget_show_all ( AltkWidget *widget );
 void altk_widget_set_enable_show_all ( AltkWidget *widget,
                                        gboolean enable );
 AltkRegion *altk_widget_get_shape ( AltkWidget *widget );
-void altk_widget_foreach ( AltkWidget *widget,
-                           AltkForeachFunc func,
-                           gpointer data );
-void altk_widget_forall ( AltkWidget *widget,
-                          AltkForeachFunc func,
-                          gpointer data );
 void altk_widget_set_event_mask ( AltkWidget *widget,
                                   AltkEventMask mask );
 AltkEventMask altk_widget_get_event_mask ( AltkWidget *widget );

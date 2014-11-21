@@ -139,7 +139,10 @@ void _altk_widget_set_parent ( AltkWidget *widget,
 {
   ASSERT(parent);
   ASSERT(!widget->parent);
+  ASSERT(!widget->next);
   widget->parent = parent;
+  widget->next = parent->children;
+  parent->children = widget;
   if (ALTK_WIDGET_MAPPED(parent))
     {
       altk_widget_map(widget);
@@ -182,9 +185,9 @@ struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget )
 
 /* _map_recursive:
  */
-static gboolean _map_recursive ( AltkWidget *widget,
-                                 gpointer data )
+static void _map_recursive ( AltkWidget *widget )
 {
+  AltkWidget *child;
   ASSERT(!ALTK_WIDGET_MAPPED(widget));
   ASSERT(ALTK_WIDGET_TOP_WIDGET(widget) ||
          (widget->parent && ALTK_WIDGET_MAPPED(widget->parent)));
@@ -194,9 +197,9 @@ static gboolean _map_recursive ( AltkWidget *widget,
   /*   { */
       ALTK_WIDGET_GET_CLASS(widget)->map(widget);
       widget->flags |= ALTK_WIDGET_FLAG_MAPPED;
-      altk_widget_forall(widget, _map_recursive, NULL);
+      for (child = widget->children; child; child = child->next)
+        _map_recursive(child);
     /* } */
-  return ALTK_FOREACH_CONT;
 }
 
 
@@ -206,7 +209,7 @@ static gboolean _map_recursive ( AltkWidget *widget,
 void altk_widget_map ( AltkWidget *widget )
 {
 
-  _map_recursive(widget, NULL);
+  _map_recursive(widget);
 }
 
 
@@ -224,9 +227,9 @@ static void _on_map ( AltkWidget *widget )
 
 /* _realize_child:
  */
-static gboolean _realize_child ( AltkWidget *widget,
-                                 gpointer data )
+static void _realize_child ( AltkWidget *widget )
 {
+  AltkWidget *child;
   ASSERT(!ALTK_WIDGET_REALIZED(widget));
   ASSERT(ALTK_WIDGET_TOP_WIDGET(widget) ||
          (widget->parent && ALTK_WIDGET_REALIZED(widget->parent)));
@@ -235,9 +238,9 @@ static gboolean _realize_child ( AltkWidget *widget,
     {
       ALTK_WIDGET_GET_CLASS(widget)->realize(widget);
       widget->flags |= ALTK_WIDGET_FLAG_REALIZED; /* [removeme] ?? */
-      altk_widget_forall(widget, (AltkForeachFunc) _realize_child, NULL);
+      for (child = widget->children; child; child = child->next)
+        _realize_child(child);
     }
-  return ALTK_FOREACH_CONT;
 }
 
 
@@ -246,19 +249,19 @@ static gboolean _realize_child ( AltkWidget *widget,
  */
 void altk_widget_realize ( AltkWidget *widget )
 {
-  _realize_child(widget, NULL);
+  _realize_child(widget);
 }
 
 
 
-static gboolean _unrealize_child ( AltkWidget *widget,
-                                   gpointer data )
+static void _unrealize_child ( AltkWidget *widget )
 {
+  AltkWidget *child;
   if (!ALTK_WIDGET_REALIZED(widget))
-    return ALTK_FOREACH_CONT;
-  altk_widget_forall(widget, _unrealize_child, NULL);
+    return;
+  for (child = widget->children; child; child = child->next)
+    _unrealize_child(child);
   ALTK_WIDGET_GET_CLASS(widget)->unrealize(widget);
-  return ALTK_FOREACH_CONT;
 }
 
 
@@ -267,7 +270,7 @@ static gboolean _unrealize_child ( AltkWidget *widget,
  */
 void altk_widget_unrealize ( AltkWidget *widget )
 {
-  _unrealize_child(widget, NULL);
+  _unrealize_child(widget);
 }
 
 
@@ -389,32 +392,21 @@ void altk_widget_set_name ( AltkWidget *widget,
 
 
 
-struct find_data
+static AltkWidget *_widget_find ( AltkWidget *widget,
+                                  const gchar *name )
 {
-  const gchar *name;
+  AltkWidget *child;
   AltkWidget *found;
-};
-
-
-
-static gboolean _widget_find ( AltkWidget *widget,
-                               gpointer data_ )
-{
-  struct find_data *data = data_;
-  /* [FIXME] altk_widget_foreach() should return STOP/CONT to avoid
-     that */
-  if (data->found)
-    return ALTK_FOREACH_STOP;
-  if (widget->name && !strcmp(widget->name, data->name))
+  if (widget->name && !strcmp(widget->name, name))
     {
-      data->found = widget;
-      return ALTK_FOREACH_STOP;
+      return widget;
     }
-  altk_widget_forall(widget, _widget_find, data);
-  if (data->found)
-    return ALTK_FOREACH_STOP;
-  else
-    return ALTK_FOREACH_CONT;
+  for (child = widget->children; child; child = child->next)
+    {
+      if ((found = _widget_find(child, name)))
+        return found;
+    }
+  return NULL;
 }
 
 
@@ -424,11 +416,7 @@ static gboolean _widget_find ( AltkWidget *widget,
 AltkWidget *altk_widget_find ( AltkWidget *widget,
                                const gchar *name )
 {
-  struct find_data data;
-  data.name = name;
-  data.found = NULL;
-  _widget_find(widget, &data);
-  return data.found;
+  return _widget_find(widget, name);
 }
 
 
@@ -476,16 +464,16 @@ void altk_widget_hide ( AltkWidget *widget )
 
 /* _show_all:
  */
-static gboolean _show_all ( AltkWidget *widget,
-                            gpointer data )
+static void _show_all ( AltkWidget *widget )
 {
+  AltkWidget *child;
   /* show children first */
-  altk_widget_forall(widget, (AltkForeachFunc) _show_all, NULL);
+  for (child = widget->children; child; child = child->next)
+    _show_all(child);
   if (ALTK_WIDGET_ENABLE_SHOW_ALL(widget))
     {
       altk_widget_show(widget);
     }
-  return ALTK_FOREACH_CONT;
 }
 
 
@@ -494,7 +482,7 @@ static gboolean _show_all ( AltkWidget *widget,
  */
 void altk_widget_show_all ( AltkWidget *widget )
 {
-  _show_all(widget, NULL);
+  _show_all(widget);
 }
 
 
@@ -527,21 +515,12 @@ AltkRegion *altk_widget_get_shape ( AltkWidget *widget )
 
 
 
-static gboolean _expose_child ( AltkWidget *widget,
-                                AltkEvent *event )
-{
-  if (ALTK_WIDGET_NOWINDOW(widget))
-    altk_widget_event(widget, event);
-  return ALTK_FOREACH_CONT;
-}
-
-
-
 /* _event_expose:
  */
 static void _event_expose ( AltkWidget *widget,
                             AltkEvent *event )
 {
+  AltkWidget *child;
   if (!ALTK_WIDGET_REALIZED(widget))
     return;
   if (widget->event_mask & ALTK_EVENT_MASK_EXPOSE)
@@ -571,7 +550,8 @@ static void _event_expose ( AltkWidget *widget,
       event->expose.area = old_area;
     }
   /* process children */
-  altk_widget_forall(widget, (AltkForeachFunc) _expose_child, event);
+  for (child = widget->children; child; child = child->next)
+    _event_expose(child, event);
 }
 
 
@@ -615,35 +595,6 @@ static void _on_expose_event ( AltkWidget *wid,
                                AltkEvent *event )
 {
   CL_DEBUG("[TODO] not implemented: AltkWidget.expose_event()");
-}
-
-
-
-/* altk_widget_foreach:
- */
-void altk_widget_foreach ( AltkWidget *widget,
-                           AltkForeachFunc func,
-                           gpointer data )
-{
-  if (ALTK_WIDGET_GET_CLASS(widget)->foreach) {
-    ALTK_WIDGET_GET_CLASS(widget)->foreach(widget, func, data);
-  }
-}
-
-
-
-/* altk_widget_forall:
- */
-void altk_widget_forall ( AltkWidget *widget,
-                          AltkForeachFunc func,
-                          gpointer data )
-{
-  if (ALTK_WIDGET_GET_CLASS(widget)->forall) {
-    ALTK_WIDGET_GET_CLASS(widget)->forall(widget, func, data);
-  } else if (ALTK_WIDGET_GET_CLASS(widget)->foreach) {
-    /* fallback on foreach if forall not implemented */
-    ALTK_WIDGET_GET_CLASS(widget)->foreach(widget, func, data);
-  }
 }
 
 
