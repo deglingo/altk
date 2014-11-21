@@ -7,6 +7,8 @@
 
 #include <altk/altkbase.h>
 
+#include <altk/altkwm.h>
+
 #include <altk/altkregion.h>
 
 #include <altk/altkmain.h>
