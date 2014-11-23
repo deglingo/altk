@@ -182,6 +182,8 @@ void _altk_widget_unset_parent ( AltkWidget *widget )
     widget->next->prev = widget->prev;
   if (widget->parent->children == widget)
     widget->parent->children = widget->next;
+  altk_widget_queue_resize(widget->parent);
+  altk_widget_queue_draw(widget->parent);
   widget->parent = widget->prev = widget->next = NULL;
 }
 

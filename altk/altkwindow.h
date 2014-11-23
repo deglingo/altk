@@ -109,6 +109,7 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
                               gint width,
                               gint height,
                               AltkWindowFlags flags );
+void altk_window_destroy ( AltkWindow *window );
 void altk_window_set_event_mask ( AltkWindow *window,
                                   AltkEventMask mask );
 void altk_window_set_bounds ( AltkWindow *window,

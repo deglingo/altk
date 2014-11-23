@@ -24,6 +24,7 @@ static LSignalID signals[SIG_COUNT] = { 0, };
 
 
 static void _on_realize ( AltkWidget *wid );
+static void _on_unrealize ( AltkWidget *wid );
 static void _on_size_request ( AltkWidget *wid,
                                AltkRequisition *req );
 static void _on_size_allocate ( AltkWidget *wid,
@@ -46,6 +47,7 @@ static void _on_expose_event ( AltkWidget *wid,
 static void altk_button_class_init ( LObjectClass *cls )
 {
   ((AltkWidgetClass *) cls)->realize = _on_realize;
+  ((AltkWidgetClass *) cls)->unrealize = _on_unrealize;
   ((AltkWidgetClass *) cls)->size_request = _on_size_request;
   ((AltkWidgetClass *) cls)->size_allocate = _on_size_allocate;
   ((AltkWidgetClass *) cls)->mouse_enter_event = _on_mouse_enter_event;
@@ -103,6 +105,17 @@ static void _on_realize ( AltkWidget *wid )
                              ALTK_EVENT_MASK_MOUSE_CROSSING |
                              ALTK_EVENT_MASK_MOUSE_BUTTON);
   ALTK_BUTTON(wid)->event_window->user_data = wid;
+}
+
+
+
+/* _on_unrealize:
+ */
+static void _on_unrealize ( AltkWidget *wid )
+{
+  altk_window_destroy(ALTK_BUTTON(wid)->event_window);
+  L_OBJECT_CLEAR(ALTK_BUTTON(wid)->event_window);
+  ALTK_WIDGET_CLASS(parent_class)->unrealize(wid);
 }
 
 

@@ -193,6 +193,44 @@ AltkWindow *altk_window_new ( AltkWindow *parent,
 
 
 
+/* altk_window_destroy:
+ */
+void altk_window_destroy ( AltkWindow *window )
+{
+  /* [FIXME] */
+  while (window->children)
+    altk_window_destroy(window->children);
+  if (window->prev)
+    window->prev->next = window->next;
+  if (window->next)
+    window->next->prev = window->prev;
+  if (window->parent)
+    {
+      AltkRegion *area = NULL;
+      if (!(window->flags & ALTK_WINDOW_FLAG_INPUT_ONLY))
+        {
+          AltkRectangle rect;
+          rect.x = window->x;
+          rect.y = window->y;
+          rect.width = window->width;
+          rect.height = window->height;
+          area = altk_region_rectangle(&rect);
+        }
+      if (window->parent->children == window)
+        window->parent->children = window->next;
+      if (window->parent->children_tail == window)
+        window->parent->children_tail = window->prev;
+      if (area)
+        {
+          altk_window_invalidate(window->parent, area);
+          altk_region_destroy(area);
+        }
+    }
+  window->parent = window->prev = window->next;
+}
+
+
+
 /* altk_window_set_event_mask:
  */
 void altk_window_set_event_mask ( AltkWindow *window,
