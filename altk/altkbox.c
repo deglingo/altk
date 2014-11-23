@@ -64,6 +64,8 @@ static void _size_allocate ( AltkWidget *wid,
                              AltkAllocation *alloc );
 static void _add ( AltkContainer *cont,
                    AltkWidget *child );
+static void _remove ( AltkContainer *cont,
+                      AltkWidget *child );
 
 
 
@@ -105,6 +107,7 @@ static void altk_box_class_init ( LObjectClass *cls )
   ALTK_WIDGET_CLASS(cls)->size_request = _size_request;
   ALTK_WIDGET_CLASS(cls)->size_allocate = _size_allocate;
   ALTK_CONTAINER_CLASS(cls)->add = _add;
+  ALTK_CONTAINER_CLASS(cls)->remove = _remove;
 
   pspecs[PROP_ORIENTATION] =
     l_param_spec_int("orientation",
@@ -412,6 +415,31 @@ static void _add ( AltkContainer *cont,
   _altk_widget_set_parent(child, ALTK_WIDGET(cont));
   bchild->widget = l_object_ref(child);
   PRIVATE(cont)->children = g_list_append(PRIVATE(cont)->children, bchild);
+}
+
+
+
+/* _remove:
+ */
+static void _remove ( AltkContainer *cont,
+                      AltkWidget *child )
+{
+  Private *priv = PRIVATE(cont);
+  GList *l;
+  for (l = priv->children; l; l = l->next)
+    {
+      Child *bchild = l->data;
+      if (bchild->widget == child)
+        {
+          _altk_widget_unset_parent(bchild->widget);
+          l_object_unref(bchild->widget);
+          g_free(bchild);
+          priv->children = g_list_delete_link(priv->children, l);
+          altk_widget_queue_resize(ALTK_WIDGET(cont));
+          return;
+        }
+    }
+  CL_ERROR("child not found!");
 }
 
 

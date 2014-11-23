@@ -54,6 +54,7 @@ typedef enum
     ALTK_WIDGET_FLAG_MAPPED = 1 << 4,
     ALTK_WIDGET_FLAG_NOWINDOW = 1 << 5,
     ALTK_WIDGET_FLAG_ENABLE_SHOW_ALL = 1 << 6,
+    ALTK_WIDGET_FLAG_DESTROYED = 1 << 7,
   }
   AltkWidgetFlags;
 
@@ -63,6 +64,7 @@ typedef enum
 #define ALTK_WIDGET_MAPPED(w)     (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_MAPPED)
 #define ALTK_WIDGET_NOWINDOW(w)   (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_NOWINDOW)
 #define ALTK_WIDGET_ENABLE_SHOW_ALL(w) (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_ENABLE_SHOW_ALL)
+#define ALTK_WIDGET_DESTROYED(w)  (ALTK_WIDGET(w)->flags & ALTK_WIDGET_FLAG_DESTROYED)
 
 
 
@@ -76,6 +78,7 @@ struct _AltkWidget
   /* children list */
   AltkWidget *children;
   AltkWidget *next;
+  AltkWidget *prev;
   /* user name */
   gchar *name;
   /* flags */
@@ -146,7 +149,10 @@ void altk_widget_event_handler ( AltkEvent *event,
 
 void _altk_widget_set_parent ( AltkWidget *widget,
                                AltkWidget *parent );
+void _altk_widget_unset_parent ( AltkWidget *widget );
+void altk_widget_destroy ( AltkWidget *widget );
 void altk_widget_map ( AltkWidget *widget );
+void altk_widget_unmap ( AltkWidget *widget );
 void altk_widget_realize ( AltkWidget *widget );
 void altk_widget_unrealize ( AltkWidget *widget );
 void altk_widget_event ( AltkWidget *widget,

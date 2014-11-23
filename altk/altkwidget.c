@@ -8,6 +8,7 @@
 #include "altk/altkdisplay.h"
 #include "altk/altkwindow.h"
 #include "altk/altkwm.h"
+#include "altk/altkcontainer.h"
 #include "altk/altkwidget.inl"
 
 
@@ -69,6 +70,8 @@ static void altk_widget_init ( LObject *obj )
   /* [fixme] prop default */
   ALTK_WIDGET(obj)->name = g_strdup("");
   ALTK_WIDGET(obj)->flags |= ALTK_WIDGET_FLAG_ENABLE_SHOW_ALL;
+  /* /\* debug *\/ */
+  /* l_object_trace_ref(obj, TRUE); */
 }
 
 
@@ -138,9 +141,12 @@ void _altk_widget_set_parent ( AltkWidget *widget,
                                AltkWidget *parent )
 {
   ASSERT(parent);
+  ASSERT(ALTK_IS_CONTAINER(parent));
   ASSERT(!widget->parent);
   ASSERT(!widget->next);
   widget->parent = parent;
+  if (parent->children)
+    parent->children->prev = widget;
   widget->next = parent->children;
   parent->children = widget;
   if (ALTK_WIDGET_MAPPED(parent))
@@ -156,6 +162,27 @@ void _altk_widget_set_parent ( AltkWidget *widget,
           altk_widget_queue_draw(widget);
         }
     }
+}
+
+
+
+/* _altk_widget_unset_parent:
+ */
+void _altk_widget_unset_parent ( AltkWidget *widget )
+{
+  ASSERT(widget->parent);
+  if (ALTK_WIDGET_REALIZED(widget))
+    altk_widget_unrealize(widget);
+  if (ALTK_WIDGET_MAPPED(widget))
+    altk_widget_unmap(widget);
+  /* remove from parent list */
+  if (widget->prev)
+    widget->prev->next = widget->next;
+  if (widget->next)
+    widget->next->prev = widget->prev;
+  if (widget->parent->children == widget)
+    widget->parent->children = widget->next;
+  widget->parent = widget->prev = widget->next = NULL;
 }
 
 
@@ -179,6 +206,25 @@ static AltkDisplay *_on_get_display ( AltkWidget *widget )
 struct _AltkDisplay *altk_widget_get_display ( AltkWidget *widget )
 {
   return ALTK_WIDGET_GET_CLASS(widget)->get_display(widget);
+}
+
+
+
+/* altk_widget_destroy:
+ */
+void altk_widget_destroy ( AltkWidget *widget )
+{
+  AltkWidget *child;
+  l_object_ref(widget);
+  if (ALTK_WIDGET_DESTROYED(widget))
+    return;
+  for (child = widget->children; child; child = child->next)
+    altk_widget_destroy(child);
+  if (widget->parent)
+    altk_container_remove(ALTK_CONTAINER(widget->parent), widget);
+  widget->flags |= ALTK_WIDGET_FLAG_DESTROYED;
+  l_object_dispose(L_OBJECT(widget));
+  l_object_unref(widget);
 }
 
 
@@ -221,6 +267,32 @@ static void _on_map ( AltkWidget *widget )
   /* CL_DEBUG("widget_map(%p)", widget); */
   widget->style = altk_style_new();
   widget->style_context = altk_style_context_new(widget->style);
+}
+
+
+
+/* _unmap_recursive:
+ */
+static void _unmap_recursive ( AltkWidget *widget )
+{
+  AltkWidget *child;
+  ASSERT(ALTK_WIDGET_MAPPED(widget));
+  /* CL_DEBUG("[TODO] widget unmap (%p)", widget); */
+  for (child = widget->children; child; child = child->next)
+    _unmap_recursive(child);
+  L_OBJECT_CLEAR(widget->style);
+  L_OBJECT_CLEAR(widget->style_context);
+  widget->flags &= ~ALTK_WIDGET_FLAG_MAPPED;
+}
+
+
+
+/* altk_widget_unmap:
+ */
+void altk_widget_unmap ( AltkWidget *widget )
+{
+  /* [FIXME] */
+  _unmap_recursive(widget);
 }
 
 
@@ -705,6 +777,7 @@ static gboolean _idle_resize ( gpointer data )
   for (q = queue; q; q = q->next)
     {
       _negotiate_size(ALTK_WIDGET(q->data));
+      l_object_unref(q->data);
     }
   g_slist_free(queue); /* [FIXME] free_full(l_object_unref) */
   /* remove the idle source */
