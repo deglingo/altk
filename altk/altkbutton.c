@@ -217,7 +217,7 @@ static void _on_mouse_button_up_event ( AltkWidget *wid,
 {
   /* CL_TRACE("%p", wid); */
   altk_widget_set_state(wid, ALTK_STATE_PRELIGHT);
-  l_signal_emit(L_OBJECT(wid), signals[SIG_CLICKED], 0);
+  l_signal_emit(L_OBJECT(wid), signals[SIG_CLICKED], 0, NULL);
 }
 
 

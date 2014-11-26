@@ -100,7 +100,7 @@ void altk_display_open ( AltkDisplay *display )
   /* create the root window */
   display->root_window = altk_window_new_root(display);
   /* signal */
-  l_signal_emit(L_OBJECT(display), signals[SIG_OPEN], 0);
+  l_signal_emit(L_OBJECT(display), signals[SIG_OPEN], 0, NULL);
 }
 
 
