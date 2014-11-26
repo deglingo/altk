@@ -56,7 +56,14 @@ static void altk_button_class_init ( LObjectClass *cls )
   ((AltkWidgetClass *) cls)->mouse_button_up_event = _on_mouse_button_up_event;
   ((AltkWidgetClass *) cls)->expose_event = _on_expose_event;
 
-  signals[SIG_CLICKED] = l_signal_new(cls, "clicked");
+  signals[SIG_CLICKED] = l_signal_new(cls,
+                                      "clicked",
+                                      0,
+                                      0,
+                                      NULL,
+                                      NULL,
+                                      NULL,
+                                      NULL);
 }
 
 

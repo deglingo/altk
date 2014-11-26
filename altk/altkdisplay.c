@@ -33,7 +33,13 @@ static LSignalID signals[SIG_COUNT] = { 0, };
 static void altk_display_class_init ( LObjectClass *cls )
 {
   signals[SIG_OPEN] = l_signal_new(cls,
-                                   "open");
+                                   "open",
+                                   0,
+                                   0,
+                                   NULL,
+                                   NULL,
+                                   NULL,
+                                   NULL);
 }
 
 
