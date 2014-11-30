@@ -58,6 +58,14 @@ void altk_gc_draw_bitmap_region ( AltkGC *gc,
                                   AltkRegion *region,
                                   gint dx,
                                   gint dy );
+void altk_gc_draw_vline ( AltkGC *gc,
+                          gint x1,
+                          gint y1,
+                          gint y2 );
+void altk_gc_draw_hline ( AltkGC *gc,
+                          gint x1,
+                          gint y1,
+                          gint x2 );
 void altk_gc_draw_rectangle ( AltkGC *gc,
                               gboolean filled,
                               gint x,

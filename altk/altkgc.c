@@ -188,6 +188,32 @@ void altk_gc_draw_bitmap_region ( AltkGC *gc,
 
 
 
+/* altk_gc_draw_vline:
+ */
+void altk_gc_draw_vline ( AltkGC *gc,
+                          gint x1,
+                          gint y1,
+                          gint y2 )
+{
+  /* [FIXME] ?? */
+  altk_gc_draw_rectangle(gc, TRUE, x1, y1, 1, y2 - y1);
+}
+
+
+
+/* altk_gc_draw_hline:
+ */
+void altk_gc_draw_hline ( AltkGC *gc,
+                          gint x1,
+                          gint y1,
+                          gint x2 )
+{
+  /* [FIXME] ?? */
+  altk_gc_draw_rectangle(gc, TRUE, x1, y1, x2 - x1, 1);
+}
+
+
+
 /* altk_gc_draw_rectangle:
  */
 void altk_gc_draw_rectangle ( AltkGC *gc,
