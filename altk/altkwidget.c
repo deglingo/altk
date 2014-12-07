@@ -311,7 +311,6 @@ static void _realize_child ( AltkWidget *widget )
   if (ALTK_WIDGET_VISIBLE(widget))
     {
       ALTK_WIDGET_GET_CLASS(widget)->realize(widget);
-      widget->flags |= ALTK_WIDGET_FLAG_REALIZED; /* [removeme] ?? */
       for (child = widget->children; child; child = child->next)
         _realize_child(child);
     }
@@ -354,6 +353,7 @@ void altk_widget_unrealize ( AltkWidget *widget )
 static void _on_realize ( AltkWidget *widget )
 {
   /* CL_DEBUG("[TODO] realize(%p)", widget); */
+  widget->flags |= ALTK_WIDGET_FLAG_REALIZED; /* [removeme] ?? */
   if (ALTK_WIDGET_NOWINDOW(widget))
     {
       widget->window = widget->parent->window;
