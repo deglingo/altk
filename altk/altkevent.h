@@ -18,6 +18,7 @@ typedef union _AltkEvent AltkEvent;
 typedef struct _AltkEventAny AltkEventAny;
 typedef struct _AltkEventExpose AltkEventExpose;
 typedef struct _AltkEventCrossing AltkEventCrossing;
+typedef struct _AltkEventMotion AltkEventMotion;
 typedef struct _AltkEventButton AltkEventButton;
 
 typedef void (* AltkEventHandler) ( AltkEvent *event,
@@ -36,6 +37,7 @@ enum _AltkEventType
     ALTK_EVENT_EXPOSE,
     ALTK_EVENT_MOUSE_ENTER,
     ALTK_EVENT_MOUSE_LEAVE,
+    ALTK_EVENT_MOUSE_MOTION,
     ALTK_EVENT_EXPOSE_BACKGROUND,
     ALTK_EVENT_MOUSE_BUTTON_DOWN,
     ALTK_EVENT_MOUSE_BUTTON_UP,
@@ -86,6 +88,17 @@ struct _AltkEventCrossing
 
 
 
+/* AltkEventMotion:
+ */
+struct _AltkEventMotion
+{
+  _ALTK_EVENT_HEADER;
+  gint mx;
+  gint my;
+};
+
+
+
 /* AltkEventButton:
  */
 struct _AltkEventButton
@@ -106,6 +119,7 @@ union _AltkEvent
   AltkEventAny any;
   AltkEventExpose expose;
   AltkEventCrossing crossing;
+  AltkEventMotion motion;
   AltkEventButton button;
 };
 

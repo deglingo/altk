@@ -650,6 +650,9 @@ void altk_widget_event ( AltkWidget *widget,
   case ALTK_EVENT_MOUSE_LEAVE:
     ALTK_WIDGET_GET_CLASS(widget)->mouse_leave_event(widget, event);
     break;
+  case ALTK_EVENT_MOUSE_MOTION:
+    ALTK_WIDGET_GET_CLASS(widget)->mouse_motion_event(widget, event);
+    break;
   case ALTK_EVENT_MOUSE_BUTTON_DOWN:
     ALTK_WIDGET_GET_CLASS(widget)->mouse_button_down_event(widget, event);
     break;

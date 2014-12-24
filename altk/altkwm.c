@@ -150,6 +150,55 @@ static gboolean _al_source_check ( GSource *src )
 
 
 
+static void _generate_enter_leave ( void )
+{
+  AltkEvent event;
+  AltkWindow *win;
+  for (win = wm->flywin; win; win = win->parent)
+    if (win->event_mask & ALTK_EVENT_MASK_MOUSE_CROSSING)
+      break;
+  if (win != wm->entered_window)
+    {
+      if (wm->entered_window)
+        {
+          event.type = ALTK_EVENT_MOUSE_LEAVE;
+          event.crossing.window = wm->entered_window;
+          event.crossing.mx = wm->mouse_x - wm->entered_window->root_x;
+          event.crossing.my = wm->mouse_y - wm->entered_window->root_y;
+          altk_event_process(&event);
+        }
+      if ((wm->entered_window = win))
+        {
+          event.type = ALTK_EVENT_MOUSE_ENTER;
+          event.crossing.window = wm->entered_window;
+          event.crossing.mx = wm->mouse_x - wm->entered_window->root_x;
+          event.crossing.my = wm->mouse_y - wm->entered_window->root_y;
+          altk_event_process(&event);
+        }
+    }
+}
+
+
+
+static void _generate_motion ( void )
+{
+  AltkWindow *win;
+  for (win = wm->flywin; win; win = win->parent)
+    if (win->event_mask & ALTK_EVENT_MASK_MOUSE_MOTION)
+      break;
+  if (win)
+    {
+      AltkEvent event;
+      event.type = ALTK_EVENT_MOUSE_MOTION;
+      event.motion.window = win;
+      event.motion.mx = wm->mouse_x - win->root_x;
+      event.motion.my = wm->mouse_y - win->root_y;
+      altk_event_process(&event);
+    }
+}
+
+
+
 /* _mouse_motion:
  */
 static void _mouse_motion ( ALLEGRO_DISPLAY *al_display,
@@ -157,8 +206,6 @@ static void _mouse_motion ( ALLEGRO_DISPLAY *al_display,
                             gint my )
 {
   AltkDisplay *display;
-  AltkWindow *entered;
-  AltkEvent event;
   display = altk_wm_lookup_display(al_display);
   ASSERT(display);
   wm->entered_display = display;
@@ -168,30 +215,9 @@ static void _mouse_motion ( ALLEGRO_DISPLAY *al_display,
   wm->flywin = altk_window_get_child_at(altk_display_get_root_window(display),
                                         mx,
                                         my);
-  /* generate the entered/leave events */
-  for (entered = wm->flywin; entered; entered = entered->parent) {
-    if (entered->event_mask & ALTK_EVENT_MASK_MOUSE_CROSSING)
-      break;
-  }
-  if (entered != wm->entered_window)
-    {
-      if (wm->entered_window)
-        {
-          event.type = ALTK_EVENT_MOUSE_LEAVE;
-          event.crossing.window = wm->entered_window;
-          event.crossing.mx = mx - wm->entered_window->root_x;
-          event.crossing.my = my - wm->entered_window->root_y;
-          altk_event_process(&event);
-        }
-      if ((wm->entered_window = entered))
-        {
-          event.type = ALTK_EVENT_MOUSE_ENTER;
-          event.crossing.window = wm->entered_window;
-          event.crossing.mx = mx - wm->entered_window->root_x;
-          event.crossing.my = my - wm->entered_window->root_y;
-          altk_event_process(&event);
-        }
-    }
+  /* CL_DEBUG("motion: %d, %d -> %p", mx, my, wm->flywin); */
+  _generate_enter_leave();
+  _generate_motion();
 }
 
 
